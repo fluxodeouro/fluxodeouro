@@ -24,6 +24,8 @@
             --dourado: #C9A961;
             --dourado-dark: #B8960F;
             --cinza: #f5f5f7;
+            --cinza-claro: #FAFAFA;
+            --cinza-mais-escuro: #EAEAEA; /* Added darker light gray */
             --cinza-text: #86868b;
             --header-link-hover: var(--dourado-dark);
             --header-bg: rgba(255, 255, 255, 0.95);
@@ -881,12 +883,7 @@
 
         /* --- FIM MINI FLUXOGRAMA DOURADO --- */
 
-
-        /* PROVA SOCIAL / STATS (Mantido) */
-        .stats-section {
-            padding: 8rem 4rem;
-            background: var(--cinza);
-        }
+        /* Removed .stats-section, .stat-icon, .stats-grid, .stat-card styles */
 
         .section-title {
             text-align: center;
@@ -897,12 +894,6 @@
             letter-spacing: -0.03em;
         }
 
-        .stat-icon {
-            margin-bottom: 1.5rem;
-            display: inline-block;
-            color: var(--dourado-dark);
-        }
-
         .lucide-icon {
             width: 48px;
             height: 48px;
@@ -911,7 +902,7 @@
 
         /* ... restante do CSS mantido ... */
         .planos, .tecnologias, footer, .chat-float {
-             /* Estilos das outras seções não foram alterados, apenas o HERO */
+             /* Estilos das outras seções não foram alterados */
         }
 
         /* CORREÇÃO DO COMO FUNCIONA ANTIGO: */
@@ -920,26 +911,11 @@
             /* Estilos antigos removidos/ignorados */
         }
 
-        /* Estilos de Planos, Tech, Footer (Inalterados) */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
+        /* Estilos de Planos, Tech, Footer */
+        .planos {
+            padding: 4rem 4rem 8rem; /* Reduced top padding */
+            background: var(--cinza-mais-escuro); /* Changed background color */
         }
-        .stat-card {
-            background: var(--branco);
-            padding: 2.5rem;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        .stat-card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; font-weight: 600; }
-        .stat-card p { color: var(--cinza-text); font-size: 1rem; }
-
-        .planos { padding: 8rem 4rem; background: var(--branco); }
         .planos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; max-width: 1200px; margin: 0 auto; }
         .plano-card {
             border: 1px solid rgba(0, 0, 0, 0.1);
@@ -949,7 +925,7 @@
             flex-direction: column;
             position: relative;
             overflow: hidden;
-            background: var(--cinza);
+            background: var(--branco); /* Changed card background to white */
         }
         .plano-card.destaque {
             background: var(--preto);
@@ -1257,7 +1233,7 @@
             }
 
             /* Outros Responsivos */
-            .stats-grid { grid-template-columns: 1fr; }
+            /* Removed .stats-grid rule */
             .planos-grid { grid-template-columns: 1fr; }
             .plano-card { max-width: 400px; margin: 0 auto; }
         }
@@ -1275,10 +1251,10 @@
                 font-size: 2rem;
             }
 
-            .stats-section,
+            /* Removed .stats-section from this rule */
             .planos,
             .tecnologias {
-                padding: 4rem 1.5rem;
+                padding: 2rem 1.5rem 4rem; /* Reduced top padding for Planos */
             }
             footer { padding: 4rem 1.5rem 2rem; }
 
@@ -1609,33 +1585,7 @@
     </section>
     <!-- ### FIM NOVA SEÇÃO CASES (PROJETOS) ### -->
 
-    <!-- PROVA SOCIAL / STATS -->
-    <section id="prova-social" class="stats-section">
-        <h2 class="section-title">Resultados Reais do Nosso Ecossistema</h2>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i data-lucide="trending-up" class="lucide-icon"></i>
-                </div>
-                <h3>Faturamento Duplicado</h3>
-                <p>E-commerce dobrou o faturamento com o Vendedor AI implementado no fluxo de atendimento.</p>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i data-lucide="shopping-cart" class="lucide-icon"></i>
-                </div>
-                <h3>42% Menos Abandono</h3>
-                <p>Loja reduziu o abandono de carrinho em 42% com automação inteligente de recuperação.</p>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i data-lucide="target" class="lucide-icon"></i>
-                </div>
-                <h3>Origem Mapeada</h3>
-                <p>Cliente identificou origem de leads mais lucrativa via dashboard e otimizou investimento.</p>
-            </div>
-        </div>
-    </section>
+    <!-- PROVA SOCIAL / STATS Section Removed -->
 
     <!-- PLANOS -->
     <section id="planos" class="planos">
@@ -1857,7 +1807,8 @@
             });
         }, observerOptions);
 
-        document.querySelectorAll('.stat-card, .plano-card, .flow-card, .tech-item, .projeto-tile, .search-intro-content').forEach(el => { // Added .search-intro-content
+        // Updated selector to remove .stat-card
+        document.querySelectorAll('.plano-card, .flow-card, .tech-item, .projeto-tile, .search-intro-content').forEach(el => {
             // Apenas aplica a animação base de scroll para itens que NÃO são flow-card (que tem animação própria)
             if (!el.classList.contains('flow-card')) {
                 el.style.opacity = '0';
