@@ -883,7 +883,129 @@
 
         /* --- FIM MINI FLUXOGRAMA DOURADO --- */
 
-        /* Removed .stats-section, .stat-icon, .stats-grid, .stat-card styles */
+        /* --- SEÇÃO BLOG --- */
+        .blog-section {
+            padding: 3rem 0 6rem; /* Reduced top padding */
+            background: var(--cinza); /* Fundo cinza claro para destacar os cards */
+        }
+        .blog-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 4rem; /* Padding lateral padrão */
+        }
+        .blog-section .section-title {
+            margin-bottom: 4rem; /* Herda o estilo .section-title */
+        }
+        .blog-carousel-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .blog-carousel {
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto; /* Habilita o scroll horizontal */
+            scroll-behavior: smooth;
+
+            /* Esconde a barra de rolagem (padrão) */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE e Edge */
+        }
+        .blog-carousel::-webkit-scrollbar {
+            display: none; /* Chrome, Safari e Opera */
+        }
+        .blog-card {
+            /* Define o tamanho base do card */
+            flex: 0 0 320px;
+
+            background: var(--branco);
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        }
+        .blog-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+        .blog-card-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 180px); /* Garante altura consistente */
+        }
+        .blog-card-content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--preto);
+        }
+        .blog-card-content p {
+            font-size: 0.95rem;
+            color: var(--cinza-text);
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            flex-grow: 1; /* Empurra o botão para o final */
+        }
+        .blog-card-cta {
+            display: inline-block;
+            width: fit-content; /* O botão só ocupa o espaço do texto */
+            background: var(--preto);
+            color: var(--branco);
+            padding: 0.7rem 1.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: 980px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        .blog-card-cta:hover {
+            background: var(--grafite-light);
+            transform: scale(1.02);
+        }
+        /* Estilo das Setas de Navegação */
+        .blog-nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            color: var(--preto);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .blog-nav-arrow:hover {
+            background: var(--branco);
+            transform: translateY(-50%) scale(1.1);
+        }
+        .blog-nav-arrow .lucide-icon {
+            width: 24px;
+            height: 24px;
+        }
+        .blog-nav-arrow.arrow-left {
+            left: -22px; /* Metade para fora do container */
+        }
+        .blog-nav-arrow.arrow-right {
+            right: -22px; /* Metade para fora do container */
+        }
+        /* --- FIM SEÇÃO BLOG --- */
+
 
         .section-title {
             text-align: center;
@@ -1192,6 +1314,22 @@
                 max-height: 200px;
             }
 
+            /* CSS RESPONSIVO BLOG (TABLET) */
+             .blog-container {
+                padding: 0 1.5rem; /* Reduz o padding lateral em tablet */
+            }
+            .blog-nav-arrow {
+                /* Esconde as setas, pois o scroll manual é mais comum */
+                display: none;
+            }
+            .blog-carousel {
+                /* Adiciona um padding no final para que o último card não corte */
+                padding-right: 1.5rem;
+                /* Garante que o carrossel comece na borda */
+                margin-left: -1.5rem;
+                padding-left: 1.5rem;
+            }
+
             /* CSS RESPONSIVO PROJETOS (TABLET) */
             .projetos-section {
                 padding: 2rem 1.5rem 4rem; /* Adjusted top padding */
@@ -1252,6 +1390,18 @@
             }
             .search-bar-icon {
                 display: none; /* Esconde o ícone no layout de coluna */
+            }
+
+             /* CSS RESPONSIVO BLOG (MOBILE) */
+             .blog-section {
+                padding: 2rem 0 4rem; /* Reduced top padding */
+            }
+            .blog-card {
+                /* Reduz o tamanho do card no mobile */
+                flex-basis: 280px;
+            }
+            .blog-card-content h3 {
+                font-size: 1.15rem;
             }
 
             /* CSS RESPONSIVO PROJETOS (MOBILE) */
@@ -1499,6 +1649,62 @@
         </div>
         <!-- Removido o flow-cards-container obsoleto -->
     </section>
+
+    <!-- ### INÍCIO NOVA SEÇÃO BLOG ### -->
+    <section id="blog" class="blog-section">
+        <div class="blog-container">
+            <h2 class="section-title">Fluxo de Insights: O Blog da Performance</h2>
+
+            <div class="blog-carousel-wrapper">
+                <button class="blog-nav-arrow arrow-left" aria-label="Slide anterior">
+                    <i data-lucide="chevron-left" class="lucide-icon"></i>
+                </button>
+
+                <div class="blog-carousel">
+                    <div class="blog-card">
+                        <img src="https://placehold.co/400x250/333/ccc?text=Blog+Post+1" alt="Imagem do post de blog">
+                        <div class="blog-card-content">
+                            <h3>Como a IA está dobrando a taxa de conversão no varejo</h3>
+                            <p>Descubra 3 automações que você pode implementar hoje para qualificar leads e vender 24/7, usando a mesma tecnologia do nosso 'Motor de Ouro'.</p>
+                            <a href="#" class="blog-card-cta">Leia Mais</a>
+                        </div>
+                    </div>
+
+                    <div class="blog-card">
+                        <img src="https://placehold.co/400x250/555/eee?text=Blog+Post+2" alt="Imagem do post de blog">
+                        <div class="blog-card-content">
+                            <h3>SEO não é mágica, é dado: O Guia Definitivo</h3>
+                            <p>Passo a passo para estruturar seu site ('Base de Ouro') para ser encontrado pelo Google, com foco em métricas reais que geram faturamento.</p>
+                            <a href="#" class="blog-card-cta">Leia Mais</a>
+                        </div>
+                    </div>
+
+                    <div class="blog-card">
+                        <img src="https://placehold.co/400x250/B8960F/000?text=Blog+Post+3" alt="Imagem do post de blog">
+                        <div class="blog-card-content">
+                            <h3>Seu ROI no Power BI: Por que o 'Mapa de Ouro' funciona</h3>
+                            <p>Pare de gastar em anúncios sem saber o retorno. Veja como um dashboard em tempo real expõe gargalos e otimiza seu investimento.</p>
+                            <a href="#" class="blog-card-cta">Leia Mais</a>
+                        </div>
+                    </div>
+
+                    <div class="blog-card">
+                        <img src="https://placehold.co/400x250/1a1a1a/fff?text=Blog+Post+4" alt="Imagem do post de blog">
+                        <div class="blog-card-content">
+                            <h3>5 Erros de N8N que estão custando seus leads</h3>
+                            <p>A automação é poderosa, mas perigosa se mal configurada. Analisamos os erros mais comuns que vemos em fluxos de nutrição de leads.</p>
+                            <a href="#" class="blog-card-cta">Leia Mais</a>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="blog-nav-arrow arrow-right" aria-label="Próximo slide">
+                    <i data-lucide="chevron-right" class="lucide-icon"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+    <!-- ### FIM NOVA SEÇÃO BLOG ### -->
 
     <!-- ### INÍCIO SEÇÃO CASES (PROJETOS) REESTRUTURADA ### -->
     <section id="projetos" class="projetos-section">
@@ -1765,7 +1971,7 @@
         }, observerOptions);
 
         // Updated selector to remove .stat-card
-        document.querySelectorAll('.plano-card, .flow-card, .tech-item, .projeto-tile, .search-intro-content').forEach(el => {
+        document.querySelectorAll('.plano-card, .flow-card, .tech-item, .projeto-tile, .search-intro-content, .blog-card').forEach(el => { // Added .blog-card
             // Apenas aplica a animação base de scroll para itens que NÃO são flow-card (que tem animação própria)
             if (!el.classList.contains('flow-card')) {
                 el.style.opacity = '0';
@@ -2070,13 +2276,41 @@
             });
         }
 
-        // Executa o Lucide Icons
+        // Executa o Lucide Icons E a lógica do carrossel
         document.addEventListener('DOMContentLoaded', (event) => {
             // Check if lucide exists before calling createIcons
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             } else {
                 console.error("Lucide library not loaded.");
+            }
+
+            // --- LÓGICA DO CARROSSEL DE BLOG ---
+            const carouselWrapper = document.querySelector('.blog-carousel-wrapper');
+            if (carouselWrapper) {
+                const carousel = carouselWrapper.querySelector('.blog-carousel');
+                const prevBtn = carouselWrapper.querySelector('.arrow-left');
+                const nextBtn = carouselWrapper.querySelector('.arrow-right');
+
+                if(carousel && prevBtn && nextBtn) {
+                     // Wait for images and layout to settle before calculating width
+                    setTimeout(() => {
+                        const firstCard = carousel.querySelector('.blog-card');
+                        if (!firstCard) return; // Exit if no cards found
+
+                        const cardWidth = firstCard.offsetWidth;
+                        const cardGap = parseFloat(window.getComputedStyle(carousel).gap);
+                        const scrollAmount = cardWidth + cardGap;
+
+                        nextBtn.addEventListener('click', () => {
+                            carousel.scrollLeft += scrollAmount;
+                        });
+
+                        prevBtn.addEventListener('click', () => {
+                            carousel.scrollLeft -= scrollAmount;
+                        });
+                    }, 500); // Delay to ensure layout calculation is correct
+                }
             }
         });
 
