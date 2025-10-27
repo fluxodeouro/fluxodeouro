@@ -1,0 +1,2173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxo de Ouro - O sistema que transforma dados em vendas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Importação do Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --branco: #FFFFFF;
+            --preto: #000000;
+            --grafite: #0a0a0a;
+            --grafite-light: #1a1a1a;
+            --dourado: #C9A961;
+            --dourado-dark: #B8960F;
+            --cinza: #f5f5f7;
+            --cinza-text: #86868b;
+            --header-link-hover: var(--dourado-dark);
+            --header-bg: rgba(255, 255, 255, 0.95);
+            /* Cor para as partículas (Gold) */
+            --particle-color: rgba(201, 169, 97, 0.8);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--preto);
+            background: var(--branco);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- NOVO INDICADOR DE ROLAGEM VERTICAL (GRÁFICO) --- */
+        #verticalScrollIndicator {
+            position: fixed;
+            top: 75px; /* Abaixo do header */
+            left: 0;
+            width: 100%;
+            height: 8px; /* Altura total do indicador */
+            display: flex;
+            justify-content: flex-start; /* Alinha as barras à esquerda */
+            align-items: flex-end; /* Garante que as barras cresçam de baixo para cima */
+            z-index: 999;
+            overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.05); /* Fundo claro para o indicador */
+        }
+
+        .progress-bar-segment {
+            flex-grow: 0; /* Não cresce na horizontal */
+            width: calc(100% / 8); /* Divide em 8 colunas, ajustável */
+            height: 0%; /* Altura inicial (preenchida pelo JS) */
+            background-color: var(--dourado);
+            transition: height 0.1s linear; /* Animação suave no crescimento */
+            box-shadow: 0 0 5px var(--dourado);
+            margin-right: 2px; /* Espaçamento entre as barras */
+        }
+
+        .progress-bar-segment:last-child {
+            margin-right: 0;
+        }
+
+        /* Adiciona um efeito de degradê sutil para parecer mais "luxuoso" */
+        .progress-bar-segment::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--dourado-dark) 0%, var(--dourado) 100%);
+            opacity: 0.8;
+        }
+
+        /* Altura no mobile para não ocupar muito espaço */
+        @media (max-width: 768px) {
+             #verticalScrollIndicator {
+                height: 5px;
+            }
+        }
+        /* --- FIM INDICADOR DE ROLAGEM VERTICAL --- */
+
+
+        /* --- HEADER (Mantido do passo anterior) --- */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--header-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            height: 75px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav {
+            max-width: 1400px;
+            height: 100%;
+            margin: 0 auto;
+            padding: 0 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 45px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.02);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3.5rem;
+            list-style: none;
+            height: 100%;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--preto);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            letter-spacing: -0.01em;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--header-link-hover);
+        }
+
+        /* Dropdown Desktop */
+        .nav-item {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-arrow {
+            width: 14px;
+            height: 14px;
+            vertical-align: middle;
+            margin-left: 4px;
+            stroke: currentColor;
+            transition: transform 0.2s;
+        }
+
+        .nav-item:hover .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: -1rem;
+            min-width: 200px;
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            padding: 0.5rem 0;
+            list-style: none;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease-out;
+            pointer-events: none;
+        }
+
+        .nav-item:hover > .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--cinza-text);
+            white-space: nowrap;
+        }
+
+        .dropdown-menu a:hover {
+            background: var(--cinza);
+            color: var(--preto);
+        }
+
+        /* CTA Header */
+        .cta-header {
+            background: var(--preto);
+            color: var(--branco);
+            padding: 0.65rem 1.8rem;
+            border-radius: 980px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 1.5rem;
+        }
+
+        /* Contêiner de Controles (CTA + Hamburger) */
+        .nav-controls {
+            display: flex; /* Adicionado display flex para alinhar itens */
+            align-items: center; /* Centraliza verticalmente */
+            gap: 10px; /* Espaço entre o CTA e o botão hamburger */
+        }
+
+        .cta-header:hover {
+            background: var(--grafite-light);
+            transform: scale(1.02);
+        }
+
+        /* Botão Menu Mobile (Hamburger) */
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 1001;
+            padding: 10px;
+        }
+
+        .hamburger {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--preto);
+            position: relative;
+            transition: background 0.3s ease-in-out;
+        }
+
+        .hamburger::before,
+        .hamburger::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 2px;
+            background: var(--preto);
+            left: 0;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .hamburger::before { top: -7px; }
+        .hamburger::after { bottom: -7px; }
+
+        .nav-toggle.active .hamburger { background: transparent; }
+        .nav-toggle.active .hamburger::before { transform: translateY(7px) rotate(45deg); }
+        .nav-toggle.active .hamburger::after { transform: translateY(-7px) rotate(-45deg); }
+
+        /* Painel do Menu Mobile */
+        .mobile-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            position: fixed;
+            top: 75px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 75px);
+            background: var(--branco);
+            z-index: 999;
+            padding: 4rem 2rem;
+            text-align: center;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            overflow-y: auto;
+        }
+
+        .mobile-nav.active {
+            transform: translateX(0);
+        }
+
+        /* Submenu Mobile */
+        .mobile-nav-item {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .mobile-nav-toggle-sub {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            cursor: pointer;
+        }
+
+        .mobile-nav-toggle-sub span {
+            color: var(--preto);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .mobile-nav-toggle-sub .dropdown-arrow {
+            width: 24px;
+            height: 24px;
+            stroke-width: 2.5;
+            transition: transform 0.3s ease;
+            color: var(--dourado);
+        }
+
+        .mobile-nav-toggle-sub.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .mobile-sub-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+            padding-left: 1.5rem;
+        }
+
+        .mobile-sub-menu.active {
+            max-height: 500px;
+            padding-bottom: 1rem;
+        }
+
+        .mobile-sub-menu a {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: var(--cinza-text);
+            padding: 0.75rem 0;
+        }
+
+        .mobile-nav-link {
+            display: block;
+            color: var(--preto);
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 600;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        /* --- FIM NOVO HEADER --- */
+
+
+        /* --- HERO SLIDER (NOVA ESTRUTURA) --- */
+        .hero {
+            margin-top: 75px;
+            min-height: 90vh;
+            background: var(--grafite);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            padding: 0;
+        }
+
+        /* Canvas da Animação de Fundo */
+        #particle-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        /* Estilo dos Slides */
+        .hero-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center center;
+            opacity: 0; /* Começa invisível */
+            transition: opacity 0.5s ease-out; /* Transição base para o texto */
+            display: flex;
+            align-items: center;
+            padding: 8rem 0;
+            /* Importante: Transformação inicial para que o slide saia de um ponto de origem */
+            transform: scale(1.0);
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+            transform: none; /* Reset após a transição */
+        }
+
+        /*
+        * 1. ANIMAÇÕES NOVAS (Para as fotos)
+        */
+
+        /* 1. Efeito Zoom Sutil (Simulando "Pulando") */
+        @keyframes zoom-in-bg {
+            0% { transform: scale(1.15) rotate(0.1deg); opacity: 0; }
+            50% { transform: scale(1.02) rotate(-0.1deg); opacity: 1; }
+            100% { transform: scale(1.0) rotate(0); }
+        }
+        .hero-slide.animate-zoom-in-out {
+            animation: zoom-in-bg 3.0s forwards;
+        }
+
+        /* 2. Efeito Bloco Caindo (Slide-Down) */
+        @keyframes slide-block-down {
+            0% { transform: translateY(-100%); opacity: 0; }
+            30% { transform: translateY(-5%); opacity: 1; }
+            100% { transform: translateY(0); }
+        }
+        .hero-slide.animate-slide-block-down {
+            animation: slide-block-down 2.0s ease-out forwards;
+        }
+
+        /* 3. Efeito Bloco Entrando Lateral (Slide-Right) */
+        @keyframes slide-block-right {
+            0% { transform: translateX(100%); opacity: 0; }
+            30% { transform: translateX(-5%); opacity: 1; }
+            100% { transform: translateX(0); }
+        }
+        .hero-slide.animate-slide-block-right {
+            animation: slide-block-right 2.0s ease-out forwards;
+        }
+
+        /* Garante que o slide que está saindo não fique preso em estados animados */
+        .hero-slide:not(.active) {
+            animation: none !important;
+            transform: none !important;
+        }
+
+        /* 2. GARANTINDO QUE O TEXTO FIQUE PARADO */
+        .hero-slide .hero-content {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .hero-slide.active .hero-content {
+            opacity: 1;
+        }
+
+
+        /* Overlay escuro para garantir legibilidade do texto dourado */
+        .hero-slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.7);
+            z-index: 3;
+        }
+
+        .hero-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 4rem;
+            position: relative;
+            z-index: 4;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: 5rem;
+            font-weight: 700;
+            line-height: 1.05;
+            margin-bottom: 1.5rem;
+            color: var(--branco);
+            letter-spacing: -0.03em;
+            /* Mantido: animações de entrada de texto */
+            animation: slideInDown 1s ease-out;
+            animation-fill-mode: both;
+        }
+
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-gold {
+            background: linear-gradient(135deg, var(--dourado) 0%, var(--branco) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-content p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 3rem;
+            line-height: 1.5;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            /* Mantido: animações de entrada de texto */
+            animation: fadeInUp 1s ease-out 0.3s backwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+        .cta-hero {
+            display: inline-block;
+            background: var(--dourado);
+            color: var(--preto);
+            padding: 1rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 980px;
+            transition: all 0.3s ease;
+            /* Mantido: animações de entrada de texto */
+            animation: fadeInUp 1s ease-out 0.6s backwards;
+        }
+
+        .cta-hero:hover {
+            background: var(--dourado-dark);
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(201, 169, 97, 0.4);
+        }
+
+        /* Controles do Slider (NOVOS) */
+        .slider-controls {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5; /* Fica acima de tudo */
+            display: flex;
+            gap: 15px;
+        }
+
+        .slider-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--dourado);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .slider-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: var(--branco);
+            transform: scale(1.1);
+        }
+
+        .slider-btn .lucide-icon {
+            width: 24px;
+            height: 24px;
+            stroke-width: 2;
+        }
+
+        /* --- FIM HERO SLIDER --- */
+
+        /* --- NOVA SEÇÃO DE BUSCA GOOGLE --- */
+        .google-search-section {
+            padding: 3rem 4rem 3rem; /* Reduced vertical padding */
+            background: var(--branco);
+            text-align: center;
+        }
+        .search-intro-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .search-section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--preto);
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+        .search-section-subtitle {
+            font-size: 1.15rem;
+            color: var(--cinza-text);
+            max-width: 700px;
+            margin: 0 auto 3rem auto;
+            line-height: 1.6;
+        }
+        .search-bar-simulator {
+            display: flex;
+            align-items: center;
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--branco);
+            border: 1px solid #dfe1e5; /* Cor cinza claro do Google */
+            border-radius: 980px; /* Bordas arredondadas */
+            padding: 0.75rem 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .search-bar-simulator:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .search-bar-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--cinza-text);
+            margin-right: 0.75rem;
+            flex-shrink: 0; /* Impede que o ícone encolha */
+        }
+        .search-bar-input {
+            flex-grow: 1; /* Ocupa o espaço restante */
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            background: transparent;
+            color: var(--preto);
+        }
+        .search-bar-input::placeholder {
+            color: var(--cinza-text);
+        }
+        .search-bar-button {
+            background: var(--dourado);
+            color: var(--preto);
+            border: none;
+            border-radius: 980px;
+            padding: 0.6rem 1.25rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap; /* Impede quebra de linha */
+            margin-left: 0.75rem;
+        }
+        .search-bar-button:hover {
+            background: var(--dourado-dark);
+        }
+        .search-bar-note {
+            font-size: 0.85rem;
+            color: var(--cinza-text);
+            margin-top: 1rem;
+            font-style: italic;
+        }
+        /* --- FIM NOVA SEÇÃO DE BUSCA GOOGLE --- */
+
+        /* --- MINI FLUXOGRAMA DOURADO (Nova Seção) --- */
+        .flow-section {
+            /* AJUSTE: padding reduzido (ajustes anteriores) */
+            padding: 3rem 4rem 4rem;
+            background: var(--dourado);
+            color: var(--preto);
+            text-align: center;
+            position: relative; /* Necessário para posicionar o gráfico de fundo */
+            overflow: hidden; /* Garante que o gráfico não vaze */
+            z-index: 1; /* Garante que o conteúdo fique por cima */
+        }
+
+        .flow-section .section-title {
+            color: var(--preto);
+            margin-bottom: 3rem;
+            position: relative; /* Coloca o título acima do gráfico */
+            z-index: 2;
+        }
+
+        /* --- GRÁFICO DE BARRAS DE FUNDO (NOVO) --- */
+        #bar-chart-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end; /* As barras crescem de baixo para cima */
+            opacity: 0.15; /* Sutil */
+            z-index: 0; /* Fica no fundo */
+            padding-bottom: 30px; /* Margem da base */
+        }
+
+        .bar {
+            width: 8%; /* Largura das barras */
+            height: 0;
+            background-color: var(--branco);
+            margin: 0 5px;
+            border-radius: 4px 4px 0 0;
+            animation-fill-mode: forwards;
+            /* Atraso para que a animação seja diferente em cada barra */
+            animation: barGrow 2.5s ease-out infinite alternate;
+        }
+
+        /* * AJUSTE AQUI: Definindo alturas progressivas para o efeito "escadinha"
+         */
+        .bar:nth-child(1) { height: 35%; animation-delay: 0.1s; } /* Menor */
+        .bar:nth-child(2) { height: 45%; animation-delay: 0.3s; }
+        .bar:nth-child(3) { height: 55%; animation-delay: 0.5s; }
+        .bar:nth-child(4) { height: 70%; animation-delay: 0.7s; }
+        .bar:nth-child(5) { height: 80%; animation-delay: 0.9s; }
+        .bar:nth-child(6) { height: 95%; animation-delay: 1.1s; } /* Maior */
+
+        @keyframes barGrow {
+            0% { transform: scaleY(0.8); opacity: 0.8; }
+            100% { transform: scaleY(1); opacity: 1; }
+        }
+        /* --- FIM GRÁFICO DE FUNDO --- */
+
+        /* Novo Container Principal do Acordeão/Slicer */
+        .flow-diagram-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2; /* Garante que o acordeão fique acima do gráfico */
+        }
+
+        /* Wrapper para o botão e o card correspondente */
+        .flow-item-wrapper {
+            width: 100%;
+            margin-bottom: 0.75rem;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .flow-item-wrapper.active {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Botão/Passo (Slicer) */
+        .flow-step {
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center; /* Changed */
+            width: 100%;
+            height: 80px;
+            gap: 0.75rem; /* Added */
+
+            background: var(--preto);
+            color: var(--branco);
+            font-weight: 700; /* Changed */
+            font-size: 1.4rem; /* Changed */
+            padding: 1.5rem 2rem;
+
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+
+            border-radius: 0;
+        }
+
+        .flow-step:first-child { border-top-left-radius: 12px; border-top-right-radius: 12px; }
+        .flow-step:last-child:not(.active) { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
+
+        .flow-step:hover {
+            background: var(--grafite-light);
+            color: var(--dourado);
+        }
+
+        .flow-step.active {
+            background: var(--dourado-dark);
+            color: var(--preto);
+            transform: none;
+            border-color: var(--branco);
+            border-bottom: 3px solid var(--branco);
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            animation: pulse-active-step 2s ease-in-out infinite; /* Added */
+        }
+
+        .flow-step.active:hover {
+            background: var(--dourado-dark);
+            color: var(--preto);
+        }
+
+        /* Ícone de Seta dentro do botão */
+        .flow-step .lucide-icon {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+            color: currentColor;
+        }
+
+        .flow-step.active .lucide-icon {
+            transform: rotate(180deg);
+        }
+
+        /* --- ESTILIZAÇÃO DO CARD (CONTEÚDO ACORDEÃO) --- */
+        .flow-card {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            padding: 0 1.5rem;
+            visibility: hidden;
+
+            background: var(--branco);
+            text-align: left;
+            box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.05);
+
+            transition: max-height 0.5s ease-in-out, opacity 0.4s ease-in-out, padding 0.5s ease-in-out, visibility 0.5s;
+        }
+
+        .flow-card.active {
+            max-height: 1000px;
+            opacity: 1;
+            padding: 2rem 2rem 4rem;
+            visibility: visible;
+        }
+
+        /* Imagens e Conteúdo do Card */
+        .flow-card img {
+            width: 100%;
+            height: auto;
+            max-height: 280px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .flow-card h4 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dourado-dark);
+            /* AJUSTE AQUI: Reduzindo a margem inferior para subir o elemento P */
+            margin-bottom: 0.5rem;
+        }
+
+        .flow-card p {
+            color: var(--cinza-text);
+            font-size: 1rem;
+            line-height: 1.5;
+            /* AJUSTE AQUI: Reduzindo a margem inferior para subir o botão CTA */
+            margin-bottom: 1rem;
+        }
+
+        .flow-cta {
+            /* AJUSTE AQUI: Subir o botão 3px */
+            display: inline-block;
+            background: var(--preto);
+            color: var(--dourado);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 980px;
+            transition: all 0.3s ease;
+            border: 2px solid var(--preto);
+            margin-top: -3px;
+        }
+
+        .flow-cta:hover {
+            background: var(--grafite-light);
+            color: var(--branco);
+            border-color: var(--grafite-light);
+        }
+
+        /* --- FIM MINI FLUXOGRAMA DOURADO --- */
+
+
+        /* PROVA SOCIAL / STATS (Mantido) */
+        .stats-section {
+            padding: 8rem 4rem;
+            background: var(--cinza);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 5rem;
+            color: var(--preto);
+            letter-spacing: -0.03em;
+        }
+
+        .stat-icon {
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            color: var(--dourado-dark);
+        }
+
+        .lucide-icon {
+            width: 48px;
+            height: 48px;
+            stroke-width: 1.5;
+        }
+
+        /* ... restante do CSS mantido ... */
+        .planos, .tecnologias, footer, .chat-float {
+             /* Estilos das outras seções não foram alterados, apenas o HERO */
+        }
+
+        /* CORREÇÃO DO COMO FUNCIONA ANTIGO: */
+        /* Removendo estilos do como-funciona que foi refatorado */
+        .como-funciona, .pilares-grid, .pilar-card {
+            /* Estilos antigos removidos/ignorados */
+        }
+
+        /* Estilos de Planos, Tech, Footer (Inalterados) */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .stat-card {
+            background: var(--branco);
+            padding: 2.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .stat-card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; font-weight: 600; }
+        .stat-card p { color: var(--cinza-text); font-size: 1rem; }
+
+        .planos { padding: 8rem 4rem; background: var(--branco); }
+        .planos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+        .plano-card {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            background: var(--cinza);
+        }
+        .plano-card.destaque {
+            background: var(--preto);
+            color: var(--branco);
+            border-color: var(--preto);
+        }
+        .plano-badge {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: var(--dourado);
+            color: var(--preto);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 980px;
+        }
+        .plano-card h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .plano-card.destaque h3 { color: var(--branco); }
+        .plano-ideal { font-size: 0.9rem; color: var(--cinza-text); margin-bottom: 1.5rem; }
+        .plano-card.destaque .plano-ideal { color: rgba(255, 255, 255, 0.7); }
+        .plano-preco { font-size: 2.5rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1; }
+        .plano-preco span { display: block; font-size: 0.9rem; font-weight: 400; color: var(--cinza-text); }
+        .plano-card.destaque .plano-preco { color: var(--dourado); }
+        .plano-features { list-style: none; margin-bottom: 2rem; flex-grow: 1; }
+        .plano-features li {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            position: relative;
+            padding-left: 28px;
+        }
+        .plano-features li::before {
+            content: '✔';
+            color: var(--dourado-dark);
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: 700;
+        }
+        .plano-card.destaque .plano-features li { color: rgba(255, 255, 255, 0.9); }
+        .plano-cta {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 980px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: none;
+            text-decoration: none;
+        }
+        .plano-cta.gold { background: var(--dourado); color: var(--preto); }
+        .plano-cta.gold:hover { background: var(--dourado-dark); transform: scale(1.02); }
+        .plano-cta.black { background: var(--preto); color: var(--branco); }
+        .plano-cta.black:hover { background: var(--grafite-light); transform: scale(1.02); }
+        .plano-card.destaque .plano-cta.black { background: var(--branco); color: var(--preto); }
+        .plano-card.destaque .plano-cta.black:hover { background: var(--cinza); }
+
+        .tecnologias { padding: 8rem 4rem; background: var(--grafite); }
+        .tecnologias .section-title { color: var(--branco); }
+        .tech-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .tech-item {
+            background: var(--grafite-light);
+            color: var(--cinza);
+            padding: 1rem 2rem;
+            border-radius: 980px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .tech-item h4 { font-size: 1.1rem; font-weight: 500; }
+        .tech-item:hover { background: var(--dourado); color: var(--preto); border-color: var(--dourado); transform: scale(1.05); }
+
+        footer {
+            background: var(--preto);
+            color: var(--cinza-text);
+            padding: 6rem 4rem 3rem;
+            text-align: center;
+        }
+        .footer-logo-img { height: 50px; margin-bottom: 1.5rem; }
+        .footer-tagline { font-size: 1.1rem; color: var(--branco); margin-bottom: 2rem; }
+        .footer-contact { margin-bottom: 3rem; }
+        .footer-contact p { margin-bottom: 0.5rem; }
+        .footer-contact a { color: var(--dourado); text-decoration: none; }
+        .footer-contact a:hover { text-decoration: underline; }
+        .footer-bottom p { font-size: 0.9rem; }
+
+        .chat-float {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--dourado);
+            color: var(--preto);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 998;
+            transition: all 0.3s ease;
+        }
+        .chat-float:hover { transform: scale(1.1); background: var(--dourado-dark); }
+        .chat-float .lucide-icon { width: 32px; height: 32px; }
+
+
+        /* --- SEÇÃO CASES (PROJETOS) --- */
+        .projetos-section {
+            padding: 3rem 4rem 6rem; /* Top padding reduced */
+            background: var(--branco); /* Fundo branco padrão */
+        }
+        .projetos-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        /* Título da seção já herda o .section-title */
+        .projetos-section .section-title {
+            margin-bottom: 4rem;
+        }
+        .projetos-grid-mosaic {
+            display: grid;
+            /* Define 3 colunas: 1fr, 1.5fr (central maior), 1fr */
+            grid-template-columns: 1fr 1.5fr 1fr;
+            /* Define 2 linhas de altura automática */
+            grid-template-rows: auto auto;
+            gap: 1.5rem; /* Espaçamento entre os cards */
+
+            /* Mapeia como os 5 cards vão se encaixar no grid 3x2 */
+            grid-template-areas:
+                "small-1 large small-3"
+                "small-2 large small-4";
+        }
+        /* Atribui cada classe a uma área do grid */
+        .tile-small-1 { grid-area: small-1; }
+        .tile-small-2 { grid-area: small-2; }
+        .tile-large   { grid-area: large; }
+        .tile-small-3 { grid-area: small-3; }
+        .tile-small-4 { grid-area: small-4; }
+
+        .projeto-tile {
+            display: flex; /* Usamos flex para alinhar o conteúdo interno */
+            flex-direction: column;
+            justify-content: space-between; /* Empurra o CTA para baixo */
+            align-items: center; /* Centraliza o logo */
+
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+
+            background-size: cover;
+            background-position: center center;
+            text-decoration: none;
+
+            /* Cor de fallback caso a imagem não carregue */
+            background-color: var(--cinza);
+
+            /* Altura mínima para os cards pequenos */
+            min-height: 300px;
+
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .projeto-tile:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        .tile-large {
+            /* Altura mínima para o card grande (aprox. 2x pequenos + gap) */
+            min-height: 620px;
+        }
+        /* Overlay para o conteúdo (logo e cta) */
+        .projeto-overlay {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem;
+
+            /* Fundo escuro sutil para garantir legibilidade */
+            background: linear-gradient(0deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0) 100%);
+
+            /* Garante que o conteúdo fique centralizado (fallback) */
+            text-align: center;
+        }
+        .projeto-logo {
+            max-width: 140px;
+            height: auto;
+            /* O justify-content: space-between já o empurra para o centro/topo */
+        }
+        /* O logo do 'Feiras de Rua' pode ser maior */
+        .tile-large .projeto-logo {
+            max-width: 200px;
+        }
+        .projeto-cta {
+            display: inline-block;
+            padding: 0.6rem 1.25rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--preto);
+            background: rgba(255, 255, 255, 0.8); /* Fundo branco semi-transparente */
+            border-radius: 980px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .projeto-tile:hover .projeto-cta {
+            background: var(--branco);
+            transform: scale(1.05);
+        }
+        /* --- FIM SEÇÃO CASES --- */
+
+        /* Animação de pulso para o botão ativo do acordeão */
+        @keyframes pulse-active-step {
+            0% {
+                border-color: var(--branco);
+                box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+            }
+            50% {
+                border-color: #fff;
+                box-shadow: 0 0 20px rgba(255, 255, 255, 1);
+            }
+            100% {
+                border-color: var(--branco);
+                box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+            }
+        }
+
+
+        /* RESPONSIVO */
+        @media (max-width: 1024px) {
+            .nav { padding: 0 1.5rem; }
+            .nav-links { display: none; }
+            /* CORREÇÃO CABEÇALHO MOBILE */
+            .nav-controls {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .nav-toggle {
+                display: block;
+                margin-left: 0;
+                padding: 10px;
+            }
+            .cta-header {
+                padding: 0.65rem 1rem;
+                margin-left: 0;
+                order: 1;
+            }
+            .nav-toggle {
+                order: 2;
+            }
+            .hero-content { padding: 0 1.5rem; }
+
+            /* FLUXOGRAMA MOBILE - O layout de acordeão já é responsivo, apenas ajusta padding da seção */
+            .flow-section {
+                /* AJUSTE: padding reduzido (ajustes anteriores) */
+                padding: 2rem 1.5rem 4rem;
+            }
+            .flow-diagram-container {
+                max-width: none;
+            }
+
+            .flow-step {
+                font-size: 1.1rem; /* Reverts to smaller size on tablet */
+                height: 70px;
+                padding: 1rem 1.5rem;
+            }
+
+            .flow-card.active {
+                 padding: 1.5rem 1.5rem 2.5rem;
+            }
+
+            .flow-card img {
+                max-height: 200px;
+            }
+
+            /* CSS RESPONSIVO PROJETOS (TABLET) */
+            .projetos-section {
+                padding: 2rem 1.5rem 4rem; /* Adjusted top padding */
+            }
+            .projetos-grid-mosaic {
+                /* Em tablets, muda para 2 colunas */
+                grid-template-columns: 1fr 1fr;
+                /* O card grande ocupa a primeira linha inteira */
+                grid-template-areas:
+                    "large large"
+                    "small-1 small-2"
+                    "small-3 small-4";
+            }
+            .tile-large {
+                min-height: 400px; /* Altura do card grande em tablet */
+            }
+
+            /* Outros Responsivos */
+            .stats-grid { grid-template-columns: 1fr; }
+            .planos-grid { grid-template-columns: 1fr; }
+            .plano-card { max-width: 400px; margin: 0 auto; }
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-content p {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .stats-section,
+            .planos,
+            .tecnologias {
+                padding: 4rem 1.5rem;
+            }
+            footer { padding: 4rem 1.5rem 2rem; }
+
+             /* CSS RESPONSIVO GOOGLE SEARCH (MOBILE) */
+             .google-search-section {
+                padding: 2rem 1.5rem 2rem; /* Reduced vertical padding */
+            }
+            .search-section-title {
+                font-size: 2rem;
+            }
+            .search-section-subtitle {
+                font-size: 1rem;
+            }
+            /* Ajusta a barra de busca no mobile */
+            .search-bar-simulator {
+                flex-direction: column;
+                gap: 1rem;
+                border-radius: 20px; /* Menos arredondado no mobile */
+                padding: 1.25rem;
+            }
+            .search-bar-input {
+                width: 100%;
+                text-align: center;
+            }
+            .search-bar-button {
+                width: 100%;
+                padding: 0.8rem 1.25rem;
+            }
+            .search-bar-icon {
+                display: none; /* Esconde o ícone no layout de coluna */
+            }
+
+            /* CSS RESPONSIVO PROJETOS (MOBILE) */
+             .projetos-section {
+                padding: 2rem 1.5rem 4rem; /* Adjusted top padding */
+            }
+            .projetos-grid-mosaic {
+                /* Em mobile, vira coluna única */
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "large"
+                    "small-1"
+                    "small-2"
+                    "small-3"
+                    "small-4";
+            }
+            .projeto-tile, .tile-large {
+                min-height: 350px; /* Altura padrão de todos os cards no mobile */
+            }
+            .projeto-overlay {
+                padding: 1.5rem;
+            }
+
+            /* Flow Step Mobile Adjustments */
+             .flow-step {
+                font-size: 1.2rem; /* Slightly larger on mobile */
+             }
+        }
+    </style>
+</head>
+<body>
+    <!-- INDICADOR DE ROLAGEM VERTICAL (GRÁFICO DE BARRAS) -->
+    <div id="verticalScrollIndicator">
+        <!-- 8 segmentos de barra para o efeito visual de gráfico -->
+        <div class="progress-bar-segment"></div>
+        <div class="progress-bar-segment"></div>
+        <div class="progress-bar-segment"></div>
+        <div class="progress-bar-segment"></div>
+        <div class="progress-bar-segment"></div>
+        <div class="progress-bar-segment"></div>
+        <div class="progress-bar-segment"></div>
+        <div class="progress-bar-segment"></div>
+    </div>
+
+    <!-- HEADER (Mantido) -->
+    <header class="header" id="header">
+        <nav class="nav">
+            <a href="#">
+                <img src="logofluxo.png" alt="Fluxo de Ouro" class="logo-img">
+            </a>
+
+            <!-- Links Desktop -->
+            <ul class="nav-links">
+                <!-- Item 1: O Ecossistema (Dropdown) -->
+                <li class="nav-item">
+                    <a href="#como-funciona">
+                        O Ecossistema
+                        <i data-lucide="chevron-down" class="dropdown-arrow lucide-icon"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#card-base-ouro">Base de Ouro (Site)</a></li>
+                        <li><a href="#card-motor-ouro">Motor de Ouro (AI)</a></li>
+                        <li><a href="#card-mapa-ouro">Mapa de Ouro (ROI)</a></li>
+                    </ul>
+                </li>
+                <!-- Item 2: Planos (Link Simples) -->
+                <li class="nav-item">
+                    <a href="#planos">Planos</a>
+                </li>
+                <!-- Item 3: Cases (Link Simples) -->
+                <li class="nav-item">
+                    <a href="#projetos">Cases</a> <!-- Updated link to point to #projetos -->
+                </li>
+                <!-- Item 4: Tecnologias (Link Simples) -->
+                <li class="nav-item">
+                    <a href="#tecnologias">Tecnologias</a>
+                </li>
+            </ul>
+
+            <div class="nav-controls">
+                <a href="#planos" class="cta-header">Comece Agora</a>
+
+                <button class="nav-toggle" aria-label="Abrir menu">
+                    <span class="hamburger"></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Menu Mobile (Mantido) -->
+    <div class="mobile-nav">
+        <!-- Item 1: O Ecossistema (Accordion) -->
+        <div class="mobile-nav-item">
+            <div class="mobile-nav-toggle-sub">
+                <span>O Ecossistema</span>
+                <i data-lucide="chevron-down" class="dropdown-arrow lucide-icon"></i>
+            </div>
+            <div class="mobile-sub-menu">
+                <a href="#card-base-ouro">Base de Ouro (Site)</a>
+                <a href="#card-motor-ouro">Motor de Ouro (AI)</a>
+                <a href="#card-mapa-ouro">Mapa de Ouro (ROI)</a>
+            </div>
+        </div>
+        <!-- Item 2: Planos -->
+        <a href="#planos" class="mobile-nav-link">Planos</a>
+        <!-- Item 3: Cases -->
+        <a href="#projetos" class="mobile-nav-link">Cases de Sucesso</a> <!-- Updated link to point to #projetos -->
+        <!-- Item 4: Tecnologias -->
+        <a href="#tecnologias" class="mobile-nav-link">Tecnologias</a>
+    </div>
+
+    <!-- HERO SLIDER (NOVA ESTRUTURA) -->
+    <section class="hero">
+
+        <!-- Canvas da Animação de Partículas -->
+        <canvas id="particle-background"></canvas>
+
+        <!-- Slide 1: SUPER BENEFÍCIO -->
+        <div class="hero-slide active" style="background-image: url('hero-slide-1.png');">
+            <div class="hero-content">
+                <h1>Seu <span class="hero-gold">Funil de Vendas</span> 100% Automatizado por IA.</h1>
+                <p>Nós construímos o ecossistema completo: Site Otimizado, Vendedor AI e Dashboard de ROI. Menos trabalho, mais faturamento.</p>
+                <a href="#planos" class="cta-hero">Explore o Ecossistema</a>
+            </div>
+        </div>
+
+        <!-- Slide 2: BASE DE OURO -->
+        <div class="hero-slide" style="background-image: url('hero-slide-2.png');">
+            <div class="hero-content">
+                <h1>Base de Ouro: <span class="hero-gold">O Site que Converte</span> no Piloto Automático.</h1>
+                <p>Design estratégico focado em UX e SEO de ponta, preparando sua audiência para a venda antes mesmo do contato.</p>
+                <a href="#card-base-ouro" class="cta-hero">Ver Detalhes da Base</a>
+            </div>
+        </div>
+
+        <!-- Slide 3: MOTOR DE OURO -->
+        <div class="hero-slide" style="background-image: url('hero-slide-3.png');">
+            <div class="hero-content">
+                <h1>Motor de Ouro: Seu <span class="hero-gold">Vendedor AI</span> Trabalhando 24/7.</h1>
+                <p>Automação que qualifica, tira dúvidas e fecha vendas em qualquer canal (WhatsApp, Chat, E-mail) sem intervenção humana.</p>
+                <a href="#card-motor-ouro" class="cta-hero">Conhecer o Motor</a>
+            </div>
+        </div>
+
+        <!-- Slide 4: MAPA DE OURO -->
+        <div class="hero-slide" style="background-image: url('hero-slide-4.png');">
+            <div class="hero-content">
+                <h1>Mapa de Ouro: O <span class="hero-gold">ROI Transparente</span> para Otimizar o Gasto.</h1>
+                <p>Dashboard de Power BI em tempo real. Saiba exatamente de onde vêm seus leads, qual canal lucra mais e onde investir cada centavo.</p>
+                <a href="#card-mapa-ouro" class="cta-hero">Acessar o Mapa</a>
+            </div>
+        </div>
+
+        <!-- Controles de Navegação (NOVOS) -->
+        <div class="slider-controls">
+            <div class="slider-btn" id="prevSlideBtn" role="button" aria-label="Slide Anterior">
+                <i data-lucide="chevron-left" class="lucide-icon"></i>
+            </div>
+            <div class="slider-btn" id="nextSlideBtn" role="button" aria-label="Próximo Slide">
+                <i data-lucide="chevron-right" class="lucide-icon"></i>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ### INÍCIO NOVA SEÇÃO GOOGLE SEARCH ### -->
+    <section id="google-search-intro" class="google-search-section">
+        <div class="search-intro-content">
+            <h2 class="search-section-title">Chegou a hora de inverter o jogo:<br> Agora são seus clientes que vão te encontrar!</h2>
+            <p class="search-section-subtitle">Pare de correr atrás de clientes. Com a estratégia certa, o Google faz isso por você. Nosso foco é transformar o Google no seu vendedor mais eficiente!</p>
+
+            <div class="search-bar-simulator">
+                <i data-lucide="search" class="search-bar-icon lucide-icon"></i>
+                <input type="text" placeholder="Digite a URL do seu site aqui..." class="search-bar-input" aria-label="URL do site">
+                <button class="search-bar-button">Verificar Posição</button>
+            </div>
+            <p class="search-bar-note">Em breve: Analise a visibilidade do seu site no Google.</p>
+        </div>
+    </section>
+    <!-- ### FIM NOVA SEÇÃO GOOGLE SEARCH ### -->
+
+    <!-- NOVO MINI FLUXOGRAMA DOURADO - AGORA É UM SLICER/ACORDEÃO -->
+    <section id="como-funciona" class="flow-section">
+        <h2 class="section-title">O Ecossistema Completo</h2>
+
+        <!-- GRÁFICO DE BARRAS DE FUNDO (NOVO) -->
+        <div id="bar-chart-background">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+
+        <div class="flow-diagram-container">
+
+            <!-- Passo 1: Base de Ouro -->
+            <!-- Wrapper para o botão e o card correspondente -->
+            <div class="flow-item-wrapper" id="wrapper-base-ouro">
+                <div class="flow-step active" id="btn-base-ouro" data-target="card-base-ouro">
+                    Base de Ouro
+                    <i data-lucide="chevron-down" class="lucide-icon"></i>
+                </div>
+
+                <!-- Card 1: Base de Ouro (Conteúdo) -->
+                <div class="flow-card active" id="card-base-ouro">
+                    <!-- Use a imagem sugerida: base-ouro-visual.png -->
+                    <img src="https://placehold.co/600x280/cccccc/333333?text=base-ouro-visual.png" alt="Base de Ouro (Site Otimizado)">
+                    <h4>A Base de Ouro</h4>
+                    <p>O site focado em conversão. Design estratégico, SEO otimizado e estrutura preparada para capturar e qualificar visitantes.</p>
+                    <a href="#base-ouro-page" class="flow-cta">Confira Detalhes</a>
+                </div>
+            </div>
+
+            <!-- Passo 2: Motor de Ouro -->
+            <div class="flow-item-wrapper" id="wrapper-motor-ouro">
+                <div class="flow-step" id="btn-motor-ouro" data-target="card-motor-ouro">
+                    Motor de Ouro
+                    <i data-lucide="chevron-down" class="lucide-icon"></i>
+                </div>
+
+                <!-- Card 2: Motor de Ouro (Conteúdo) -->
+                <div class="flow-card" id="card-motor-ouro">
+                    <!-- Use a imagem sugerida: motor-ouro-visual.png -->
+                    <img src="https://placehold.co/600x280/cccccc/333333?text=motor-ouro-visual.png" alt="Motor de Ouro (Vendedor AI)">
+                    <h4>O Motor de Ouro</h4>
+                    <p>A automação que qualifica e vende 24h. IA conversacional que atende, qualifica leads e fecha vendas sem intervenção humana.</p>
+                    <a href="#motor-ouro-page" class="flow-cta">Confira Detalhes</a>
+                </div>
+            </div>
+
+            <!-- Passo 3: Mapa de Ouro -->
+            <div class="flow-item-wrapper" id="wrapper-mapa-ouro">
+                <div class="flow-step" id="btn-mapa-ouro" data-target="card-mapa-ouro">
+                    Mapa de Ouro
+                    <i data-lucide="chevron-down" class="lucide-icon"></i>
+                </div>
+
+                <!-- Card 3: Mapa de Ouro (Conteúdo) -->
+                <div class="flow-card" id="card-mapa-ouro">
+                    <!-- Use a imagem sugerida: mapa-ouro-visual.png -->
+                    <img src="https://placehold.co/600x280/cccccc/333333?text=mapa-ouro-visual.png" alt="Mapa de Ouro (Dashboard de ROI)">
+                    <h4>O Mapa de Ouro</h4>
+                    <p>O dashboard que prova o ROI. Visualize em tempo real de onde vêm seus leads, qual canal converte mais e quanto você está ganhando.</p>
+                    <a href="#mapa-ouro-page" class="flow-cta">Confira Detalhes</a>
+                </div>
+            </div>
+
+        </div>
+        <!-- Removido o flow-cards-container obsoleto -->
+    </section>
+
+    <!-- ### INÍCIO NOVA SEÇÃO CASES (PROJETOS) - ATUALIZADO COM IMAGENS LOCAIS ### -->
+    <section id="projetos" class="projetos-section">
+        <div class="projetos-container">
+            <h2 class="section-title">Cases de Sucesso</h2> <!-- Text updated -->
+
+            <div class="projetos-grid-mosaic">
+
+                <a href="URL_DO_PROJETO_1" target="_blank" rel="noopener noreferrer" class="projeto-tile tile-small-1" style="background-image: url('case1.png');">
+                    <div class="projeto-overlay">
+                        <img src="case1-logo.png" alt="Logo Cliente 1" class="projeto-logo">
+                        <span class="projeto-cta">» Acesse o case</span>
+                    </div>
+                </a>
+
+                <a href="URL_DO_PROJETO_2" target="_blank" rel="noopener noreferrer" class="projeto-tile tile-small-2" style="background-image: url('case2.png');">
+                    <div class="projeto-overlay">
+                        <img src="case2-logo.png" alt="Logo Cliente 2" class="projeto-logo">
+                        <span class="projeto-cta">» Acesse o case</span>
+                    </div>
+                </a>
+
+                <a href="https://www.feirasderua.com.br" target="_blank" rel="noopener noreferrer" class="projeto-tile tile-large" style="background-image: url('caseprincipal.png');">
+                    <div class="projeto-overlay">
+                        <img src="caseprincipal-logo.png" alt="Logo Feiras de Rua" class="projeto-logo">
+                        <span class="projeto-cta">» Acesse o case</span>
+                    </div>
+                </a>
+
+                <a href="URL_DO_PROJETO_3" target="_blank" rel="noopener noreferrer" class="projeto-tile tile-small-3" style="background-image: url('case3.png');">
+                    <div class="projeto-overlay">
+                        <img src="case3-logo.png" alt="Logo Cliente 3" class="projeto-logo">
+                        <span class="projeto-cta">» Acesse o case</span>
+                    </div>
+                </a>
+
+                <a href="URL_DO_PROJETO_4" target="_blank" rel="noopener noreferrer" class="projeto-tile tile-small-4" style="background-image: url('case4.png');">
+                    <div class="projeto-overlay">
+                        <img src="case4-logo.png" alt="Logo Cliente 4" class="projeto-logo">
+                        <span class="projeto-cta">» Acesse o case</span>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </section>
+    <!-- ### FIM NOVA SEÇÃO CASES (PROJETOS) ### -->
+
+    <!-- PROVA SOCIAL / STATS -->
+    <section id="prova-social" class="stats-section">
+        <h2 class="section-title">Resultados Reais do Nosso Ecossistema</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i data-lucide="trending-up" class="lucide-icon"></i>
+                </div>
+                <h3>Faturamento Duplicado</h3>
+                <p>E-commerce dobrou o faturamento com o Vendedor AI implementado no fluxo de atendimento.</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i data-lucide="shopping-cart" class="lucide-icon"></i>
+                </div>
+                <h3>42% Menos Abandono</h3>
+                <p>Loja reduziu o abandono de carrinho em 42% com automação inteligente de recuperação.</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i data-lucide="target" class="lucide-icon"></i>
+                </div>
+                <h3>Origem Mapeada</h3>
+                <p>Cliente identificou origem de leads mais lucrativa via dashboard e otimizou investimento.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PLANOS -->
+    <section id="planos" class="planos">
+        <h2 class="section-title">Comece Agora. Escolha seu Fluxo.</h2>
+        <div class="planos-grid">
+            <!-- CARD 1: STARTER -->
+            <div class="plano-card destaque">
+                <span class="plano-badge">Mais Procurado</span>
+                <h3>Base de Ouro: STARTER</h3>
+                <p class="plano-ideal">Ideal para negócios que precisam de presença digital rápida.</p>
+                <div class="plano-preco">
+                    R$ 600
+                    <span>Pagamento Único</span>
+                </div>
+                <ul class="plano-features">
+                    <li>Site 1 Página</li>
+                    <li>SEO Básico</li>
+                    <li>GA4 Configurado</li>
+                    <li>Módulo Blog (via Colab)</li>
+                </ul>
+                <button id="btn-contratar-starter" class="plano-cta gold">Contratar Agora</button>
+            </div>
+
+            <!-- CARD 2: ECOSSISTEMA -->
+            <div class="plano-card">
+                <h3>Ecossistema Completo</h3>
+                <p class="plano-ideal">Ideal para empresas que buscam automação máxima e ROI.</p>
+                <div class="plano-preco">
+                    Sob Orçamento
+                </div>
+                <ul class="plano-features">
+                    <li>Base de Ouro Completa</li>
+                    <li>Motor de Ouro (Vendedor AI)</li>
+                    <li>Mapa de Ouro (Power BI)</li>
+                </ul>
+                <button id="btn-pedir-diagnostico" class="plano-cta black">Pedir Diagnóstico</button>
+            </div>
+
+            <!-- CARD 3: ANUAL -->
+            <div class="plano-card">
+                <h3>Plano Anual (Setup Zero)</h3>
+                <p class="plano-ideal">Ideal para quem quer o ecossistema completo sem investimento inicial.</p>
+                <div class="plano-preco">
+                    Consulte
+                </div>
+                <ul class="plano-features">
+                    <li>Motor de Ouro</li>
+                    <li>Mapa de Ouro</li>
+                    <li>Base Completa (Custo Zero)</li>
+                </ul>
+                <button id="btn-saber-mais-anual" class="plano-cta black">Saber Mais</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- TECNOLOGIAS -->
+    <section class="tecnologias" id="tecnologias">
+        <h2 class="section-title">Nossas Ferramentas. Sua Vantagem.</h2>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <h4>Python</h4>
+            </div>
+            <div class="tech-item">
+                <h4>Gemini 1.5</h4>
+            </div>
+            <div class="tech-item">
+                <h4>n8n</h4>
+            </div>
+            <div class="tech-item">
+                <h4>Power BI</h4>
+            </div>
+            <div class="tech-item">
+                <h4>GA4</h4>
+            </div>
+            <div class="tech-item">
+                <h4>SQL</h4>
+            </div>
+            <div class="tech-item">
+                <h4>Flask</h4>
+            </div>
+            <div class="tech-item">
+                <h4>Docker</h4>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <img src="logofluxo.png" alt="Fluxo de Ouro" class="footer-logo-img">
+        <p class="footer-tagline">Transformando dados em vendas através de automação inteligente.</p>
+        <div class="footer-contact">
+            <p>@leanttro</p>
+            <p><a href="mailto:contato@fluxodeouro.com.br">contato@fluxodeouro.com.br</a></p>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Fluxo de Ouro. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- CHATBOT FLUTUANTE -->
+    <div class="chat-float" onclick="abrirChatbot('geral')">
+        <div class="chat-icon">
+            <i data-lucide="message-circle-more" class="lucide-icon"></i>
+        </div>
+    </div>
+
+    <script>
+        // --- LÓGICA DO INDICADOR DE ROLAGEM VERTICAL (GRÁFICO) ---
+        // A lógica antiga do scrollIndicator.style.width foi substituída
+        window.addEventListener('scroll', () => {
+            const progressSegments = document.querySelectorAll('.progress-bar-segment');
+            if (progressSegments.length === 0) return;
+
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            // Calcula o progresso de 0 a 100
+            const scrolled = (window.scrollY / windowHeight) * 100;
+
+            // Alturas de referência para criar um gráfico de barras "irregular"
+            // Se todas as barras tivessem a mesma altura, pareceria uma linha,
+            // então usamos um array de pesos (de 0.6 a 1.0)
+            const heightWeights = [0.8, 0.95, 0.6, 1.0, 0.75, 0.9, 0.65, 0.85];
+
+            progressSegments.forEach((segment, index) => {
+                // Multiplica o progresso de rolagem pelo peso da barra
+                const calculatedHeight = scrolled * heightWeights[index];
+
+                // Garante que a altura não passe de 100%
+                const finalHeight = Math.min(calculatedHeight, 100);
+
+                segment.style.height = finalHeight + '%';
+            });
+        });
+
+        // Lógica do Menu Mobile (Copiada do Oceano e adaptada)
+        const navToggle = document.querySelector('.nav-toggle');
+        const mobileNav = document.querySelector('.mobile-nav');
+
+        if (navToggle && mobileNav) {
+            navToggle.addEventListener('click', () => {
+                navToggle.classList.toggle('active');
+                mobileNav.classList.toggle('active');
+
+                if (mobileNav.classList.contains('active')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // Fecha o menu principal ao clicar em um link SIMPLES
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    navToggle.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+
+
+            // --- LÓGICA DO SUB-MENU MOBILE (Sanfona/Accordion) ---
+            document.querySelectorAll('.mobile-nav-toggle-sub').forEach(toggle => {
+                toggle.addEventListener('click', () => {
+                    // Fecha outros submenus
+                    document.querySelectorAll('.mobile-nav-toggle-sub').forEach(otherToggle => {
+                        if (otherToggle !== toggle && otherToggle.classList.contains('active')) {
+                            otherToggle.classList.remove('active');
+                            const otherSubMenu = otherToggle.nextElementSibling;
+                            otherSubMenu.classList.remove('active');
+                            otherSubMenu.style.maxHeight = '0px';
+                        }
+                    });
+
+                    toggle.classList.toggle('active');
+                    const subMenu = toggle.nextElementSibling;
+                    subMenu.classList.toggle('active');
+
+                    if (subMenu.classList.contains('active')) {
+                        subMenu.style.maxHeight = subMenu.scrollHeight + 'px';
+                    } else {
+                        subMenu.style.maxHeight = '0px';
+                    }
+                });
+            });
+
+            // Fecha o menu principal ao clicar em um link de SUB-MENU
+            document.querySelectorAll('.mobile-sub-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navToggle.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                    document.body.style.overflow = '';
+                    // Fecha o submenu pai e os outros
+                    document.querySelectorAll('.mobile-nav-toggle-sub.active').forEach(toggle => {
+                        toggle.classList.remove('active');
+                    });
+                    document.querySelectorAll('.mobile-sub-menu.active').forEach(subMenu => {
+                        subMenu.classList.remove('active');
+                        subMenu.style.maxHeight = '0px';
+                    });
+                });
+            });
+        }
+
+
+        // Intersection Observer para animações
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // A animação de card/item só é aplicada se ele NÃO for um flow-card (que é controlado por clique)
+                    if (!entry.target.classList.contains('flow-card')) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.stat-card, .plano-card, .flow-card, .tech-item, .projeto-tile, .search-intro-content').forEach(el => { // Added .search-intro-content
+            // Apenas aplica a animação base de scroll para itens que NÃO são flow-card (que tem animação própria)
+            if (!el.classList.contains('flow-card')) {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+            }
+             // Aplica o observer a todos os elementos selecionados
+             observer.observe(el);
+        });
+
+        // Função placeholder para chatbot
+        function abrirChatbot(fluxo) {
+            console.log('Abrindo chatbot com fluxo:', fluxo);
+            console.log(`Função de chatbot chamada para: ${fluxo}`);
+        }
+
+        // Event Listeners para os CTAs dos planos
+        document.getElementById('btn-contratar-starter').onclick = function() {
+            abrirChatbot('venda_starter');
+        };
+
+        document.getElementById('btn-pedir-diagnostico').onclick = function() {
+            abrirChatbot('diagnostico_ecossistema');
+        };
+
+        document.getElementById('btn-saber-mais-anual').onclick = function() {
+            abrirChatbot('plano_anual');
+        };
+
+        // Smooth scroll para links internos (Adicionando a função de fechar menu)
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const target = document.querySelector(targetId);
+                if (target) {
+                    // Feche o menu mobile (se estiver aberto) antes de rolar
+                    if (mobileNav && mobileNav.classList.contains('active')) {
+                        navToggle.classList.remove('active');
+                        mobileNav.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                     // Calculate offset for fixed header
+                    const headerOffset = 75; // Height of the fixed header
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+
+        /* --- LÓGICA DE EXIBIÇÃO DE CARDS NO FLUXOGRAMA (ACORDEÃO/SLICER) --- */
+        const flowSteps = document.querySelectorAll('.flow-step');
+        const flowItemWrappers = document.querySelectorAll('.flow-item-wrapper');
+
+        // Função para alternar o card (slicer)
+        function toggleFlowCard(targetBtn) {
+            const targetCardId = targetBtn.getAttribute('data-target');
+            const targetCard = document.getElementById(targetCardId);
+            const targetWrapper = targetBtn.closest('.flow-item-wrapper');
+
+            // 1. Verifica se o item clicado já está ativo
+            const isActive = targetBtn.classList.contains('active');
+
+            // 2. Fecha todos os outros (Acordeão)
+            flowItemWrappers.forEach(wrapper => {
+                wrapper.classList.remove('active');
+                wrapper.querySelector('.flow-step').classList.remove('active');
+                const card = wrapper.querySelector('.flow-card');
+                if (card) {
+                    card.classList.remove('active');
+                    // Reset CSS properties for transition
+                    card.style.maxHeight = null;
+                    card.style.padding = ''; // <!-- MODIFICAÇÃO EXECUTADA (BUG FIX) -->
+                }
+            });
+
+            // 3. Se o item não estava ativo, abre ele
+            if (!isActive) {
+                targetWrapper.classList.add('active');
+                targetBtn.classList.add('active');
+                targetCard.classList.add('active');
+
+                // Define a altura máxima para a transição funcionar (recalculada)
+                // Usamos scrollHeight do wrapper para garantir que o card seja visível
+                // Adicionamos um pequeno buffer (+ 50px) para garantir que o padding caiba
+                // NOTA: No CSS, o controle principal é feito por max-height/padding no .flow-card.active.
+                // Aqui apenas garantimos que a classe .active seja aplicada.
+            }
+        }
+
+        // Adiciona o listener de clique a cada botão/passo
+        flowSteps.forEach(step => {
+            step.addEventListener('click', () => {
+                toggleFlowCard(step);
+            });
+        });
+
+        // Inicializa o primeiro card como ativo
+        const firstStep = document.querySelector('.flow-step');
+        if (firstStep) {
+             // Chamamos com o item ativo para que ele feche e abra o primeiro
+             // Assim, se for o primeiro carregamento, ele garante o estado inicial.
+             toggleFlowCard(firstStep);
+        }
+
+
+        // --- LÓGICA DO HERO SLIDER E ANIMAÇÃO DE FUNDO MODIFICADA ---
+        // 1. Variáveis Globais
+        const slides = document.querySelectorAll('.hero-slide');
+        const prevSlideBtn = document.getElementById('prevSlideBtn');
+        const nextSlideBtn = document.getElementById('nextSlideBtn');
+        let currentSlide = 0;
+        // Aumentado o tempo para dar espaço para a animação mais longa (3.0s)
+        const slideIntervalTime = 8000;
+        let intervalId;
+
+        // Array com as classes de animação para ciclar
+        const animationClasses = [
+            'animate-zoom-in-out',        // Efeito de Zoom (Pulando/Zoom)
+            'animate-slide-block-down',   // Efeito Bloco Caindo
+            'animate-slide-block-right',  // Efeito Bloco Entrando Lateral
+        ];
+        let currentAnimationIndex = 0; // Começa com o primeiro
+
+        // 2. Função para exibir o slide
+        function showSlide(n) {
+            const prevSlide = slides[currentSlide];
+
+            // 1. Remove classes ativas e de animação do slide anterior
+            if (prevSlide) {
+                prevSlide.classList.remove('active');
+                animationClasses.forEach(cls => prevSlide.classList.remove(cls));
+                // Força o reset da animação do conteúdo para que ele possa ser animado no próximo slide
+                const prevContent = prevSlide.querySelector('.hero-content');
+                if(prevContent) {
+                    prevContent.style.animation = 'none';
+                    void prevContent.offsetWidth; // Trigger reflow
+                }
+            }
+
+            // Garante que o índice sempre esteja correto (loop)
+            currentSlide = (n + slides.length) % slides.length;
+
+            const nextSlideEl = slides[currentSlide];
+
+            // 2. Aplica a classe de animação (que afeta a imagem de fundo)
+            const animationClass = animationClasses[currentAnimationIndex];
+            nextSlideEl.classList.add(animationClass);
+
+            // 3. Adiciona a classe 'active' para exibir o slide
+            nextSlideEl.classList.add('active');
+
+            // 4. Re-aplica as animações de entrada de texto
+            const nextContent = nextSlideEl.querySelector('.hero-content');
+            if(nextContent) {
+                // Remove a propriedade style para reativar as animações definidas no CSS (slideInDown/fadeInUp)
+                nextContent.style.animation = '';
+            }
+
+            // 5. Atualiza o índice da animação para a próxima vez
+            currentAnimationIndex = (currentAnimationIndex + 1) % animationClasses.length;
+        }
+
+        // 3. Função para passar para o próximo slide
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        // 4. Função para voltar o slide
+        function prevSlide() {
+            // Ajusta o índice da animação também, para que a próxima animação seja diferente
+            currentAnimationIndex = (currentAnimationIndex - 1 + animationClasses.length) % animationClasses.length;
+            showSlide(currentSlide - 1);
+        }
+
+        // 5. Função para reiniciar o intervalo automático
+        function resetInterval() {
+            clearInterval(intervalId);
+            intervalId = setInterval(nextSlide, slideIntervalTime);
+        }
+
+        // 6. Inicia o slider e o intervalo
+        if (slides.length > 0) {
+            // Inicializa o primeiro slide com a primeira animação (se não for o slide 0, que já está 'active')
+            if (currentSlide === 0) {
+                slides[0].classList.add(animationClasses[0]);
+                currentAnimationIndex = 1; // Prepara para a próxima animação
+            }
+            intervalId = setInterval(nextSlide, slideIntervalTime);
+        }
+
+        // 7. Event Listeners para os botões
+        if (prevSlideBtn && nextSlideBtn) {
+            prevSlideBtn.addEventListener('click', () => {
+                prevSlide();
+                resetInterval(); // Reseta o timer automático após a interação manual
+            });
+            nextSlideBtn.addEventListener('click', () => {
+                nextSlide();
+                resetInterval(); // Reseta o timer automático após a interação manual
+            });
+        }
+
+
+        // --- ANIMAÇÃO DE PARTÍCULAS (CANVAS) ---
+        const canvas = document.getElementById('particle-background');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            const heroSection = document.querySelector('.hero');
+            let width = heroSection.clientWidth;
+            let height = heroSection.clientHeight;
+            let particleArray = [];
+            const particleCount = 40;
+
+            // Cor das partículas (dourado)
+            const particleColor = getComputedStyle(document.documentElement).getPropertyValue('--particle-color');
+
+            canvas.width = width;
+            canvas.height = height;
+
+            // Redimensiona o canvas quando a tela muda
+            const resizeObserver = new ResizeObserver(() => {
+                width = heroSection.clientWidth;
+                height = heroSection.clientHeight;
+                canvas.width = width;
+                canvas.height = height;
+            });
+            resizeObserver.observe(heroSection);
+
+
+            class Particle {
+                constructor() {
+                    this.size = Math.random() * 3 + 1; // Tamanho 1-4
+                    // Inicia a partícula na lateral esquerda ou direita
+                    this.direction = Math.random() > 0.5 ? 1 : -1;
+                    this.x = this.direction === 1 ? -this.size : width + this.size;
+                    this.y = Math.random() * height;
+                    // Velocidade mais lenta para ser sutil
+                    this.vx = (Math.random() * 0.3 + 0.1) * this.direction;
+                    this.vy = Math.random() * 0.1 - 0.05; // Movimento vertical sutil
+                    this.opacity = Math.random() * 0.5 + 0.3;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    // Se a partícula sair da tela, reseta ela do lado oposto
+                    if (this.direction === 1 && this.x > width + this.size * 2) {
+                        this.x = -this.size * 2;
+                        this.y = Math.random() * height;
+                    } else if (this.direction === -1 && this.x < -this.size * 2) {
+                        this.x = width + this.size * 2;
+                        this.y = Math.random() * height;
+                    }
+                    // Mantém a partícula dentro da altura
+                    if (this.y > height || this.y < 0) {
+                        this.vy *= -1;
+                    }
+                }
+
+                draw() {
+                    ctx.fillStyle = particleColor;
+                    ctx.globalAlpha = this.opacity;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.globalAlpha = 1; // Reseta a opacidade global
+                }
+            }
+
+            function initParticles() {
+                for (let i = 0; i < particleCount; i++) {
+                    particleArray.push(new Particle());
+                }
+            }
+
+            function animateParticles() {
+                // Efeito "rastro" sutil (para não ficar muito carregado)
+                ctx.fillStyle = 'rgba(10, 10, 10, 0.2)';
+                ctx.fillRect(0, 0, width, height);
+
+                for (let i = 0; i < particleArray.length; i++) {
+                    particleArray[i].update();
+                    particleArray[i].draw();
+                }
+                requestAnimationFrame(animateParticles);
+            }
+
+             // Inicia a animação DEPOIS que a página carregar
+            window.addEventListener('load', function() {
+                if (canvas) { // Verifica novamente se o canvas existe
+                    initParticles();
+                    animateParticles();
+                }
+            });
+        }
+
+        // Executa o Lucide Icons
+        document.addEventListener('DOMContentLoaded', (event) => {
+            lucide.createIcons();
+        });
+
+    </script>
+</body>
+</html>
+
