@@ -27,6 +27,7 @@
             --cinza-claro: #FAFAFA;
             --cinza-mais-escuro: #EAEAEA; /* Added darker light gray */
             --cinza-text: #86868b;
+            --cinza-text-dark-bg: rgba(255, 255, 255, 0.7); /* Lighter gray text for dark backgrounds */
             --header-link-hover: var(--dourado-dark);
             --header-bg: rgba(255, 255, 255, 0.95);
             /* Cor para as partículas (Gold) */
@@ -1017,14 +1018,10 @@
         }
 
         .lucide-icon {
-            width: 48px;
-            height: 48px;
+            /* Adjusted default size */
+            width: 24px;
+            height: 24px;
             stroke-width: 1.5;
-        }
-
-        /* ... restante do CSS mantido ... */
-        .planos, .tecnologias, footer, .chat-float {
-             /* Estilos das outras seções não foram alterados */
         }
 
         /* CORREÇÃO DO COMO FUNCIONA ANTIGO: */
@@ -1033,7 +1030,7 @@
             /* Estilos antigos removidos/ignorados */
         }
 
-        /* Estilos de Planos, Tech, Footer */
+        /* Estilos de Planos, Footer */
         .planos {
             padding: 4rem 4rem 8rem; /* Reduced top padding */
             background: var(--cinza-mais-escuro); /* Changed background color */
@@ -1107,40 +1104,22 @@
         .plano-card.destaque .plano-cta.black { background: var(--branco); color: var(--preto); }
         .plano-card.destaque .plano-cta.black:hover { background: var(--cinza); }
 
-        .tecnologias { padding: 8rem 4rem; background: var(--grafite); }
-        .tecnologias .section-title { color: var(--branco); }
-        .tech-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1.5rem;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        .tech-item {
-            background: var(--grafite-light);
-            color: var(--cinza);
-            padding: 1rem 2rem;
-            border-radius: 980px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-        .tech-item h4 { font-size: 1.1rem; font-weight: 500; }
-        .tech-item:hover { background: var(--dourado); color: var(--preto); border-color: var(--dourado); transform: scale(1.05); }
+        /* Removed styles for .tecnologias, .tech-grid, .tech-item */
 
         footer {
-            background: var(--preto);
-            color: var(--cinza-text);
+            background: var(--branco); /* Changed */
+            color: var(--cinza-text); /* Changed */
             padding: 6rem 4rem 3rem;
             text-align: center;
+            border-top: 1px solid rgba(0,0,0,0.05); /* Added border for separation */
         }
         .footer-logo-img { height: 50px; margin-bottom: 1.5rem; }
-        .footer-tagline { font-size: 1.1rem; color: var(--branco); margin-bottom: 2rem; }
+        .footer-tagline { font-size: 1.1rem; color: var(--preto); margin-bottom: 2rem; } /* Changed */
         .footer-contact { margin-bottom: 3rem; }
         .footer-contact p { margin-bottom: 0.5rem; }
         .footer-contact a { color: var(--dourado); text-decoration: none; }
         .footer-contact a:hover { text-decoration: underline; }
-        .footer-bottom p { font-size: 0.9rem; }
+        .footer-bottom p { font-size: 0.9rem; color: var(--cinza-text); } /* Ensure color */
 
         .chat-float {
             position: fixed;
@@ -1249,6 +1228,207 @@
         }
         /* --- FIM SEÇÃO CASES --- */
 
+         /* --- SEÇÃO STORYTELLING (VÍDEO) --- */
+        .storytelling-section {
+            padding: 3rem 4rem 6rem; /* Reduced top padding */
+            background: var(--grafite); /* Fundo escuro para "modo cinema" */
+        }
+        .storytelling-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .storytelling-section .section-title {
+            color: var(--branco); /* Título branco */
+            margin-bottom: 1rem;
+        }
+        .storytelling-subtitle {
+            font-size: 1.15rem;
+            color: var(--cinza-text);
+            margin-bottom: 3rem;
+        }
+        .storytelling-video-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* Proporção 16:9 */
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            background: #000;
+        }
+        #storytelling-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: filter 0.4s ease, opacity 0.4s ease;
+        }
+        .video-play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90px;
+            height: 90px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s ease;
+            opacity: 1;
+            pointer-events: none;
+        }
+        .video-play-overlay .lucide-icon {
+            width: 45px;
+            height: 45px;
+            color: var(--branco);
+            margin-left: 5px; /* Ajuste visual do ícone */
+        }
+        /* Estado PAUSADO (padrão) */
+        .storytelling-video-container:not(.playing) #storytelling-video {
+            opacity: 0.5; /* Escurece o vídeo */
+            filter: blur(4px); /* Desfoca */
+        }
+        .storytelling-video-container:not(.playing):hover .video-play-overlay {
+            transform: translate(-50%, -50%) scale(1.1);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        /* Estado TOCANDO */
+        .storytelling-video-container.playing .video-play-overlay {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+        }
+        .storytelling-video-container.playing #storytelling-video {
+            opacity: 1;
+            filter: blur(0px);
+        }
+        /* --- FIM SEÇÃO STORYTELLING --- */
+
+
+        /* --- SEÇÃO FAQ (DÚVIDAS FREQUENTES) --- */
+        .faq-section {
+            padding: 3rem 4rem 6rem; /* Reduced top padding */
+            background: var(--preto); /* Changed */
+        }
+        .faq-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .faq-section .section-title {
+            margin-bottom: 1.5rem;
+            color: var(--branco); /* Changed */
+        }
+        .faq-subtitle {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--cinza-text-dark-bg); /* Changed */
+            margin-bottom: 4rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .faq-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem; /* Espaço entre as colunas */
+
+            /* Inicia o contador para a primeira coluna */
+            counter-reset: faq-counter-1;
+        }
+        /* Cria um novo escopo de contador para a segunda coluna, começando do 8 */
+        .faq-grid .faq-column:nth-child(2) {
+            counter-reset: faq-counter-2 7;
+        }
+        .faq-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem; /* Espaço entre os items do FAQ */
+        }
+        .faq-item {
+            border-bottom: 1px solid rgba(255,255,255,0.1); /* Changed */
+        }
+        /* Estilo do <summary> (a pergunta) */
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 0.5rem;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--branco); /* Changed */
+            list-style: none; /* Remove a seta padrão do <details> */
+            transition: color 0.3s ease;
+            position: relative; /* Para o número */
+            padding-left: 2.5rem; /* Espaço para o número */
+        }
+        .faq-question::-webkit-details-marker { display: none; } /* Remove seta no Safari */
+        /* Adiciona o número ANTES da pergunta */
+        .faq-column:nth-child(1) .faq-question::before {
+            counter-increment: faq-counter-1;
+            content: counter(faq-counter-1) ".";
+        }
+        .faq-column:nth-child(2) .faq-question::before {
+            counter-increment: faq-counter-2;
+            content: counter(faq-counter-2) ".";
+        }
+        .faq-question::before {
+            position: absolute;
+            left: 0.5rem;
+            top: 1.25rem;
+            font-weight: 700;
+            color: var(--dourado-dark); /* Kept gold */
+            width: 2rem;
+        }
+        .faq-question span { /* O texto da pergunta */
+            flex-grow: 1;
+        }
+        .faq-question:hover,
+        details[open] > .faq-question {
+            color: var(--dourado-dark); /* Kept gold hover */
+        }
+        .faq-arrow {
+            width: 20px;
+            height: 20px;
+            stroke-width: 2.5;
+            color: var(--dourado); /* Kept gold */
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+            margin-left: 1rem;
+        }
+        details[open] > .faq-question .faq-arrow {
+            transform: rotate(180deg);
+        }
+        /* Estilo da Resposta (o conteúdo) */
+        .faq-answer {
+            padding: 0 0.5rem 1.5rem 2.5rem; /* Alinhado com a pergunta */
+            color: var(--cinza-text-dark-bg); /* Changed */
+            font-size: 1rem;
+            line-height: 1.6;
+
+            /* Animação */
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease-out 0.1s, padding 0.4s ease-out;
+        }
+        .faq-answer p {
+            margin: 0;
+        }
+        details[open] > .faq-answer {
+            max-height: 500px; /* Altura máxima para a transição */
+            opacity: 1;
+            padding-top: 0; /* Garante que o padding seja aplicado na transição */
+            padding-bottom: 1.5rem;
+        }
+        /* --- FIM SEÇÃO FAQ --- */
+
         /* Animação de pulso para o botão ativo do acordeão */
         @keyframes pulse-active-step {
             0% {
@@ -1336,9 +1516,23 @@
             }
             /* Rules for .projetos-grid-mosaic and .tile-large removed for 1024px breakpoint */
 
+            /* CSS RESPONSIVO FAQ (TABLET) */
+            .faq-grid {
+                gap: 1.5rem;
+            }
+            .faq-question {
+                font-size: 1rem;
+                padding-left: 2.2rem;
+            }
+            .faq-answer {
+                padding-left: 2.2rem;
+            }
+            .faq-question::before {
+                left: 0;
+            }
+
 
             /* Outros Responsivos */
-            /* Removed .stats-grid rule */
             .planos-grid { grid-template-columns: 1fr; }
             .plano-card { max-width: 400px; margin: 0 auto; }
         }
@@ -1356,9 +1550,8 @@
                 font-size: 2rem;
             }
 
-            /* Removed .stats-section from this rule */
-            .planos,
-            .tecnologias {
+            /* Removed .stats-section and .tecnologias from this rule */
+            .planos {
                 padding: 2rem 1.5rem 4rem; /* Reduced top padding for Planos */
             }
             footer { padding: 4rem 1.5rem 2rem; }
@@ -1420,6 +1613,42 @@
                 padding: 1.5rem;
             }
 
+             /* CSS RESPONSIVO STORYTELLING (MOBILE) */
+            .storytelling-section {
+                padding: 2rem 1.5rem 4rem; /* Reduced top padding */
+            }
+            .video-play-overlay {
+                width: 70px;
+                height: 70px;
+            }
+            .video-play-overlay .lucide-icon {
+                width: 35px;
+                height: 35px;
+            }
+
+
+            /* CSS RESPONSIVO FAQ (MOBILE) */
+            .faq-section {
+                padding: 2rem 1.5rem 4rem; /* Reduced top padding */
+            }
+            .faq-subtitle {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+            .faq-grid {
+                grid-template-columns: 1fr; /* Coluna única no mobile */
+                gap: 0; /* O gap já está no .faq-column */
+            }
+            /* No mobile, a segunda coluna não precisa mais de um reset */
+            .faq-grid .faq-column:nth-child(2) {
+                counter-reset: none;
+            }
+            /* E o contador 2 deve usar o contador 1 */
+            .faq-column:nth-child(2) .faq-question::before {
+                counter-increment: faq-counter-1;
+                content: counter(faq-counter-1) ".";
+            }
+
             /* Flow Step Mobile Adjustments */
              .flow-step {
                 font-size: 1.2rem; /* Slightly larger on mobile */
@@ -1470,9 +1699,13 @@
                 <li class="nav-item">
                     <a href="#projetos">Cases</a> <!-- Updated link to point to #projetos -->
                 </li>
-                <!-- Item 4: Tecnologias (Link Simples) -->
+                 <!-- Item 4: Blog (Link Simples) -->
                 <li class="nav-item">
-                    <a href="#tecnologias">Tecnologias</a>
+                    <a href="#blog">Blog</a>
+                </li>
+                <!-- Item 5: FAQ (Link Simples - Replaces Tecnologias) -->
+                <li class="nav-item">
+                    <a href="#faq">FAQ</a>
                 </li>
             </ul>
 
@@ -1504,8 +1737,10 @@
         <a href="#planos" class="mobile-nav-link">Planos</a>
         <!-- Item 3: Cases -->
         <a href="#projetos" class="mobile-nav-link">Cases de Sucesso</a> <!-- Updated link to point to #projetos -->
-        <!-- Item 4: Tecnologias -->
-        <a href="#tecnologias" class="mobile-nav-link">Tecnologias</a>
+         <!-- Item 4: Blog -->
+        <a href="#blog" class="mobile-nav-link">Blog</a>
+        <!-- Item 5: FAQ (Replaces Tecnologias) -->
+        <a href="#faq" class="mobile-nav-link">FAQ</a>
     </div>
 
     <!-- HERO SLIDER (NOVA ESTRUTURA) -->
@@ -1748,6 +1983,25 @@
     </section>
     <!-- ### FIM SEÇÃO CASES (PROJETOS) ### -->
 
+    <!-- ### INÍCIO NOVA SEÇÃO STORYTELLING ### -->
+    <section id="storytelling" class="storytelling-section">
+        <div class="storytelling-container">
+            <h2 class="section-title">Assista a Transformação</h2>
+            <p class="storytelling-subtitle">Deixe de adivinhar. Veja em 30 segundos o que acontece quando seus dados viram vendas.</p>
+
+            <div class="storytelling-video-container" id="storytelling-video-container">
+                <video id="storytelling-video" loop muted playsinline poster="storytelling-poster.jpg">
+                    <source src="storytelling-video.mp4" type="video/mp4">
+                    Seu navegador não suporta a tag de vídeo.
+                </video>
+                <div class="video-play-overlay">
+                    <i data-lucide="play" class="lucide-icon"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ### FIM NOVA SEÇÃO STORYTELLING ### -->
+
     <!-- PROVA SOCIAL / STATS Section Removed -->
 
     <!-- PLANOS -->
@@ -1804,36 +2058,167 @@
         </div>
     </section>
 
-    <!-- TECNOLOGIAS -->
-    <section class="tecnologias" id="tecnologias">
-        <h2 class="section-title">Nossas Ferramentas. Sua Vantagem.</h2>
-        <div class="tech-grid">
-            <div class="tech-item">
-                <h4>Python</h4>
-            </div>
-            <div class="tech-item">
-                <h4>Gemini 1.5</h4>
-            </div>
-            <div class="tech-item">
-                <h4>n8n</h4>
-            </div>
-            <div class="tech-item">
-                <h4>Power BI</h4>
-            </div>
-            <div class="tech-item">
-                <h4>GA4</h4>
-            </div>
-            <div class="tech-item">
-                <h4>SQL</h4>
-            </div>
-            <div class="tech-item">
-                <h4>Flask</h4>
-            </div>
-            <div class="tech-item">
-                <h4>Docker</h4>
+    <!-- TECNOLOGIAS Section Removed -->
+
+    <!-- ### INÍCIO NOVA SEÇÃO FAQ ### -->
+    <section id="faq" class="faq-section">
+        <div class="faq-container">
+            <h2 class="section-title">Dúvidas Frequentes</h2>
+            <p class="faq-subtitle">Respostas diretas para as principais objeções e dúvidas sobre nosso Ecossistema de IA.</p>
+
+            <div class="faq-grid">
+
+                <div class="faq-column">
+
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span>A Fluxo de Ouro é uma Agência de Marketing Digital?</span>
+                            <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>Não. Somos Arquitetos de Soluções. Agências vendem tempo e serviços; nós vendemos sistemas de IA que operam 24h por dia e provam o ROI de cada ação, transformando dados em vendas.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span>Qual a principal vantagem do Funil de IA em relação a um funil tradicional?</span>
+                            <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>A principal vantagem é a Automação Escalável. Nosso Motor de Ouro identifica leads quentes e nutre os frios automaticamente, permitindo que seu funil pense, aprenda e feche vendas sem intervenção humana constante.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span>Vocês têm cases de sucesso que comprovam o ROI?</span>
+                            <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>Sim. Implementamos o Vendedor AI em um e-commerce que dobrou o faturamento e ajudamos uma loja a reduzir o abandono de carrinho em 42%. Nosso foco é gerar resultados visíveis no seu Mapa de Ouro.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span>O que é o 'Vendedor AI' e como ele funciona?</span>
+                            <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>É uma das tecnologias do nosso Motor de Ouro. É um chatbot avançado (alimentado por Gemini) que assume o papel de qualificador no site ou WhatsApp, recuperando vendas e coletando briefings (como no nosso plano Base Starter).</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span>O que torna o 'Mapa de Ouro' tão importante?</span>
+                            <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>O Mapa de Ouro garante a Prova de ROI em Tempo Real. Ele transforma dados brutos (GA4, vendas) em um dashboard Power BI claro, mostrando o custo por lead, a taxa de conversão e o desempenho exato do funil.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span>Quanto custa um sistema completo?</span>
+                            <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>Depende do tamanho do funil. Temos soluções de entrada, como a Base Starter por R$ 600 (para iniciar a coleta de dados). Para o Ecossistema Completo (Motor + Mapa), oferecemos Planos Anuais com Setup Zero, onde o site sai de graça.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span>É possível fazer o site Base Starter evoluir para o Ecossistema Completo?</span>
+                            <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>Com certeza. A Base Starter (R$ 600) já instala o GA4 e cria a fundação de SEO. Seu site já nasce pronto para receber o Motor de Ouro (automação) e o Mapa de Ouro (análise) futuramente.</p>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="faq-column">
+
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span>Como vocês garantem que meu site será otimizado (SEO)?</span>
+                            <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>Nossa Base de Ouro inclui otimização de SEO essencial (tags, títulos, estrutura) e a instalação obrigatória do Google Search Console (GSC), permitindo que o Google indexe seu conteúdo rapidamente e você monitore sua posição.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span>O Motor de Ouro se integra ao meu e-commerce ou CRM atual?</span>
+                            <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>Sim. Usamos tecnologias como n8n e Python para garantir integrações robustas com as principais plataformas (Shopify, Nuvemshop, SQL, etc.), permitindo que o fluxo de IA funcione sem quebrar seus sistemas existentes.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span>O que significa 'Leads Classificados e Nutrídos'?</span>
+                            <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>Significa que o Motor de Ouro usa IA para analisar o histórico da conversa ou a ação do cliente (ex: abandono de carrinho) e marca o lead como 'Quente', 'Morno' ou 'Frio', iniciando a nutrição (e-mails, WhatsApp) adequada para cada perfil.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span>A Base Starter (R$ 600) inclui alguma forma de eu atualizar o conteúdo?</span>
+                            <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>Sim, como bônus. A Base Starter inclui um Módulo de Blog que permite a você ou sua equipe atualizar o conteúdo facilmente, sem precisar de código (usando uma interface intuitiva, como nosso painel Colab).</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span>Quanto tempo leva para a Base de Ouro: Starter ser entregue?</span>
+                            <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>Como o briefing é coletado e aprovado em minutos pelo nosso Vendedor AI, a produção da Base Starter (R$ 600) é feita em tempo recorde após a confirmação do pagamento, permitindo que você comece a coletar dados imediatamente.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span>O Vendedor AI funciona no WhatsApp Business?</span>
+                            <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>Sim. Usamos a API Oficial do WhatsApp Business (WABA) para garantir que nosso Motor de Ouro opere no site e no WhatsApp, permitindo a qualificação e recuperação de vendas em ambos os canais.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span>Se eu fechar o Plano Anual, o Mapa de Ouro me mostra o desempenho da concorrência?</span>
+                            <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>O Mapa de Ouro foca primariamente no seu ROI. No entanto, o motor de análise de dados (Power BI) pode ser expandido para incluir dados de mercado e de concorrentes (como os do GSC, se disponíveis) para te dar uma visão mais ampla do posicionamento.</p>
+                        </div>
+                    </details>
+
+                </div>
             </div>
         </div>
     </section>
+    <!-- ### FIM NOVA SEÇÃO FAQ ### -->
+
 
     <!-- FOOTER -->
     <footer>
@@ -1970,8 +2355,8 @@
             });
         }, observerOptions);
 
-        // Updated selector to remove .stat-card
-        document.querySelectorAll('.plano-card, .flow-card, .tech-item, .projeto-tile, .search-intro-content, .blog-card').forEach(el => { // Added .blog-card
+        // Updated selector to remove .tech-item
+        document.querySelectorAll('.plano-card, .flow-card, .projeto-tile, .search-intro-content, .blog-card, .faq-item, .storytelling-container').forEach(el => { // Added .faq-item and .storytelling-container
             // Apenas aplica a animação base de scroll para itens que NÃO são flow-card (que tem animação própria)
             if (!el.classList.contains('flow-card')) {
                 el.style.opacity = '0';
@@ -2311,6 +2696,37 @@
                         });
                     }, 500); // Delay to ensure layout calculation is correct
                 }
+            }
+
+            // --- LÓGICA DO PLAYER DE VÍDEO STORYTELLING ---
+            const videoContainer = document.getElementById('storytelling-video-container');
+            const video = document.getElementById('storytelling-video');
+
+            if (videoContainer && video) {
+                // Listener para o clique no container
+                videoContainer.addEventListener('click', () => {
+                    if (video.paused) {
+                        video.play();
+                        videoContainer.classList.add('playing');
+                        video.muted = false; // Tira o mudo ao clicar
+                    } else {
+                        video.pause();
+                        videoContainer.classList.remove('playing');
+                    }
+                });
+
+                // Listener para o próprio vídeo (caso o usuário pause pelos controles)
+                video.addEventListener('pause', () => {
+                    videoContainer.classList.remove('playing');
+                });
+
+                // Listener para o play (garante que a classe seja aplicada)
+                video.addEventListener('play', () => {
+                    videoContainer.classList.add('playing');
+                });
+
+                // Garante que o vídeo comece pausado para mostrar o overlay
+                video.pause();
             }
         });
 
