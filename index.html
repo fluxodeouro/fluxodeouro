@@ -1056,23 +1056,11 @@
         }
         .projetos-grid-mosaic {
             display: grid;
-            /* Define 3 colunas: 1fr, 1.5fr (central maior), 1fr */
-            grid-template-columns: 1fr 1.5fr 1fr;
-            /* Define 2 linhas de altura automática */
-            grid-template-rows: auto auto;
+            grid-template-columns: repeat(2, 1fr); /* Changed to 2 columns */
             gap: 1.5rem; /* Espaçamento entre os cards */
-
-            /* Mapeia como os 5 cards vão se encaixar no grid 3x2 */
-            grid-template-areas:
-                "small-1 large small-3"
-                "small-2 large small-4";
+            /* grid-template-rows and grid-template-areas removed */
         }
-        /* Atribui cada classe a uma área do grid */
-        .tile-small-1 { grid-area: small-1; }
-        .tile-small-2 { grid-area: small-2; }
-        .tile-large   { grid-area: large; }
-        .tile-small-3 { grid-area: small-3; }
-        .tile-small-4 { grid-area: small-4; }
+        /* Rules for .tile-small-*, .tile-large, .tile-large .projeto-logo removed */
 
         .projeto-tile {
             display: flex; /* Usamos flex para alinhar o conteúdo interno */
@@ -1092,8 +1080,7 @@
             /* Cor de fallback caso a imagem não carregue */
             background-color: var(--cinza);
 
-            /* Altura mínima para os cards pequenos */
-            min-height: 300px;
+            min-height: 380px; /* Changed min-height */
 
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                         box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1102,17 +1089,14 @@
             transform: scale(1.02);
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
-        .tile-large {
-            /* Altura mínima para o card grande (aprox. 2x pequenos + gap) */
-            min-height: 620px;
-        }
+
         /* Overlay para o conteúdo (logo e cta) */
         .projeto-overlay {
             width: 100%;
             height: 100%;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-end; /* Changed */
             align-items: center;
             padding: 2rem;
 
@@ -1122,15 +1106,8 @@
             /* Garante que o conteúdo fique centralizado (fallback) */
             text-align: center;
         }
-        .projeto-logo {
-            max-width: 140px;
-            height: auto;
-            /* O justify-content: space-between já o empurra para o centro/topo */
-        }
-        /* O logo do 'Feiras de Rua' pode ser maior */
-        .tile-large .projeto-logo {
-            max-width: 200px;
-        }
+        /* Rule for .projeto-logo removed */
+
         .projeto-cta {
             display: inline-block;
             padding: 0.6rem 1.25rem;
@@ -1219,18 +1196,8 @@
             .projetos-section {
                 padding: 2rem 1.5rem 4rem; /* Adjusted top padding */
             }
-            .projetos-grid-mosaic {
-                /* Em tablets, muda para 2 colunas */
-                grid-template-columns: 1fr 1fr;
-                /* O card grande ocupa a primeira linha inteira */
-                grid-template-areas:
-                    "large large"
-                    "small-1 small-2"
-                    "small-3 small-4";
-            }
-            .tile-large {
-                min-height: 400px; /* Altura do card grande em tablet */
-            }
+            /* Rules for .projetos-grid-mosaic and .tile-large removed for 1024px breakpoint */
+
 
             /* Outros Responsivos */
             /* Removed .stats-grid rule */
@@ -1294,14 +1261,9 @@
             .projetos-grid-mosaic {
                 /* Em mobile, vira coluna única */
                 grid-template-columns: 1fr;
-                grid-template-areas:
-                    "large"
-                    "small-1"
-                    "small-2"
-                    "small-3"
-                    "small-4";
+                 /* grid-template-areas removed */
             }
-            .projeto-tile, .tile-large {
+            .projeto-tile { /* Updated selector */
                 min-height: 350px; /* Altura padrão de todos os cards no mobile */
             }
             .projeto-overlay {
@@ -1538,44 +1500,39 @@
         <!-- Removido o flow-cards-container obsoleto -->
     </section>
 
-    <!-- ### INÍCIO NOVA SEÇÃO CASES (PROJETOS) - ATUALIZADO COM IMAGENS LOCAIS ### -->
+    <!-- ### INÍCIO SEÇÃO CASES (PROJETOS) REESTRUTURADA ### -->
     <section id="projetos" class="projetos-section">
         <div class="projetos-container">
-            <h2 class="section-title">Cases de Sucesso</h2> <!-- Text updated -->
+            <h2 class="section-title">Cases de Sucesso</h2>
 
-            <div class="projetos-grid-mosaic">
+            <div class="projetos-grid-mosaic"> <!-- Class name kept for consistency, layout changed in CSS -->
 
-                <a href="URL_DO_PROJETO_1" target="_blank" rel="noopener noreferrer" class="projeto-tile tile-small-1" style="background-image: url('case1.png');">
+                <a href="https://www.feirasderua.com.br" target="_blank" rel="noopener noreferrer" class="projeto-tile" style="background-image: url('case1.png');"> <!-- Removed tile-small-1, updated href -->
                     <div class="projeto-overlay">
-                        <img src="case1-logo.png" alt="Logo Cliente 1" class="projeto-logo">
+                        <!-- Logo Removed -->
                         <span class="projeto-cta">» Acesse o case</span>
                     </div>
                 </a>
 
-                <a href="URL_DO_PROJETO_2" target="_blank" rel="noopener noreferrer" class="projeto-tile tile-small-2" style="background-image: url('case2.png');">
+                <a href="https://leanttro.github.io/oceano-etiquetas/" target="_blank" rel="noopener noreferrer" class="projeto-tile" style="background-image: url('case2.png');"> <!-- Removed tile-small-2, updated href -->
                     <div class="projeto-overlay">
-                        <img src="case2-logo.png" alt="Logo Cliente 2" class="projeto-logo">
+                        <!-- Logo Removed -->
                         <span class="projeto-cta">» Acesse o case</span>
                     </div>
                 </a>
 
-                <a href="https://www.feirasderua.com.br" target="_blank" rel="noopener noreferrer" class="projeto-tile tile-large" style="background-image: url('caseprincipal.png');">
+                <!-- Removed the .tile-large link -->
+
+                <a href="https://www.leanttro.onrender.com" target="_blank" rel="noopener noreferrer" class="projeto-tile" style="background-image: url('case3.png');"> <!-- Removed tile-small-3, updated href -->
                     <div class="projeto-overlay">
-                        <img src="caseprincipal-logo.png" alt="Logo Feiras de Rua" class="projeto-logo">
+                        <!-- Logo Removed -->
                         <span class="projeto-cta">» Acesse o case</span>
                     </div>
                 </a>
 
-                <a href="URL_DO_PROJETO_3" target="_blank" rel="noopener noreferrer" class="projeto-tile tile-small-3" style="background-image: url('case3.png');">
+                <a href="https://leanttro.github.io/vick_express/" target="_blank" rel="noopener noreferrer" class="projeto-tile" style="background-image: url('case4.png');"> <!-- Removed tile-small-4, updated href -->
                     <div class="projeto-overlay">
-                        <img src="case3-logo.png" alt="Logo Cliente 3" class="projeto-logo">
-                        <span class="projeto-cta">» Acesse o case</span>
-                    </div>
-                </a>
-
-                <a href="URL_DO_PROJETO_4" target="_blank" rel="noopener noreferrer" class="projeto-tile tile-small-4" style="background-image: url('case4.png');">
-                    <div class="projeto-overlay">
-                        <img src="case4-logo.png" alt="Logo Cliente 4" class="projeto-logo">
+                        <!-- Logo Removed -->
                         <span class="projeto-cta">» Acesse o case</span>
                     </div>
                 </a>
@@ -1583,7 +1540,7 @@
             </div>
         </div>
     </section>
-    <!-- ### FIM NOVA SEÇÃO CASES (PROJETOS) ### -->
+    <!-- ### FIM SEÇÃO CASES (PROJETOS) ### -->
 
     <!-- PROVA SOCIAL / STATS Section Removed -->
 
@@ -2115,7 +2072,12 @@
 
         // Executa o Lucide Icons
         document.addEventListener('DOMContentLoaded', (event) => {
-            lucide.createIcons();
+            // Check if lucide exists before calling createIcons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            } else {
+                console.error("Lucide library not loaded.");
+            }
         });
 
     </script>
