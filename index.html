@@ -25,11 +25,12 @@
             --dourado-dark: #B8960F;
             --cinza: #f5f5f7;
             --cinza-claro: #FAFAFA;
-            --cinza-mais-escuro: #EAEAEA;
+            --cinza-mais-escuro: #EAEAEA; /* Added darker light gray */
             --cinza-text: #86868b;
-            --cinza-text-dark-bg: rgba(255, 255, 255, 0.7);
+            --cinza-text-dark-bg: rgba(255, 255, 255, 0.7); /* Lighter gray text for dark backgrounds */
             --header-link-hover: var(--dourado-dark);
             --header-bg: rgba(255, 255, 255, 0.95);
+            /* Cor para as partículas (Gold) */
             --particle-color: rgba(201, 169, 97, 0.8);
         }
 
@@ -46,35 +47,36 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* --- INDICADOR DE ROLAGEM VERTICAL (GRÁFICO) --- */
+        /* --- NOVO INDICADOR DE ROLAGEM VERTICAL (GRÁFICO) --- */
         #verticalScrollIndicator {
             position: fixed;
-            top: 75px;
+            top: 75px; /* Abaixo do header */
             left: 0;
             width: 100%;
-            height: 8px;
+            height: 8px; /* Altura total do indicador */
             display: flex;
-            justify-content: flex-start;
-            align-items: flex-end;
+            justify-content: flex-start; /* Alinha as barras à esquerda */
+            align-items: flex-end; /* Garante que as barras cresçam de baixo para cima */
             z-index: 999;
             overflow: hidden;
-            background-color: rgba(0, 0, 0, 0.05);
+            background-color: rgba(0, 0, 0, 0.05); /* Fundo claro para o indicador */
         }
 
         .progress-bar-segment {
-            flex-grow: 0;
-            width: calc(100% / 8);
-            height: 0%;
+            flex-grow: 0; /* Não cresce na horizontal */
+            width: calc(100% / 8); /* Divide em 8 colunas, ajustável */
+            height: 0%; /* Altura inicial (preenchida pelo JS) */
             background-color: var(--dourado);
-            transition: height 0.1s linear;
+            transition: height 0.1s linear; /* Animação suave no crescimento */
             box-shadow: 0 0 5px var(--dourado);
-            margin-right: 2px;
+            margin-right: 2px; /* Espaçamento entre as barras */
         }
 
         .progress-bar-segment:last-child {
             margin-right: 0;
         }
 
+        /* Adiciona um efeito de degradê sutil para parecer mais "luxuoso" */
         .progress-bar-segment::before {
             content: '';
             position: absolute;
@@ -86,6 +88,7 @@
             opacity: 0.8;
         }
 
+        /* Altura no mobile para não ocupar muito espaço */
         @media (max-width: 768px) {
              #verticalScrollIndicator {
                 height: 5px;
@@ -94,7 +97,7 @@
         /* --- FIM INDICADOR DE ROLAGEM VERTICAL --- */
 
 
-        /* --- HEADER --- */
+        /* --- HEADER (Mantido do passo anterior) --- */
         .header {
             position: fixed;
             top: 0;
@@ -227,9 +230,9 @@
 
         /* Contêiner de Controles (CTA + Hamburger) */
         .nav-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            display: flex; /* Adicionado display flex para alinhar itens */
+            align-items: center; /* Centraliza verticalmente */
+            gap: 10px; /* Espaço entre o CTA e o botão hamburger */
         }
 
         .cta-header:hover {
@@ -358,10 +361,10 @@
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        /* --- FIM HEADER --- */
+        /* --- FIM NOVO HEADER --- */
 
 
-        /* --- HERO SLIDER --- */
+        /* --- HERO SLIDER (NOVA ESTRUTURA) --- */
         .hero {
             margin-top: 75px;
             min-height: 90vh;
@@ -393,20 +396,25 @@
             height: 100%;
             background-size: cover;
             background-position: center center;
-            opacity: 0;
-            transition: opacity 0.5s ease-out;
+            opacity: 0; /* Começa invisível */
+            transition: opacity 0.5s ease-out; /* Transição base para o texto */
             display: flex;
             align-items: center;
             padding: 8rem 0;
+            /* Importante: Transformação inicial para que o slide saia de um ponto de origem */
             transform: scale(1.0);
         }
 
         .hero-slide.active {
             opacity: 1;
-            transform: none;
+            transform: none; /* Reset após a transição */
         }
 
-        /* 1. ANIMAÇÕES NOVAS (Para as fotos) */
+        /*
+        * 1. ANIMAÇÕES NOVAS (Para as fotos)
+        */
+
+        /* 1. Efeito Zoom Sutil (Simulando "Pulando") */
         @keyframes zoom-in-bg {
             0% { transform: scale(1.15) rotate(0.1deg); opacity: 0; }
             50% { transform: scale(1.02) rotate(-0.1deg); opacity: 1; }
@@ -416,6 +424,7 @@
             animation: zoom-in-bg 3.0s forwards;
         }
 
+        /* 2. Efeito Bloco Caindo (Slide-Down) */
         @keyframes slide-block-down {
             0% { transform: translateY(-100%); opacity: 0; }
             30% { transform: translateY(-5%); opacity: 1; }
@@ -425,6 +434,7 @@
             animation: slide-block-down 2.0s ease-out forwards;
         }
 
+        /* 3. Efeito Bloco Entrando Lateral (Slide-Right) */
         @keyframes slide-block-right {
             0% { transform: translateX(100%); opacity: 0; }
             30% { transform: translateX(-5%); opacity: 1; }
@@ -434,6 +444,7 @@
             animation: slide-block-right 2.0s ease-out forwards;
         }
 
+        /* Garante que o slide que está saindo não fique preso em estados animados */
         .hero-slide:not(.active) {
             animation: none !important;
             transform: none !important;
@@ -450,7 +461,7 @@
         }
 
 
-        /* Overlay escuro */
+        /* Overlay escuro para garantir legibilidade do texto dourado */
         .hero-slide::before {
             content: '';
             position: absolute;
@@ -478,6 +489,7 @@
             margin-bottom: 1.5rem;
             color: var(--branco);
             letter-spacing: -0.03em;
+            /* Mantido: animações de entrada de texto */
             animation: slideInDown 1s ease-out;
             animation-fill-mode: both;
         }
@@ -504,6 +516,7 @@
             margin-right: auto;
             font-weight: 400;
             letter-spacing: -0.01em;
+            /* Mantido: animações de entrada de texto */
             animation: fadeInUp 1s ease-out 0.3s backwards;
         }
 
@@ -523,6 +536,7 @@
             text-decoration: none;
             border-radius: 980px;
             transition: all 0.3s ease;
+            /* Mantido: animações de entrada de texto */
             animation: fadeInUp 1s ease-out 0.6s backwards;
         }
 
@@ -538,7 +552,7 @@
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 5;
+            z-index: 5; /* Fica acima de tudo */
             display: flex;
             gap: 15px;
         }
@@ -572,9 +586,9 @@
 
         /* --- FIM HERO SLIDER --- */
 
-        /* --- SEÇÃO DE BUSCA GOOGLE --- */
+        /* --- NOVA SEÇÃO DE BUSCA GOOGLE --- */
         .google-search-section {
-            padding: 3rem 4rem 3rem;
+            padding: 3rem 4rem 3rem; /* Reduced vertical padding */
             background: var(--branco);
             text-align: center;
         }
@@ -603,8 +617,8 @@
             max-width: 700px;
             margin: 0 auto;
             background: var(--branco);
-            border: 1px solid #dfe1e5;
-            border-radius: 980px;
+            border: 1px solid #dfe1e5; /* Cor cinza claro do Google */
+            border-radius: 980px; /* Bordas arredondadas */
             padding: 0.75rem 1rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
@@ -617,10 +631,10 @@
             height: 20px;
             color: var(--cinza-text);
             margin-right: 0.75rem;
-            flex-shrink: 0;
+            flex-shrink: 0; /* Impede que o ícone encolha */
         }
         .search-bar-input {
-            flex-grow: 1;
+            flex-grow: 1; /* Ocupa o espaço restante */
             border: none;
             outline: none;
             font-size: 1rem;
@@ -641,12 +655,13 @@
             font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            white-space: nowrap;
+            white-space: nowrap; /* Impede quebra de linha */
             margin-left: 0.75rem;
         }
         .search-bar-button:hover {
             background: var(--dourado-dark);
         }
+        /* <!-- ESTILO PARA O BOTÃO QUANDO ESTIVER CARREGANDO --> */
         .search-bar-button:disabled {
             background: var(--cinza);
             color: var(--cinza-text);
@@ -657,39 +672,43 @@
             color: var(--cinza-text);
             margin-top: 1rem;
             font-style: italic;
+            /* <!-- Adiciona transição para a mudança de cor --> */
             transition: color 0.3s ease;
         }
+        /* <!-- ESTILO PARA MENSAGEM DE SUCESSO --> */
         .search-bar-note.success {
             color: var(--dourado-dark);
             font-weight: 600;
             font-style: normal;
         }
+        /* <!-- ESTILO PARA MENSAGEM DE ERRO --> */
         .search-bar-note.error {
-            color: #D93025;
+            color: #D93025; /* Vermelho Google */
             font-weight: 600;
             font-style: normal;
         }
-        /* --- FIM SEÇÃO DE BUSCA GOOGLE --- */
+        /* --- FIM NOVA SEÇÃO DE BUSCA GOOGLE --- */
 
-        /* --- MINI FLUXOGRAMA DOURADO --- */
+        /* --- MINI FLUXOGRAMA DOURADO (Nova Seção) --- */
         .flow-section {
+            /* AJUSTE: padding reduzido (ajustes anteriores) */
             padding: 3rem 4rem 4rem;
             background: var(--dourado);
             color: var(--preto);
             text-align: center;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
+            position: relative; /* Necessário para posicionar o gráfico de fundo */
+            overflow: hidden; /* Garante que o gráfico não vaze */
+            z-index: 1; /* Garante que o conteúdo fique por cima */
         }
 
         .flow-section .section-title {
             color: var(--preto);
             margin-bottom: 3rem;
-            position: relative;
+            position: relative; /* Coloca o título acima do gráfico */
             z-index: 2;
         }
 
-        /* --- GRÁFICO DE BARRAS DE FUNDO --- */
+        /* --- GRÁFICO DE BARRAS DE FUNDO (NOVO) --- */
         #bar-chart-background {
             position: absolute;
             top: 0;
@@ -698,28 +717,31 @@
             height: 100%;
             display: flex;
             justify-content: space-around;
-            align-items: flex-end;
-            opacity: 0.15;
-            z-index: 0;
-            padding-bottom: 30px;
+            align-items: flex-end; /* As barras crescem de baixo para cima */
+            opacity: 0.15; /* Sutil */
+            z-index: 0; /* Fica no fundo */
+            padding-bottom: 30px; /* Margem da base */
         }
 
         .bar {
-            width: 8%;
+            width: 8%; /* Largura das barras */
             height: 0;
             background-color: var(--branco);
             margin: 0 5px;
             border-radius: 4px 4px 0 0;
             animation-fill-mode: forwards;
+            /* Atraso para que a animação seja diferente em cada barra */
             animation: barGrow 2.5s ease-out infinite alternate;
         }
 
-        .bar:nth-child(1) { height: 35%; animation-delay: 0.1s; }
+        /* * AJUSTE AQUI: Definindo alturas progressivas para o efeito "escadinha"
+         */
+        .bar:nth-child(1) { height: 35%; animation-delay: 0.1s; } /* Menor */
         .bar:nth-child(2) { height: 45%; animation-delay: 0.3s; }
         .bar:nth-child(3) { height: 55%; animation-delay: 0.5s; }
         .bar:nth-child(4) { height: 70%; animation-delay: 0.7s; }
         .bar:nth-child(5) { height: 80%; animation-delay: 0.9s; }
-        .bar:nth-child(6) { height: 95%; animation-delay: 1.1s; }
+        .bar:nth-child(6) { height: 95%; animation-delay: 1.1s; } /* Maior */
 
         @keyframes barGrow {
             0% { transform: scaleY(0.8); opacity: 0.8; }
@@ -736,9 +758,10 @@
             max-width: 900px;
             margin: 0 auto;
             position: relative;
-            z-index: 2;
+            z-index: 2; /* Garante que o acordeão fique acima do gráfico */
         }
 
+        /* Wrapper para o botão e o card correspondente */
         .flow-item-wrapper {
             width: 100%;
             margin-bottom: 0.75rem;
@@ -758,15 +781,15 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: center;
+            justify-content: center; /* Changed */
             width: 100%;
             height: 80px;
-            gap: 0.75rem;
+            gap: 0.75rem; /* Added */
 
             background: var(--preto);
             color: var(--branco);
-            font-weight: 700;
-            font-size: 1.4rem;
+            font-weight: 700; /* Changed */
+            font-size: 1.4rem; /* Changed */
             padding: 1.5rem 2rem;
 
             border: 3px solid transparent;
@@ -791,7 +814,7 @@
             border-bottom: 3px solid var(--branco);
             border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
-            animation: pulse-active-step 2s ease-in-out infinite;
+            animation: pulse-active-step 2s ease-in-out infinite; /* Added */
         }
 
         .flow-step.active:hover {
@@ -799,6 +822,7 @@
             color: var(--preto);
         }
 
+        /* Ícone de Seta dentro do botão */
         .flow-step .lucide-icon {
             width: 20px;
             height: 20px;
@@ -832,6 +856,7 @@
             visibility: visible;
         }
 
+        /* Imagens e Conteúdo do Card */
         .flow-card img {
             width: 100%;
             height: auto;
@@ -845,6 +870,7 @@
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--dourado-dark);
+            /* AJUSTE AQUI: Reduzindo a margem inferior para subir o elemento P */
             margin-bottom: 0.5rem;
         }
 
@@ -852,10 +878,12 @@
             color: var(--cinza-text);
             font-size: 1rem;
             line-height: 1.5;
+            /* AJUSTE AQUI: Reduzindo a margem inferior para subir o botão CTA */
             margin-bottom: 1rem;
         }
 
         .flow-cta {
+            /* AJUSTE AQUI: Subir o botão 3px */
             display: inline-block;
             background: var(--preto);
             color: var(--dourado);
@@ -878,16 +906,16 @@
 
         /* --- SEÇÃO BLOG --- */
         .blog-section {
-            padding: 3rem 0 6rem;
-            background: var(--cinza);
+            padding: 3rem 0 6rem; /* Reduced top padding */
+            background: var(--cinza); /* Fundo cinza claro para destacar os cards */
         }
         .blog-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 4rem;
+            padding: 0 4rem; /* Padding lateral padrão */
         }
         .blog-section .section-title {
-            margin-bottom: 4rem;
+            margin-bottom: 4rem; /* Herda o estilo .section-title */
         }
         .blog-carousel-wrapper {
             position: relative;
@@ -896,16 +924,20 @@
         .blog-carousel {
             display: flex;
             gap: 1.5rem;
-            overflow-x: auto;
+            overflow-x: auto; /* Habilita o scroll horizontal */
             scroll-behavior: smooth;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
+
+            /* Esconde a barra de rolagem (padrão) */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE e Edge */
         }
         .blog-carousel::-webkit-scrollbar {
-            display: none;
+            display: none; /* Chrome, Safari e Opera */
         }
         .blog-card {
+            /* Define o tamanho base do card */
             flex: 0 0 320px;
+
             background: var(--branco);
             border-radius: 12px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.07);
@@ -926,7 +958,7 @@
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            height: calc(100% - 180px);
+            height: calc(100% - 180px); /* Garante altura consistente */
         }
         .blog-card-content h3 {
             font-size: 1.25rem;
@@ -939,11 +971,11 @@
             color: var(--cinza-text);
             line-height: 1.5;
             margin-bottom: 1.5rem;
-            flex-grow: 1;
+            flex-grow: 1; /* Empurra o botão para o final */
         }
         .blog-card-cta {
             display: inline-block;
-            width: fit-content;
+            width: fit-content; /* O botão só ocupa o espaço do texto */
             background: var(--preto);
             color: var(--branco);
             padding: 0.7rem 1.5rem;
@@ -957,6 +989,7 @@
             background: var(--grafite-light);
             transform: scale(1.02);
         }
+        /* Estilo das Setas de Navegação */
         .blog-nav-arrow {
             position: absolute;
             top: 50%;
@@ -987,10 +1020,10 @@
             height: 24px;
         }
         .blog-nav-arrow.arrow-left {
-            left: -22px;
+            left: -22px; /* Metade para fora do container */
         }
         .blog-nav-arrow.arrow-right {
-            right: -22px;
+            right: -22px; /* Metade para fora do container */
         }
         /* --- FIM SEÇÃO BLOG --- */
 
@@ -1005,14 +1038,22 @@
         }
 
         .lucide-icon {
+            /* Adjusted default size */
             width: 24px;
             height: 24px;
             stroke-width: 1.5;
         }
 
+        /* CORREÇÃO DO COMO FUNCIONA ANTIGO: */
+        /* Removendo estilos do como-funciona que foi refatorado */
+        .como-funciona, .pilares-grid, .pilar-card {
+            /* Estilos antigos removidos/ignorados */
+        }
+
+        /* Estilos de Planos, Footer */
         .planos {
-            padding: 4rem 4rem 8rem;
-            background: var(--cinza-mais-escuro);
+            padding: 4rem 4rem 8rem; /* Reduced top padding */
+            background: var(--cinza-mais-escuro); /* Changed background color */
         }
         .planos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; max-width: 1200px; margin: 0 auto; }
         .plano-card {
@@ -1023,7 +1064,7 @@
             flex-direction: column;
             position: relative;
             overflow: hidden;
-            background: var(--branco);
+            background: var(--branco); /* Changed card background to white */
         }
         .plano-card.destaque {
             background: var(--preto);
@@ -1083,20 +1124,22 @@
         .plano-card.destaque .plano-cta.black { background: var(--branco); color: var(--preto); }
         .plano-card.destaque .plano-cta.black:hover { background: var(--cinza); }
 
+        /* Removed styles for .tecnologias, .tech-grid, .tech-item */
+
         footer {
-            background: var(--branco);
-            color: var(--cinza-text);
+            background: var(--branco); /* Changed */
+            color: var(--cinza-text); /* Changed */
             padding: 6rem 4rem 3rem;
             text-align: center;
-            border-top: 1px solid rgba(0,0,0,0.05);
+            border-top: 1px solid rgba(0,0,0,0.05); /* Added border for separation */
         }
         .footer-logo-img { height: 50px; margin-bottom: 1.5rem; }
-        .footer-tagline { font-size: 1.1rem; color: var(--preto); margin-bottom: 2rem; }
+        .footer-tagline { font-size: 1.1rem; color: var(--preto); margin-bottom: 2rem; } /* Changed */
         .footer-contact { margin-bottom: 3rem; }
         .footer-contact p { margin-bottom: 0.5rem; }
         .footer-contact a { color: var(--dourado); text-decoration: none; }
         .footer-contact a:hover { text-decoration: underline; }
-        .footer-bottom p { font-size: 0.9rem; color: var(--cinza-text); }
+        .footer-bottom p { font-size: 0.9rem; color: var(--cinza-text); } /* Ensure color */
 
         .chat-float {
             position: fixed;
@@ -1110,6 +1153,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
             z-index: 998;
             transition: all 0.3s ease;
@@ -1120,27 +1164,30 @@
 
         /* --- SEÇÃO CASES (PROJETOS) --- */
         .projetos-section {
-            padding: 3rem 4rem 6rem;
-            background: var(--branco);
+            padding: 3rem 4rem 6rem; /* Top padding reduced */
+            background: var(--branco); /* Fundo branco padrão */
         }
         .projetos-container {
             max-width: 1400px;
             margin: 0 auto;
         }
+        /* Título da seção já herda o .section-title */
         .projetos-section .section-title {
             margin-bottom: 4rem;
         }
         .projetos-grid-mosaic {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
+            grid-template-columns: repeat(2, 1fr); /* Changed to 2 columns */
+            gap: 1.5rem; /* Espaçamento entre os cards */
+            /* grid-template-rows and grid-template-areas removed */
         }
+        /* Rules for .tile-small-*, .tile-large, .tile-large .projeto-logo removed */
 
         .projeto-tile {
-            display: flex;
+            display: flex; /* Usamos flex para alinhar o conteúdo interno */
             flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
+            justify-content: space-between; /* Empurra o CTA para baixo */
+            align-items: center; /* Centraliza o logo */
 
             position: relative;
             overflow: hidden;
@@ -1151,9 +1198,10 @@
             background-position: center center;
             text-decoration: none;
 
+            /* Cor de fallback caso a imagem não carregue */
             background-color: var(--cinza);
 
-            min-height: 380px;
+            min-height: 380px; /* Changed min-height */
 
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                         box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1169,14 +1217,17 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
+            justify-content: flex-end; /* Changed */
             align-items: center;
             padding: 2rem;
 
+            /* Fundo escuro sutil para garantir legibilidade */
             background: linear-gradient(0deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0) 100%);
 
+            /* Garante que o conteúdo fique centralizado (fallback) */
             text-align: center;
         }
+        /* Rule for .projeto-logo removed */
 
         .projeto-cta {
             display: inline-block;
@@ -1184,7 +1235,7 @@
             font-size: 0.9rem;
             font-weight: 600;
             color: var(--preto);
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.8); /* Fundo branco semi-transparente */
             border-radius: 980px;
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
@@ -1199,8 +1250,8 @@
 
          /* --- SEÇÃO STORYTELLING (VÍDEO) --- */
         .storytelling-section {
-            padding: 3rem 4rem 6rem;
-            background: var(--grafite);
+            padding: 3rem 4rem 6rem; /* Reduced top padding */
+            background: var(--grafite); /* Fundo escuro para "modo cinema" */
         }
         .storytelling-container {
             max-width: 1000px;
@@ -1208,7 +1259,7 @@
             text-align: center;
         }
         .storytelling-section .section-title {
-            color: var(--branco);
+            color: var(--branco); /* Título branco */
             margin-bottom: 1rem;
         }
         .storytelling-subtitle {
@@ -1219,7 +1270,7 @@
         .storytelling-video-container {
             position: relative;
             width: 100%;
-            padding-top: 56.25%;
+            padding-top: 56.25%; /* Proporção 16:9 */
             border-radius: 12px;
             overflow: hidden;
             cursor: pointer;
@@ -1257,12 +1308,12 @@
             width: 45px;
             height: 45px;
             color: var(--branco);
-            margin-left: 5px;
+            margin-left: 5px; /* Ajuste visual do ícone */
         }
         /* Estado PAUSADO (padrão) */
         .storytelling-video-container:not(.playing) #storytelling-video {
-            opacity: 0.5;
-            filter: blur(4px);
+            opacity: 0.5; /* Escurece o vídeo */
+            filter: blur(4px); /* Desfoca */
         }
         .storytelling-video-container:not(.playing):hover .video-play-overlay {
             transform: translate(-50%, -50%) scale(1.1);
@@ -1282,8 +1333,8 @@
 
         /* --- SEÇÃO FAQ (DÚVIDAS FREQUENTES) --- */
         .faq-section {
-            padding: 3rem 4rem 6rem;
-            background: var(--preto);
+            padding: 3rem 4rem 6rem; /* Reduced top padding */
+            background: var(--preto); /* Changed */
         }
         .faq-container {
             max-width: 1200px;
@@ -1291,12 +1342,12 @@
         }
         .faq-section .section-title {
             margin-bottom: 1.5rem;
-            color: var(--branco);
+            color: var(--branco); /* Changed */
         }
         .faq-subtitle {
             text-align: center;
             font-size: 1.15rem;
-            color: var(--cinza-text-dark-bg);
+            color: var(--cinza-text-dark-bg); /* Changed */
             margin-bottom: 4rem;
             max-width: 700px;
             margin-left: auto;
@@ -1305,21 +1356,24 @@
         .faq-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2.5rem;
+            gap: 2.5rem; /* Espaço entre as colunas */
 
+            /* Inicia o contador para a primeira coluna */
             counter-reset: faq-counter-1;
         }
+        /* Cria um novo escopo de contador para a segunda coluna, começando do 8 */
         .faq-grid .faq-column:nth-child(2) {
             counter-reset: faq-counter-2 7;
         }
         .faq-column {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 1rem; /* Espaço entre os items do FAQ */
         }
         .faq-item {
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1); /* Changed */
         }
+        /* Estilo do <summary> (a pergunta) */
         .faq-question {
             display: flex;
             justify-content: space-between;
@@ -1328,13 +1382,14 @@
             cursor: pointer;
             font-size: 1.1rem;
             font-weight: 600;
-            color: var(--branco);
-            list-style: none;
+            color: var(--branco); /* Changed */
+            list-style: none; /* Remove a seta padrão do <details> */
             transition: color 0.3s ease;
-            position: relative;
-            padding-left: 2.5rem;
+            position: relative; /* Para o número */
+            padding-left: 2.5rem; /* Espaço para o número */
         }
-        .faq-question::-webkit-details-marker { display: none; }
+        .faq-question::-webkit-details-marker { display: none; } /* Remove seta no Safari */
+        /* Adiciona o número ANTES da pergunta */
         .faq-column:nth-child(1) .faq-question::before {
             counter-increment: faq-counter-1;
             content: counter(faq-counter-1) ".";
@@ -1348,21 +1403,21 @@
             left: 0.5rem;
             top: 1.25rem;
             font-weight: 700;
-            color: var(--dourado-dark);
+            color: var(--dourado-dark); /* Kept gold */
             width: 2rem;
         }
-        .faq-question span {
+        .faq-question span { /* O texto da pergunta */
             flex-grow: 1;
         }
         .faq-question:hover,
         details[open] > .faq-question {
-            color: var(--dourado-dark);
+            color: var(--dourado-dark); /* Kept gold hover */
         }
         .faq-arrow {
             width: 20px;
             height: 20px;
             stroke-width: 2.5;
-            color: var(--dourado);
+            color: var(--dourado); /* Kept gold */
             transition: transform 0.3s ease;
             flex-shrink: 0;
             margin-left: 1rem;
@@ -1370,12 +1425,14 @@
         details[open] > .faq-question .faq-arrow {
             transform: rotate(180deg);
         }
+        /* Estilo da Resposta (o conteúdo) */
         .faq-answer {
-            padding: 0 0.5rem 1.5rem 2.5rem;
-            color: var(--cinza-text-dark-bg);
+            padding: 0 0.5rem 1.5rem 2.5rem; /* Alinhado com a pergunta */
+            color: var(--cinza-text-dark-bg); /* Changed */
             font-size: 1rem;
             line-height: 1.6;
 
+            /* Animação */
             max-height: 0;
             overflow: hidden;
             opacity: 0;
@@ -1385,9 +1442,9 @@
             margin: 0;
         }
         details[open] > .faq-answer {
-            max-height: 500px;
+            max-height: 500px; /* Altura máxima para a transição */
             opacity: 1;
-            padding-top: 0;
+            padding-top: 0; /* Garante que o padding seja aplicado na transição */
             padding-bottom: 1.5rem;
         }
         /* --- FIM SEÇÃO FAQ --- */
@@ -1413,6 +1470,7 @@
         @media (max-width: 1024px) {
             .nav { padding: 0 1.5rem; }
             .nav-links { display: none; }
+            /* CORREÇÃO CABEÇALHO MOBILE */
             .nav-controls {
                 display: flex;
                 align-items: center;
@@ -1433,7 +1491,9 @@
             }
             .hero-content { padding: 0 1.5rem; }
 
+            /* FLUXOGRAMA MOBILE - O layout de acordeão já é responsivo, apenas ajusta padding da seção */
             .flow-section {
+                /* AJUSTE: padding reduzido (ajustes anteriores) */
                 padding: 2rem 1.5rem 4rem;
             }
             .flow-diagram-container {
@@ -1441,7 +1501,7 @@
             }
 
             .flow-step {
-                font-size: 1.1rem;
+                font-size: 1.1rem; /* Reverts to smaller size on tablet */
                 height: 70px;
                 padding: 1rem 1.5rem;
             }
@@ -1454,22 +1514,29 @@
                 max-height: 200px;
             }
 
-            .blog-container {
-                padding: 0 1.5rem;
+            /* CSS RESPONSIVO BLOG (TABLET) */
+             .blog-container {
+                padding: 0 1.5rem; /* Reduz o padding lateral em tablet */
             }
             .blog-nav-arrow {
+                /* Esconde as setas, pois o scroll manual é mais comum */
                 display: none;
             }
             .blog-carousel {
+                /* Adiciona um padding no final para que o último card não corte */
                 padding-right: 1.5rem;
+                /* Garante que o carrossel comece na borda */
                 margin-left: -1.5rem;
                 padding-left: 1.5rem;
             }
 
+            /* CSS RESPONSIVO PROJETOS (TABLET) */
             .projetos-section {
-                padding: 2rem 1.5rem 4rem;
+                padding: 2rem 1.5rem 4rem; /* Adjusted top padding */
             }
+            /* Rules for .projetos-grid-mosaic and .tile-large removed for 1024px breakpoint */
 
+            /* CSS RESPONSIVO FAQ (TABLET) */
             .faq-grid {
                 gap: 1.5rem;
             }
@@ -1485,6 +1552,7 @@
             }
 
 
+            /* Outros Responsivos */
             .planos-grid { grid-template-columns: 1fr; }
             .plano-card { max-width: 400px; margin: 0 auto; }
         }
@@ -1502,13 +1570,15 @@
                 font-size: 2rem;
             }
 
+            /* Removed .stats-section and .tecnologias from this rule */
             .planos {
-                padding: 2rem 1.5rem 4rem;
+                padding: 2rem 1.5rem 4rem; /* Reduced top padding for Planos */
             }
             footer { padding: 4rem 1.5rem 2rem; }
 
+             /* CSS RESPONSIVO GOOGLE SEARCH (MOBILE) */
              .google-search-section {
-                padding: 2rem 1.5rem 2rem;
+                padding: 2rem 1.5rem 2rem; /* Reduced vertical padding */
             }
             .search-section-title {
                 font-size: 2rem;
@@ -1516,10 +1586,11 @@
             .search-section-subtitle {
                 font-size: 1rem;
             }
+            /* Ajusta a barra de busca no mobile */
             .search-bar-simulator {
                 flex-direction: column;
                 gap: 1rem;
-                border-radius: 20px;
+                border-radius: 20px; /* Menos arredondado no mobile */
                 padding: 1.25rem;
             }
             .search-bar-input {
@@ -1531,34 +1602,40 @@
                 padding: 0.8rem 1.25rem;
             }
             .search-bar-icon {
-                display: none;
+                display: none; /* Esconde o ícone no layout de coluna */
             }
 
+             /* CSS RESPONSIVO BLOG (MOBILE) */
              .blog-section {
-                padding: 2rem 0 4rem;
+                padding: 2rem 0 4rem; /* Reduced top padding */
             }
             .blog-card {
+                /* Reduz o tamanho do card no mobile */
                 flex-basis: 280px;
             }
             .blog-card-content h3 {
                 font-size: 1.15rem;
             }
 
-            .projetos-section {
-                padding: 2rem 1.5rem 4rem;
+            /* CSS RESPONSIVO PROJETOS (MOBILE) */
+             .projetos-section {
+                padding: 2rem 1.5rem 4rem; /* Adjusted top padding */
             }
             .projetos-grid-mosaic {
+                /* Em mobile, vira coluna única */
                 grid-template-columns: 1fr;
+                 /* grid-template-areas removed */
             }
-            .projeto-tile {
-                min-height: 350px;
+            .projeto-tile { /* Updated selector */
+                min-height: 350px; /* Altura padrão de todos os cards no mobile */
             }
             .projeto-overlay {
                 padding: 1.5rem;
             }
 
+             /* CSS RESPONSIVO STORYTELLING (MOBILE) */
             .storytelling-section {
-                padding: 2rem 1.5rem 4rem;
+                padding: 2rem 1.5rem 4rem; /* Reduced top padding */
             }
             .video-play-overlay {
                 width: 70px;
@@ -1570,34 +1647,39 @@
             }
 
 
+            /* CSS RESPONSIVO FAQ (MOBILE) */
             .faq-section {
-                padding: 2rem 1.5rem 4rem;
+                padding: 2rem 1.5rem 4rem; /* Reduced top padding */
             }
             .faq-subtitle {
                 font-size: 1rem;
                 margin-bottom: 2rem;
             }
             .faq-grid {
-                grid-template-columns: 1fr;
-                gap: 0;
+                grid-template-columns: 1fr; /* Coluna única no mobile */
+                gap: 0; /* O gap já está no .faq-column */
             }
+            /* No mobile, a segunda coluna não precisa mais de um reset */
             .faq-grid .faq-column:nth-child(2) {
                 counter-reset: none;
             }
+            /* E o contador 2 deve usar o contador 1 */
             .faq-column:nth-child(2) .faq-question::before {
                 counter-increment: faq-counter-1;
                 content: counter(faq-counter-1) ".";
             }
 
-            .flow-step {
-                font-size: 1.2rem;
-            }
+            /* Flow Step Mobile Adjustments */
+             .flow-step {
+                font-size: 1.2rem; /* Slightly larger on mobile */
+             }
         }
     </style>
 </head>
 <body>
     <!-- INDICADOR DE ROLAGEM VERTICAL (GRÁFICO DE BARRAS) -->
     <div id="verticalScrollIndicator">
+        <!-- 8 segmentos de barra para o efeito visual de gráfico -->
         <div class="progress-bar-segment"></div>
         <div class="progress-bar-segment"></div>
         <div class="progress-bar-segment"></div>
@@ -1635,7 +1717,7 @@
                 </li>
                 <!-- Item 3: Cases (Link Simples) -->
                 <li class="nav-item">
-                    <a href="#projetos">Cases</a>
+                    <a href="#projetos">Cases</a> <!-- Updated link to point to #projetos -->
                 </li>
                  <!-- Item 4: Blog (Link Simples) -->
                 <li class="nav-item">
@@ -1674,7 +1756,7 @@
         <!-- Item 2: Planos -->
         <a href="#planos" class="mobile-nav-link">Planos</a>
         <!-- Item 3: Cases -->
-        <a href="#projetos" class="mobile-nav-link">Cases de Sucesso</a>
+        <a href="#projetos" class="mobile-nav-link">Cases de Sucesso</a> <!-- Updated link to point to #projetos -->
          <!-- Item 4: Blog -->
         <a href="#blog" class="mobile-nav-link">Blog</a>
         <!-- Item 5: FAQ (Replaces Tecnologias) -->
@@ -1735,7 +1817,7 @@
 
     </section>
 
-    <!-- ### INÍCIO SEÇÃO GOOGLE SEARCH (MANTIDO) ### -->
+    <!-- ### INÍCIO SEÇÃO GOOGLE SEARCH (MODIFICADA) ### -->
     <section id="google-search-intro" class="google-search-section">
         <div class="search-intro-content">
             <h2 class="search-section-title">Chegou a hora de inverter o jogo:<br> Agora são seus clientes que vão te encontrar!</h2>
@@ -1743,13 +1825,16 @@
 
             <div class="search-bar-simulator">
                 <i data-lucide="search" class="search-bar-icon lucide-icon"></i>
+                <!-- ID Adicionado ao Input -->
                 <input type="text" placeholder="Digite a URL do seu site aqui..." class="search-bar-input" id="seo-url-input" aria-label="URL do site">
+                <!-- Texto do Botão e ID Adicionados -->
                 <button class="search-bar-button" id="seo-submit-button">Diagnosticar Agora</button>
             </div>
+            <!-- Texto da Nota e ID Adicionados -->
             <p class="search-bar-note" id="seo-result-note">Insira a URL do seu site (ex: https://seusite.com.br) para um diagnóstico de SEO (via Google PageSpeed).</p>
         </div>
     </section>
-    <!-- ### FIM SEÇÃO GOOGLE SEARCH ### -->
+    <!-- ### FIM SEÇÃO GOOGLE SEARCH (MODIFICADA) ### -->
 
     <!-- NOVO MINI FLUXOGRAMA DOURADO - AGORA É UM SLICER/ACORDEÃO -->
     <section id="como-funciona" class="flow-section">
@@ -1768,6 +1853,7 @@
         <div class="flow-diagram-container">
 
             <!-- Passo 1: Base de Ouro -->
+            <!-- Wrapper para o botão e o card correspondente -->
             <div class="flow-item-wrapper" id="wrapper-base-ouro">
                 <div class="flow-step active" id="btn-base-ouro" data-target="card-base-ouro">
                     Base de Ouro
@@ -1776,6 +1862,7 @@
 
                 <!-- Card 1: Base de Ouro (Conteúdo) -->
                 <div class="flow-card active" id="card-base-ouro">
+                    <!-- Use a imagem sugerida: base-ouro-visual.png -->
                     <img src="https://placehold.co/600x280/cccccc/333333?text=base-ouro-visual.png" alt="Base de Ouro (Site Otimizado)">
                     <h4>A Base de Ouro</h4>
                     <p>O site focado em conversão. Design estratégico, SEO otimizado e estrutura preparada para capturar e qualificar visitantes.</p>
@@ -1792,6 +1879,7 @@
 
                 <!-- Card 2: Motor de Ouro (Conteúdo) -->
                 <div class="flow-card" id="card-motor-ouro">
+                    <!-- Use a imagem sugerida: motor-ouro-visual.png -->
                     <img src="https://placehold.co/600x280/cccccc/333333?text=motor-ouro-visual.png" alt="Motor de Ouro (Vendedor AI)">
                     <h4>O Motor de Ouro</h4>
                     <p>A automação que qualifica e vende 24h. IA conversacional que atende, qualifica leads e fecha vendas sem intervenção humana.</p>
@@ -1808,6 +1896,7 @@
 
                 <!-- Card 3: Mapa de Ouro (Conteúdo) -->
                 <div class="flow-card" id="card-mapa-ouro">
+                    <!-- Use a imagem sugerida: mapa-ouro-visual.png -->
                     <img src="https://placehold.co/600x280/cccccc/333333?text=mapa-ouro-visual.png" alt="Mapa de Ouro (Dashboard de ROI)">
                     <h4>O Mapa de Ouro</h4>
                     <p>O dashboard que prova o ROI. Visualize em tempo real de onde vêm seus leads, qual canal converte mais e quanto você está ganhando.</p>
@@ -1816,9 +1905,10 @@
             </div>
 
         </div>
+        <!-- Removido o flow-cards-container obsoleto -->
     </section>
 
-    <!-- ### INÍCIO NOVA SEÇÃO BLOG (MANTIDO) ### -->
+    <!-- ### INÍCIO NOVA SEÇÃO BLOG ### -->
     <section id="blog" class="blog-section">
         <div class="blog-container">
             <h2 class="section-title">Fluxo de Insights: O Blog da Performance</h2>
@@ -1874,33 +1964,39 @@
     </section>
     <!-- ### FIM NOVA SEÇÃO BLOG ### -->
 
-    <!-- ### INÍCIO SEÇÃO CASES (PROJETOS) REESTRUTURADA (MANTIDO) ### -->
+    <!-- ### INÍCIO SEÇÃO CASES (PROJETOS) REESTRUTURADA ### -->
     <section id="projetos" class="projetos-section">
         <div class="projetos-container">
             <h2 class="section-title">Cases de Sucesso</h2>
 
-            <div class="projetos-grid-mosaic">
+            <div class="projetos-grid-mosaic"> <!-- Class name kept for consistency, layout changed in CSS -->
 
-                <a href="https://www.feirasderua.com.br" target="_blank" rel="noopener noreferrer" class="projeto-tile" style="background-image: url('case1.png');">
+                <a href="https://www.feirasderua.com.br" target="_blank" rel="noopener noreferrer" class="projeto-tile" style="background-image: url('case1.png');"> <!-- Removed tile-small-1, updated href -->
                     <div class="projeto-overlay">
+                        <!-- Logo Removed -->
                         <span class="projeto-cta">» Acesse o case</span>
                     </div>
                 </a>
 
-                <a href="https://leanttro.github.io/oceano-etiquetas/" target="_blank" rel="noopener noreferrer" class="projeto-tile" style="background-image: url('case2.png');">
+                <a href="https://leanttro.github.io/oceano-etiquetas/" target="_blank" rel="noopener noreferrer" class="projeto-tile" style="background-image: url('case2.png');"> <!-- Removed tile-small-2, updated href -->
                     <div class="projeto-overlay">
+                        <!-- Logo Removed -->
                         <span class="projeto-cta">» Acesse o case</span>
                     </div>
                 </a>
 
-                <a href="https://www.leanttro.onrender.com" target="_blank" rel="noopener noreferrer" class="projeto-tile" style="background-image: url('case3.png');">
+                <!-- Removed the .tile-large link -->
+
+                <a href="https://www.leanttro.onrender.com" target="_blank" rel="noopener noreferrer" class="projeto-tile" style="background-image: url('case3.png');"> <!-- Removed tile-small-3, updated href -->
                     <div class="projeto-overlay">
+                        <!-- Logo Removed -->
                         <span class="projeto-cta">» Acesse o case</span>
                     </div>
                 </a>
 
-                <a href="https://leanttro.github.io/vick_express/" target="_blank" rel="noopener noreferrer" class="projeto-tile" style="background-image: url('case4.png');">
+                <a href="https://leanttro.github.io/vick_express/" target="_blank" rel="noopener noreferrer" class="projeto-tile" style="background-image: url('case4.png');"> <!-- Removed tile-small-4, updated href -->
                     <div class="projeto-overlay">
+                        <!-- Logo Removed -->
                         <span class="projeto-cta">» Acesse o case</span>
                     </div>
                 </a>
@@ -1910,7 +2006,7 @@
     </section>
     <!-- ### FIM SEÇÃO CASES (PROJETOS) ### -->
 
-    <!-- ### INÍCIO NOVA SEÇÃO STORYTELLING (MANTIDO) ### -->
+    <!-- ### INÍCIO NOVA SEÇÃO STORYTELLING ### -->
     <section id="storytelling" class="storytelling-section">
         <div class="storytelling-container">
             <h2 class="section-title">Assista a Transformação</h2>
@@ -1929,7 +2025,9 @@
     </section>
     <!-- ### FIM NOVA SEÇÃO STORYTELLING ### -->
 
-    <!-- PLANOS (MANTIDO) -->
+    <!-- PROVA SOCIAL / STATS Section Removed -->
+
+    <!-- PLANOS -->
     <section id="planos" class="planos">
         <h2 class="section-title">Comece Agora. Escolha seu Fluxo.</h2>
         <div class="planos-grid">
@@ -1985,7 +2083,9 @@
         </div>
     </section>
 
-    <!-- ### INÍCIO NOVA SEÇÃO FAQ (MANTIDO) ### -->
+    <!-- TECNOLOGIAS Section Removed -->
+
+    <!-- ### INÍCIO NOVA SEÇÃO FAQ ### -->
     <section id="faq" class="faq-section">
         <div class="faq-container">
             <h2 class="section-title">Dúvidas Frequentes</h2>
@@ -2031,6 +2131,7 @@
                             <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
                         </summary>
                         <div class="faq-answer">
+                            <!-- RESPOSTA 1: PERGUNTA 4 ATUALIZADA -->
                             <p>É a tecnologia principal do nosso Motor de Ouro (disponível no Ecossistema Completo). É um chatbot avançado (alimentado por Gemini) que assume o papel de qualificador no site ou WhatsApp, recuperando vendas e nutrindo leads 24/7.</p>
                         </div>
                     </details>
@@ -2051,16 +2152,19 @@
                             <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
                         </summary>
                         <div class="faq-answer">
+                            <!-- RESPOSTA 2: PERGUNTA 6 ATUALIZADA -->
                             <p>Depende da complexidade. Temos soluções de entrada, como o Base Ouro (Lite) por R$ 700 (para iniciar a coleta de dados). Para soluções maiores, como o Base Ouro (Full) (site customizado) ou o Ecossistema Completo (com IA e BI), o valor é sob orçamento.</p>
                         </div>
                     </details>
 
                     <details class="faq-item">
                         <summary class="faq-question">
+                            <!-- TÍTULO 3: PERGUNTA 7 ATUALIZADA -->
                             <span>É possível fazer o site Base Ouro (Lite) evoluir para o Ecossistema Completo?</span>
                             <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
                         </summary>
                         <div class="faq-answer">
+                            <!-- RESPOSTA 3: PERGUNTA 7 ATUALIZADA -->
                             <p>Com certeza. A Base Ouro (Lite) (R$ 700) já instala o GA4 e cria a fundação de SEO. Seu site já nasce pronto para receber o Motor de Ouro (automação) e o Mapa de Ouro (análise) futuramente.</p>
                         </div>
                     </details>
@@ -2100,20 +2204,25 @@
 
                     <details class="faq-item">
                         <summary class="faq-question">
+                            <!-- TÍTULO 4: PERGUNTA 11 ATUALIZADA -->
                             <span>O Base Ouro (Lite) (R$ 700) inclui algum painel?</span>
                             <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
                         </summary>
                         <div class="faq-answer">
+                            <!-- RESPOSTA 4: PERGUNTA 11 ATUALIZADA -->
                             <p>Sim. A Base Ouro (Lite) inclui um Painel de Coleta de Leads conectado a uma Planilha Google, permitindo que você gerencie seus novos contatos desde o primeiro dia, sem precisar de código.</p>
                         </div>
                     </details>
 
                     <details class="faq-item">
+                        <!-- Corrigido o erro de classe para faq-question -->
                         <summary class="faq-question">
+                            <!-- TÍTULO 5: PERGUNTA 12 ATUALIZADA -->
                             <span>Quanto tempo leva para a Base Ouro (Lite) ser entregue?</span>
                             <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
                         </summary>
                         <div class="faq-answer">
+                            <!-- RESPOSTA 5: PERGUNTA 12 ATUALIZADA -->
                             <p>A produção da Base Ouro (Lite) (R$ 700) é feita em 5 dias úteis após o envio de todo o material (textos, imagens, logo). A coleta do briefing é feita de forma estruturada para agilizar o processo.</p>
                         </div>
                     </details>
@@ -2130,10 +2239,12 @@
 
                     <details class="faq-item">
                         <summary class="faq-question">
+                            <!-- TÍTULO 6: PERGUNTA 14 ATUALIZADA -->
                             <span>Se eu fechar o Ecossistema Completo, o Mapa de Ouro me mostra o desempenho da concorrência?</span>
                             <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
                         </summary>
                         <div class="faq-answer">
+                            <!-- RESPOSTA 6: PERGUNTA 14 (Conteúdo original mantido) -->
                             <p>O Mapa de Ouro foca primariamente no seu ROI. No entanto, o motor de análise de dados (Power BI) pode ser expandido para incluir dados de mercado e de concorrentes (como os do GSC, se disponíveis) para te dar uma visão mais ampla do posicionamento.</p>
                         </div>
                     </details>
@@ -2145,7 +2256,7 @@
     <!-- ### FIM NOVA SEÇÃO FAQ ### -->
 
 
-    <!-- FOOTER (MANTIDO) -->
+    <!-- FOOTER -->
     <footer>
         <img src="logofluxo.png" alt="Fluxo de Ouro" class="footer-logo-img">
         <p class="footer-tagline">Transformando dados em vendas através de automação inteligente.</p>
@@ -2158,6 +2269,15 @@
         </div>
     </footer>
 
+    <!-- CHATBOT FLUTUANTE ANTIGO -->
+    <!-- Este bloco é removido e substituído pelo novo sistema.
+    <div class="chat-float" onclick="abrirChatbot('geral')">
+        <div class="chat-icon">
+            <i data-lucide="message-circle-more" class="lucide-icon"></i>
+        </div>
+    </div>
+    -->
+    
     <!-- ### [INÍCIO] CÓDIGO DO CHATBOT DE IA INJETADO ### -->
 
     <!-- ESPAÇADOR DO FOOTER PARA O CHATBOT MOBILE -->
@@ -2204,10 +2324,10 @@
                         <i data-lucide="brain-circuit" class="lucide-icon"></i>
                     </div>
                     <div class="message-content">
-                        <div class="message-bubble" id="initial-message-v6">
+                        <div class="message-bubble">
                             Olá! Eu sou o <strong>Analista de Ouro</strong>, uma IA treinada em SEO e conversão.
                             <br><br>
-                            Cole a URL completa do seu site (ex: <code>https://seusite.com.br</code>) e eu farei um diagnóstico rápido para ver onde estão as falhas.
+                            Cole a URL completa do seu site (ex: <code>https://seusite.com.br</code>) e eu farei um diagnóstico gratuito para você, comparando com nosso padrão-ouro.
                         </div>
                         <div class="message-time">Agora</div>
                     </div>
@@ -2215,10 +2335,10 @@
             </div>
 
             <div class="chatbot-input-area">
-                <input
-                    type="text"
-                    class="chatbot-input"
-                    id="chatbot-input-field"
+                <input 
+                    type="text" 
+                    class="chatbot-input" 
+                    id="chatbot-input-field" 
                     placeholder="Cole sua URL aqui..."
                     autocomplete="off"
                 >
@@ -2231,7 +2351,7 @@
     <!-- ### [FIM] NOVO CHATBOT FLUTUANTE ### -->
 
     <style>
-        /* [Seu CSS customizado do Chatbot V5]... (Mantido inalterado) */
+        /* --- CSS INJETADO DO CHATBOT (SOMENTE ESTILOS NOVOS) --- */
         
         /* Ajuste para o botão flutuante antigo (removido no HTML, mas mantido o CSS antigo) */
         .chat-float {
@@ -2258,35 +2378,37 @@
             position: fixed;
             bottom: 15px;
             right: 15px;
-            left: 15px;
+            left: 15px; /* Adicionado para dar espaço no mobile */
             z-index: 9999;
             font-family: 'Inter', sans-serif;
         }
 
         .chatbot-preview-button {
-            width: 100%;
-            max-width: 300px;
-            margin-left: auto;
+            width: 100%; /* Ocupa o espaço definido pelo pai */
+            max-width: 300px; /* Largura máxima */
+            margin-left: auto; /* Alinha à direita em telas maiores */
             margin-right: 0;
-            background-color: var(--preto);
-            border: 1px solid var(--dourado-dark);
+            background-color: var(--preto); /* COR: Fundo Preto */
+            border: 1px solid var(--dourado-dark); /* COR: Borda Dourada */
             border-radius: 12px;
             padding: 1rem;
             cursor: pointer;
-            box-shadow: 0 8px 25px rgba(201, 169, 97, 0.3);
+            box-shadow: 0 8px 25px rgba(201, 169, 97, 0.3); /* COR: Sombra Dourada */
             transition: all 0.3s ease;
             animation: pulse-gold 2s infinite;
+            /* Garante que esteja visível */
             opacity: 1;
             visibility: visible;
             transform: scale(1);
         }
 
         .chatbot-preview-button:hover {
-            transform: scale(1.03);
-            box-shadow: 0 12px 35px rgba(201, 169, 97, 0.5);
+            transform: scale(1.03); /* Leve scale */
+            box-shadow: 0 12px 35px rgba(201, 169, 97, 0.5); /* COR: Sombra Dourada mais forte */
         }
         
         .chatbot-preview-button.active {
+            /* Esconde o botão de preview quando o chat principal está ativo */
             opacity: 0;
             transform: scale(0.9);
             visibility: hidden;
@@ -2303,7 +2425,7 @@
         .preview-avatar {
             width: 35px;
             height: 35px;
-            background: var(--dourado);
+            background: var(--dourado); /* COR: Avatar Dourado */
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -2314,33 +2436,34 @@
         .preview-avatar .lucide-icon {
              width: 20px;
              height: 20px;
-             color: var(--branco);
+             color: var(--branco); /* CORRIGIDO: Ícone Branco */
              stroke-width: 2;
         }
 
         .preview-info strong {
             font-family: 'Inter', sans-serif;
             font-weight: 700;
-            color: var(--branco);
+            color: var(--branco); /* COR: Texto Branco */
             font-size: 0.9rem;
         }
 
         .preview-info span {
             display: block;
             font-size: 0.75rem;
-            color: var(--cinza-text);
+            color: var(--cinza-text); /* COR: "Online" Cinza */
         }
 
         .preview-message-bubble {
-            background-color: rgba(201, 169, 97, 0.1);
-            border-left: 3px solid var(--dourado);
+            background-color: rgba(201, 169, 97, 0.1); /* COR: Fundo Dourado transparente */
+            border-left: 3px solid var(--dourado); /* COR: Borda Dourada */
             padding: 0.8rem 1rem;
             border-radius: 8px;
             font-size: 0.85rem;
             line-height: 1.5;
-            color: var(--cinza-text-dark-bg);
+            color: var(--cinza-text-dark-bg); /* COR: Texto claro */
         }
         
+        /* Estilo para <code> dentro das bolhas de chat */
         .message-bubble code {
             background-color: rgba(0,0,0,0.2);
             padding: 0.1em 0.4em;
@@ -2355,6 +2478,7 @@
              color: var(--preto);
         }
 
+        /* Estilo para <ul> e <li> dentro das bolhas de chat */
         .message-bubble ul {
             padding-left: 20px;
             margin-top: 0.5rem;
@@ -2382,18 +2506,18 @@
         /* Janela Principal do Chatbot (Modal) */
         .chatbot-window {
             position: fixed;
-            bottom: 15px;
-            right: 15px;
-            left: 15px;
-            width: calc(100% - 30px);
-            max-width: 400px;
-            height: 70vh;
-            max-height: 550px;
-            background-color: var(--grafite-light);
-            border: 1px solid rgba(201, 169, 97, 0.3);
+            bottom: 15px; /* Alinha com o botão */
+            right: 15px; /* Alinha com o botão */
+            left: 15px; /* Alinha com o botão */
+            width: calc(100% - 30px); /* Ocupa a largura no mobile */
+            max-width: 400px; /* Largura máxima */
+            height: 70vh; /* Altura boa para mobile */
+            max-height: 550px; /* Altura máxima */
+            background-color: var(--grafite-light); /* COR: Fundo Grafite Claro */
+            border: 1px solid rgba(201, 169, 97, 0.3); /* COR: Borda Dourada */
             border-radius: 16px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-            display: none;
+            display: none; /* Começa escondido */
             flex-direction: column;
             overflow: hidden;
             z-index: 9998;
@@ -2409,7 +2533,7 @@
         }
 
         .chatbot-header {
-            background: linear-gradient(135deg, var(--dourado-dark), var(--dourado));
+            background: linear-gradient(135deg, var(--dourado-dark), var(--dourado)); /* COR: Gradiente Dourado */
             padding: 1.2rem 1.5rem;
             display: flex;
             align-items: center;
@@ -2420,7 +2544,7 @@
         .chatbot-header-avatar {
             width: 45px;
             height: 45px;
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: rgba(0, 0, 0, 0.2); /* COR: Fundo Preto transparente */
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -2429,7 +2553,7 @@
         }
         
         .chatbot-header-avatar .lucide-icon {
-            color: var(--branco);
+            color: var(--branco); /* CORRIGIDO: Ícone Branco */
             width: 24px;
             height: 24px;
         }
@@ -2439,26 +2563,26 @@
             font-weight: 700;
             font-size: 1.3rem;
             margin-bottom: 0.2rem;
-            color: var(--preto);
-            text-transform: none;
+            color: var(--preto); /* COR: Título Preto */
+            text-transform: none; /* Sem uppercase */
         }
         
         .chatbot-header-info h3 span {
-            color: var(--preto);
+            color: var(--preto); /* COR: 'de Ouro' Preto */
             opacity: 0.8;
         }
 
         .chatbot-header-info p {
             font-size: 0.75rem;
             opacity: 0.9;
-            color: var(--preto);
+            color: var(--preto); /* COR: "Online" Preto */
         }
 
         .chatbot-close {
             margin-left: auto;
             background: none;
             border: none;
-            color: var(--preto);
+            color: var(--preto); /* COR: X Preto */
             font-size: 1.5rem;
             cursor: pointer;
             width: 35px;
@@ -2471,7 +2595,7 @@
         }
         
         .chatbot-close .lucide-icon {
-            color: var(--branco);
+            color: var(--branco); /* CORRIGIDO: Ícone Branco */
             width: 24px;
             height: 24px;
         }
@@ -2487,7 +2611,7 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            background-color: var(--grafite);
+            background-color: var(--grafite); /* COR: Fundo do chat Grafite */
         }
 
         .chatbot-messages::-webkit-scrollbar {
@@ -2499,7 +2623,7 @@
         }
 
         .chatbot-messages::-webkit-scrollbar-thumb {
-            background: var(--dourado);
+            background: var(--dourado); /* COR: Scroll Dourado */
             border-radius: 3px;
         }
         
@@ -2515,7 +2639,7 @@
         
         .message.user {
             align-self: flex-end;
-            flex-direction: row-reverse;
+            flex-direction: row-reverse; /* Inverte a ordem */
         }
 
         .message-avatar {
@@ -2527,16 +2651,17 @@
             justify-content: center;
             font-size: 1rem;
             flex-shrink: 0;
-            color: var(--preto);
+            color: var(--preto); /* COR: Ícone Preto (Padrão - Bot) */
         }
 
         .message.bot .message-avatar {
-             background: var(--dourado);
+             background: var(--dourado); /* COR: Avatar Bot Dourado */
+             /* color: var(--preto); (Herdado) */
         }
 
         .message.user .message-avatar {
              background-color: #333;
-             color: var(--branco);
+             color: var(--branco); /* COR: Ícone User Branco */
         }
         
         .message.user .message-avatar .lucide-icon {
@@ -2544,7 +2669,7 @@
         }
 
         .message-content {
-            max-width: calc(100% - 45px);
+            max-width: calc(100% - 45px); /* Ajusta a largura */
         }
 
         .message-bubble {
@@ -2553,23 +2678,23 @@
             font-size: 0.9rem;
             line-height: 1.5;
             word-wrap: break-word;
-            color: var(--branco);
+            color: var(--branco); /* COR: Texto da bolha branco */
         }
         
         .message.bot .message-bubble {
-            background-color: var(--grafite-light);
+            background-color: var(--grafite-light); /* COR: Bolha do Bot */
             border-bottom-left-radius: 4px;
         }
         
         .message.user .message-bubble {
-            background-color: var(--dourado-dark);
-            color: var(--preto);
+            background-color: var(--dourado-dark); /* COR: Bolha do User Dourada */
+            color: var(--preto); /* COR: Texto do User Preto */
             border-bottom-right-radius: 4px;
         }
 
         .message-time {
             font-size: 0.7rem;
-            color: var(--cinza-text);
+            color: var(--cinza-text); /* COR: Cinza */
             margin-top: 0.4rem;
         }
         
@@ -2587,7 +2712,7 @@
         .typing-indicator span {
             width: 8px;
             height: 8px;
-            background-color: var(--dourado);
+            background-color: var(--dourado); /* COR: Dourado */
             border-radius: 50%;
             animation: typing-gold 1.4s infinite;
         }
@@ -2613,7 +2738,7 @@
 
         .chatbot-input-area {
             padding: 1rem;
-            background-color: var(--grafite-light);
+            background-color: var(--grafite-light); /* COR: Fundo do input */
             border-top: 1px solid #222;
             display: flex;
             gap: 0.8rem;
@@ -2621,11 +2746,11 @@
 
         .chatbot-input {
             flex: 1;
-            background-color: var(--grafite);
+            background-color: var(--grafite); /* COR: Input Grafite */
             border: 1px solid #333;
             border-radius: 20px;
             padding: 0.8rem 1rem;
-            color: var(--branco);
+            color: var(--branco); /* COR: Texto Branco */
             font-family: 'Inter', sans-serif;
             font-size: 0.9rem;
             outline: none;
@@ -2633,7 +2758,7 @@
         }
 
         .chatbot-input:focus {
-            border-color: var(--dourado);
+            border-color: var(--dourado); /* COR: Borda Dourada */
             background-color: var(--grafite-light);
         }
 
@@ -2642,7 +2767,7 @@
         }
 
         .chatbot-send {
-            background: var(--dourado);
+            background: var(--dourado); /* COR: Botão Dourado */
             border: none;
             border-radius: 50%;
             width: 45px;
@@ -2650,7 +2775,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--preto);
+            color: var(--preto); /* COR: Ícone Preto */
             font-size: 1.1rem;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -2673,7 +2798,7 @@
             cursor: not-allowed;
         }
         
-        /* --- CSS DO FORMULÁRIO DE LEAD V6 --- */
+        /* --- CSS DO FORMULÁRIO DE LEAD V5 --- */
         .chatbot-form-bubble {
             display: flex;
             flex-direction: column;
@@ -2726,7 +2851,6 @@
             text-align: center;
             margin-top: 0.5rem;
             min-height: 1.2em;
-            color: var(--branco); /* Status text should be visible on dark background */
         }
         /* --- FIM CSS FORMULÁRIO --- */
 
@@ -2759,13 +2883,14 @@
                 right: 15px;
             }
         }
-        
+
         /* --- FIM CSS INJETADO DO CHATBOT --- */
     </style>
 
     <!-- 
     ====================================================================
-    INÍCIO DA SUBSTITUIÇÃO DO SCRIPT - V6 (FLUXO ASSÍNCRONO)
+    INÍCIO DA SUBSTITUIÇÃO DO SCRIPT
+    O conteúdo antigo do <script> foi removido e substituído pelo V5 abaixo
     ====================================================================
     -->
     <script>
@@ -2783,9 +2908,6 @@
             });
         });
 
-        // --- LÓGICA DO MENU MOBILE, OBSERVER, SLIDER, PARTÍCULAS (MANTIDO) ---
-        // [CÓDIGO DE LÓGICA DE UI AQUI]...
-        
         // --- LÓGICA DO MENU MOBILE ---
         const navToggle = document.querySelector('.nav-toggle');
         const mobileNav = document.querySelector('.mobile-nav');
@@ -2992,8 +3114,8 @@
             }
             window.addEventListener('load', () => { if (canvas) { initParticles(); animateParticles(); } });
         }
-        
-        // --- [INÍCIO] LÓGICA DO CHATBOT V6 (FLUXO ASSÍNCRONO) ---
+
+        // --- [INÍCIO] LÓGICA DO CHATBOT V5 (Captura de Leads) ---
 
         // --- Variáveis Globais e Helpers ---
         let chatbotWindow; 
@@ -3001,11 +3123,10 @@
         let chatbotInput;
         let chatbotSend;
         let chatbotMessages;
-        let RENDER_API_URL = "https://fluxodeouro.onrender.com"; // URL do seu Backend Render
+        let RENDER_API_URL = ""; // Será definida no DOMContentLoaded
 
         // Variáveis de estado para o fluxo de captura de leads
-        // V6: awaiting_url, awaiting_form, awaiting_confirmation
-        let chatState = "awaiting_url"; 
+        let chatState = "awaiting_url"; // Estados: awaiting_url, awaiting_form, awaiting_confirmation
         let tempLeadData = {
             url_analisada: "",
             score_seo: 0,
@@ -3059,12 +3180,15 @@
             formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             formattedText = formattedText.replace(/`(.*?)`/g, '<code>$1</code>');
 
+            // Remove a tag [FORMULARIO_LEAD] se ela existir
+            formattedText = formattedText.replace("[FORMULARIO_LEAD]", "");
+
             // Converte listas *
             formattedText = formattedText.replace(/^\* (.*$)/gm, '<li>$1</li>');
             formattedText = formattedText.replace(/<br>(<li>)/g, '$1');
             if(formattedText.includes('<li>')) {
                 formattedText = '<ul>' + formattedText.replace(/<\/li><br>/g, '</li>') + '</ul>';
-                formattedText = formattedText.replace(/<\/ul><br>$/, '</ul>');
+                formattedText = formattedText.replace(/<\/ul><br>$/, '</ul>'); // Limpa quebra de linha extra
             }
 
             messageDiv.innerHTML = `
@@ -3080,7 +3204,7 @@
             if (chatbotMessages) {
                 chatbotMessages.appendChild(messageDiv);
                 if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
+                    lucide.createIcons(); // Renderiza os ícones
                 }
                 chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
             }
@@ -3128,18 +3252,16 @@
             if (!chatbotMessages) chatbotMessages = document.getElementById('chatbot-messages-container');
 
             const formHTML = `
-                <div class="message bot lead-form-message">
+                <div class="message bot">
                     <div class="message-avatar">
                         <i data-lucide="brain-circuit" class="lucide-icon"></i>
                     </div>
                     <div class="message-content">
                         <div class="message-bubble chatbot-form-bubble">
-                             <p style="color:var(--dourado); margin-bottom: 0.5rem; font-weight: 600;">Seu diagnóstico já está sendo pré-analisado!</p>
-                             <p style="font-size: 0.85rem; color: var(--cinza-text-dark-bg); margin-bottom: 0.8rem;">Para receber o relatório completo (com a solução) e a nota de SEO, preencha abaixo:</p>
                             <input type="text" id="lead-form-nome" placeholder="Seu nome completo" class="chatbot-form-input">
                             <input type="email" id="lead-form-email" placeholder="Seu melhor e-mail" class="chatbot-form-input">
-                            <input type="tel" id="lead-form-whatsapp" placeholder="WhatsApp (opcional: 11 987654321)" class="chatbot-form-input">
-                            <button id="lead-form-submit" class="chatbot-form-button">Enviar e Receber Relatório</button>
+                            <input type="tel" id="lead-form-whatsapp" placeholder="WhatsApp (ex: 11 987654321)" class="chatbot-form-input">
+                            <button id="lead-form-submit" class="chatbot-form-button">Enviar Análise</button>
                             <div id="lead-form-status" class="chatbot-form-status"></div>
                         </div>
                         <div class="message-time">${getCurrentTime()}</div>
@@ -3164,60 +3286,47 @@
             const whatsapp = document.getElementById('lead-form-whatsapp').value;
             const statusEl = document.getElementById('lead-form-status');
             const submitBtn = document.getElementById('lead-form-submit');
-            const formBubble = document.querySelector('.lead-form-message');
 
-
-            if (!nome || !email || !tempLeadData.url_analisada) {
-                statusEl.textContent = "Erro: Nome, E-mail e URL são obrigatórios.";
+            if (!nome || !email || !whatsapp) {
+                statusEl.textContent = "Por favor, preencha todos os campos.";
                 statusEl.style.color = "var(--dourado)";
                 return;
             }
 
-            statusEl.textContent = "🔐 Salvando dados e iniciando análise de IA...";
-            statusEl.style.color = "var(--dourado)";
+            statusEl.textContent = "Salvando...";
             submitBtn.disabled = true;
 
-            // Coleta os dados finais para enviar ao backend
-            const finalData = {
-                nome: nome,
-                email: email,
-                whatsapp: whatsapp,
-                url_analisada: tempLeadData.url_analisada,
-                score_seo: 0 // O score será gerado pela thread no backend
-            };
+            tempLeadData.nome = nome;
+            tempLeadData.email = email;
+            tempLeadData.whatsapp = whatsapp;
             
-            let leadResponse;
+            let leadResponse; // Definido fora do try para estar no escopo do finally
 
             try {
-                // ETAPA 3: Enviar todos os dados para a rota que inicia a thread
                 leadResponse = await fetch(RENDER_API_URL + '/api/capture-lead', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(finalData)
+                    body: JSON.stringify(tempLeadData)
                 });
 
-                const data = await leadResponse.json();
-
                 if (leadResponse.ok) {
-                    // SUCESSO! A rota respondeu imediatamente (menos de 1s)
-                    statusEl.textContent = "✅ Dados salvos!";
+                    // Sucesso!
+                    statusEl.textContent = "Sucesso! Dados salvos.";
                     statusEl.style.color = "#4CAF50"; // Verde
-                    
-                    // Mensagem Final para o Usuário (agora que a thread está rodando)
-                    addMessage(`🚀 **Tudo pronto, ${nome.split(' ')[0]}!**\n\nRecebemos seus dados e a thread do **Analista de Ouro** já está rodando em segundo plano. Seu relatório completo será enviado para o seu e-mail (${email}) em até 2 minutos.\n\nFique à vontade para fechar o chat!`, false);
-                    
-                    if (formBubble) formBubble.style.display = 'none'; // Esconde a bolha do formulário
+                    addMessage("🚀 **Tudo pronto!** \n\nSeus dados foram salvos. Vou gerar seu relatório completo e nossa equipe entrará em contato com você pelo WhatsApp em breve!", false);
+                    document.querySelector('.chatbot-form-bubble').style.display = 'none'; // Esconde o formulário
                 } else {
-                    throw new Error(data.error || "Erro ao salvar o lead. Tente novamente mais tarde.");
+                    const errorData = await leadResponse.json();
+                    throw new Error(errorData.error || "Erro ao salvar.");
                 }
 
             } catch (error) {
                 console.error("Erro ao salvar o lead:", error);
-                statusEl.textContent = `❌ Erro de servidor: ${error.message}`;
-                statusEl.style.color = "#FF4500"; // Laranja/Vermelho
-                submitBtn.disabled = false;
+                statusEl.textContent = `Erro: ${error.message}`;
+                statusEl.style.color = "var(--dourado)";
+                submitBtn.disabled = false; // Reabilita se falhar
             } finally {
-                // Reseta o chatbot APENAS em caso de SUCESSO (ou se o formulário for escondido)
+                // Reseta o chatbot APENAS em caso de SUCESSO
                 if (leadResponse && leadResponse.ok) {
                     chatState = "awaiting_url";
                     chatbotInput.disabled = false;
@@ -3229,55 +3338,92 @@
         }
 
 
-        // Função Principal de Envio (V6 - Fluxo de 2 passos)
+        // Função Principal de Envio (V5 - Simplificada para usar Formulário)
         async function sendMessage() {
             if (!chatbotInput) chatbotInput = document.getElementById('chatbot-input-field');
             if (!chatbotSend) chatbotSend = document.getElementById('chatbot-send-button');
             if (!chatbotInput) return;
 
+            // Bloqueia novos envios se já estiver aguardando o formulário
+            if (chatState === 'awaiting_form') return;
+
             const message = chatbotInput.value.trim();
             if (message === '') return;
 
-            // --- ESTADO 1: Aguardando URL ---
-            if (chatState === "awaiting_url") {
+            addMessage(message, true); // Mostra a mensagem do usuário
+            const originalPlaceholder = chatbotInput.placeholder;
+            chatbotInput.value = '';
+            chatbotInput.placeholder = "Analisando sua URL...";
+            chatbotSend.disabled = true;
+            showTypingIndicator();
+
+            try {
+                // --- ETAPA 1: Enviar URL para Diagnóstico-ISCA ---
                 let url = message;
                 if (!url.startsWith('http://') && !url.startsWith('https://')) {
                     url = 'https://' + url;
                 }
-                
-                // Validação de URL simples
-                if (!url.match(/^(http|https):\/\/[^ "]+$/)) {
-                    addMessage("Por favor, cole uma URL válida e completa (ex: https://meusite.com.br).", false);
-                    chatbotInput.value = '';
-                    return;
-                }
-
-                addMessage(message, true); // Mostra a URL do usuário
                 tempLeadData.url_analisada = url; // Salva a URL
 
-                chatbotInput.value = '';
-                chatbotInput.placeholder = "Preencha o formulário acima...";
-                chatbotInput.disabled = true;
-                chatbotSend.disabled = true;
+                const response = await fetch(RENDER_API_URL + '/api/get-seo-diagnosis', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_url: url }),
+                });
 
-                // ETAPA 2: Mostra imediatamente o formulário e muda o estado
-                addMessage(`💡 Certo, analisei o **${url.split('//')[1].split('/')[0]}** e vi que seu funil tem potencial, mas identifiquei **falhas críticas** que o Google PageSpeed apontou.\n\nPara eu iniciar o diagnóstico detalhado (que pode levar até 2 minutos em background), preciso saber onde enviar o relatório com as soluções.`, false);
-                addLeadForm();
-                
-                chatState = "awaiting_form"; // Muda o estado
-                
-            } 
-            // --- ESTADO 2: Aguardando formulário (O input principal está desabilitado) ---
-            else if (chatState === "awaiting_form") {
-                // Se o usuário tentar digitar aqui, ignoramos e forçamos o preenchimento do formulário
-                addMessage("Preencha e envie o formulário acima para iniciar a análise em background.", false);
-                chatbotInput.value = '';
+                const data = await response.json();
+                removeTypingIndicator();
+
+                if (response.ok && data.diagnosis) {
+                    tempLeadData.score_seo = data.seo_score || 0; // Salva o score
+
+                    if (data.diagnosis.includes("[FORMULARIO_LEAD]")) {
+                        const [isca, _] = data.diagnosis.split("[FORMULARIO_LEAD]");
+                        addMessage(isca, false); // Mostra a isca
+                        addLeadForm(); // Adiciona o formulário HTML
+                        chatState = "awaiting_form"; // Muda o estado para aguardar preenchimento
+                        chatbotInput.placeholder = "Preencha o formulário acima...";
+                        chatbotInput.disabled = true; // Desabilita o input principal
+                        chatbotSend.disabled = true;
+                    } else {
+                        addMessage(data.diagnosis, false);
+                        chatState = "awaiting_url"; 
+                        chatbotInput.placeholder = originalPlaceholder;
+                        chatbotSend.disabled = false;
+                    }
+                } else {
+                    addMessage(data.error || 'Opa, não consegui analisar essa URL. Tente outra.', false);
+                    chatState = "awaiting_url";
+                    chatbotInput.placeholder = originalPlaceholder;
+                    chatbotSend.disabled = false;
+                }
+
+            } catch (error) {
+                removeTypingIndicator();
+                addMessage('Erro de conexão com o Analista. 🔌 Tente novamente.', false);
+                console.error("Erro de rede no sendMessage:", error);
+                chatState = "awaiting_url";
+                chatbotInput.placeholder = originalPlaceholder;
+                chatbotSend.disabled = false;
+            } finally {
+                // A reabilitação dos botões agora é controlada dentro dos fluxos
+                if (chatState === 'awaiting_url') {
+                    chatbotSend.disabled = false;
+                    chatbotInput.disabled = false;
+                    chatbotInput.placeholder = "Cole outra URL...";
+                }
             }
         }
-        // --- [FIM] LÓGICA DO CHATBOT V6 ---
+        // --- [FIM] LÓGICA DO CHATBOT V5 ---
 
         // --- Event Listeners Principais (Executados no DOMContentLoaded) ---
         document.addEventListener('DOMContentLoaded', (event) => {
+
+            // ####################################################################
+            // # [CORREÇÃO] DEFINE A URL DA API PARA AMBAS AS FUNÇÕES
+            // ####################################################################
+            RENDER_API_URL = "https://fluxodeouro.onrender.com"; // <-- MUDE AQUI SE NECESSÁRIO
+            // ####################################################################
 
             // Inicializa os elementos do chatbot
             chatbotWindow = document.getElementById('chatbot-window');
@@ -3321,7 +3467,7 @@
                 }, 4000);
             }
 
-            // --- LÓGICA DA API PAGESPEED (Barra de Busca) (MANTIDO) ---
+            // --- LÓGICA DA API PAGESPEED (Barra de Busca) ---
             const seoInput = document.getElementById('seo-url-input');
             const seoButton = document.getElementById('seo-submit-button');
             const seoNote = document.getElementById('seo-result-note');
@@ -3364,7 +3510,7 @@
                 });
             }
 
-            // --- LÓGICA DO PLAYER DE VÍDEO STORYTELLING (MANTIDO) ---
+            // --- LÓGICA DO PLAYER DE VÍDEO STORYTELLING ---
             const videoContainer = document.getElementById('storytelling-video-container');
             const video = document.getElementById('storytelling-video');
             if (videoContainer && video) {
@@ -3383,7 +3529,8 @@
                 video.pause();
             }
 
-            // --- LÓGICA DOS BOTÕES DOS PLANOS (MANTIDO) ---
+            // --- LÓGICA DOS BOTÕES DOS PLANOS ---
+            // Adiciona os listeners aos botões dos planos para abrir o chat
             const btnStarter = document.getElementById('btn-contratar-starter');
             const btnFull = document.getElementById('btn-orcamento-full');
             const btnEco = document.getElementById('btn-diagnostico-ecossistema');
@@ -3391,6 +3538,9 @@
             if(btnStarter) btnStarter.addEventListener('click', (e) => {
                 e.preventDefault();
                 toggleChat(e);
+                // Futuramente, pode adicionar uma mensagem inicial:
+                // addMessage("Olá! Tenho interesse no plano Base Ouro (Lite).", true);
+                // sendMessage("Olá! Tenho interesse no plano Base Ouro (Lite)."); // (precisa adaptar a V5 para isso)
             });
             if(btnFull) btnFull.addEventListener('click', (e) => {
                 e.preventDefault();
