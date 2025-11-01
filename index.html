@@ -2031,52 +2031,54 @@
     <section id="planos" class="planos">
         <h2 class="section-title">Comece Agora. Escolha seu Fluxo.</h2>
         <div class="planos-grid">
-            <!-- CARD 1: STARTER -->
+            <!-- CARD 1: Base Ouro (Lite) - Destaque -->
             <div class="plano-card destaque">
                 <span class="plano-badge">Mais Procurado</span>
-                <h3>Base de Ouro: STARTER</h3>
-                <p class="plano-ideal">Ideal para negócios que precisam de presença digital rápida.</p>
+                <h3>Base Ouro (Lite)</h3>
+                <p class="plano-ideal">Ideal para negócios que precisam de presença digital rápida e sem mensalidade.</p>
                 <div class="plano-preco">
-                    R$ 600
-                    <span>Pagamento Único</span>
+                    R$ 700
+                    <span>Pagamento Único (1º Ano)</span>
                 </div>
                 <ul class="plano-features">
-                    <li>Site 1 Página</li>
-                    <li>SEO Básico</li>
-                    <li>GA4 Configurado</li>
-                    <li>Módulo Blog (via Colab)</li>
+                    <li>Site 1 Página (Até 5 Seções)</li>
+                    <li>SEO Técnico Otimizado</li>
+                    <li>Hospedagem 1º Ano Grátis</li>
+                    <li>Painel de Coleta de Leads (Planilhas Google)</li>
                 </ul>
                 <button id="btn-contratar-starter" class="plano-cta gold">Contratar Agora</button>
             </div>
 
-            <!-- CARD 2: ECOSSISTEMA -->
+            <!-- CARD 2: Base Ouro (Full) - Meio -->
             <div class="plano-card">
-                <h3>Ecossistema Completo</h3>
-                <p class="plano-ideal">Ideal para empresas que buscam automação máxima e ROI.</p>
+                <h3>Base Ouro (Full)</h3>
+                <p class="plano-ideal">Ideal para negócios que precisam de um site robusto e customizado.</p>
                 <div class="plano-preco">
                     Sob Orçamento
                 </div>
                 <ul class="plano-features">
-                    <li>Base de Ouro Completa</li>
-                    <li>Motor de Ouro (Vendedor AI)</li>
-                    <li>Mapa de Ouro (Power BI)</li>
+                    <li>Site Multi-Páginas (Ilimitado)</li>
+                    <li>Layout 100% Personalizado</li>
+                    <li>Funções Customizadas (Blog, E-commerce, etc.)</li>
+                    <li>Hospedagem Dedicada (sob consulta)</li>
                 </ul>
-                <button id="btn-pedir-diagnostico" class="plano-cta black">Pedir Diagnóstico</button>
+                <button id="btn-orcamento-full" class="plano-cta black">Solicitar Orçamento</button>
             </div>
 
-            <!-- CARD 3: ANUAL -->
+            <!-- CARD 3: Ecossistema Completo - Direita -->
             <div class="plano-card">
-                <h3>Plano Anual (Setup Zero)</h3>
-                <p class="plano-ideal">Ideal para quem quer o ecossistema completo sem investimento inicial.</p>
+                <h3>Ecossistema Completo</h3>
+                <p class="plano-ideal">A máquina de vendas completa: Site, IA e Análise de ROI.</p>
                 <div class="plano-preco">
-                    Consulte
+                    Sob Orçamento
                 </div>
                 <ul class="plano-features">
-                    <li>Motor de Ouro</li>
-                    <li>Mapa de Ouro</li>
-                    <li>Base Completa (Custo Zero)</li>
+                    <li>Base Ouro (Full) Inclusa</li>
+                    <li>Motor de Ouro (Vendedor AI)</li>
+                    <li>Mapa de Ouro (Dashboard Power BI)</li>
+                    <li>Automação e Nutrição de Leads (N8N)</li>
                 </ul>
-                <button id="btn-saber-mais-anual" class="plano-cta black">Saber Mais</button>
+                <button id="btn-diagnostico-ecossistema" class="plano-cta black">Pedir Diagnóstico</button>
             </div>
         </div>
     </section>
@@ -2256,12 +2258,566 @@
         </div>
     </footer>
 
-    <!-- CHATBOT FLUTUANTE -->
+    <!-- CHATBOT FLUTUANTE ANTIGO -->
+    <!-- Este bloco é removido e substituído pelo novo sistema.
     <div class="chat-float" onclick="abrirChatbot('geral')">
         <div class="chat-icon">
             <i data-lucide="message-circle-more" class="lucide-icon"></i>
         </div>
     </div>
+    -->
+    
+    <!-- ### [INÍCIO] CÓDIGO DO CHATBOT DE IA INJETADO ### -->
+
+    <!-- ESPAÇADOR DO FOOTER PARA O CHATBOT MOBILE -->
+    <div class="mobile-footer-spacer"></div>
+
+    <!-- ### NOVO CHATBOT FLUTUANTE (ANALISTA DE OURO) ### -->
+    <div class="floating-chatbot">
+        
+        <!-- Botão de Preview -->
+        <div class="chatbot-preview-button" id="chatbot-preview-button" aria-label="Abrir Analista de Ouro">
+            <div class="preview-header">
+                <div class="preview-avatar">
+                     <i data-lucide="brain-circuit" class="lucide-icon"></i>
+                </div>
+                <div class="preview-info">
+                    <strong>Analista de Ouro</strong>
+                    <span>Online</span>
+                </div>
+            </div>
+            <div class="preview-message-bubble">
+                <span id="preview-message-text">Olá! 🚀 Posso analisar seu SEO?</span>
+            </div>
+        </div>
+
+        <!-- Janela principal do Chat -->
+        <div class="chatbot-window" id="chatbot-window">
+            <div class="chatbot-header">
+                <div class="chatbot-header-avatar">
+                    <i data-lucide="brain-circuit" class="lucide-icon"></i>
+                </div>
+                <div class="chatbot-header-info">
+                    <h3>Analista <span>de Ouro</span></h3>
+                    <p>Conectado via Gemini</p>
+                </div>
+                <button class="chatbot-close" id="chatbot-close-button" aria-label="Fechar chat">
+                    <i data-lucide="x" class="lucide-icon"></i>
+                </button>
+            </div>
+
+            <div class="chatbot-messages" id="chatbot-messages-container">
+                <!-- Mensagem inicial do Bot -->
+                <div class="message bot">
+                    <div class="message-avatar">
+                        <i data-lucide="brain-circuit" class="lucide-icon"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            Olá! Eu sou o <strong>Analista de Ouro</strong>, uma IA treinada em SEO e conversão.
+                            <br><br>
+                            Cole a URL completa do seu site (ex: <code>https://seusite.com.br</code>) e eu farei um diagnóstico gratuito para você, comparando com nosso padrão-ouro.
+                        </div>
+                        <div class="message-time">Agora</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chatbot-input-area">
+                <input 
+                    type="text" 
+                    class="chatbot-input" 
+                    id="chatbot-input-field" 
+                    placeholder="Cole sua URL aqui..."
+                    autocomplete="off"
+                >
+                <button class="chatbot-send" id="chatbot-send-button" aria-label="Enviar mensagem">
+                    <i data-lucide="send" class="lucide-icon"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- ### [FIM] NOVO CHATBOT FLUTUANTE ### -->
+
+    <style>
+        /* --- CSS INJETADO DO CHATBOT (SOMENTE ESTILOS NOVOS) --- */
+        
+        /* Ajuste para o botão flutuante antigo (removido no HTML, mas mantido o CSS antigo) */
+        .chat-float {
+            /* Como o HTML do chat-float foi removido e substituído, este CSS é agora obsoleto, mas o deixo para referência */
+            display: none !important; /* Força sumir se o usuário o recolocar */
+        }
+
+        /* Espaçador para o footer no mobile, para o chat não cobrir */
+        .mobile-footer-spacer {
+            display: none; /* Escondido por padrão */
+            height: 120px; /* Altura do preview do chat + margem */
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-footer-spacer {
+                display: block;
+            }
+        }
+
+        /* --- Estilos da Bolha de Chat (Copiados e adaptados do Taurusbot) --- */
+        
+        /* O .chat-float antigo foi removido. Este é o novo container */
+        .floating-chatbot {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            left: 15px; /* Adicionado para dar espaço no mobile */
+            z-index: 9999;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .chatbot-preview-button {
+            width: 100%; /* Ocupa o espaço definido pelo pai */
+            max-width: 300px; /* Largura máxima */
+            margin-left: auto; /* Alinha à direita em telas maiores */
+            margin-right: 0;
+            background-color: var(--preto); /* COR: Fundo Preto */
+            border: 1px solid var(--dourado-dark); /* COR: Borda Dourada */
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(201, 169, 97, 0.3); /* COR: Sombra Dourada */
+            transition: all 0.3s ease;
+            animation: pulse-gold 2s infinite;
+            /* Garante que esteja visível */
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        .chatbot-preview-button:hover {
+            transform: scale(1.03); /* Leve scale */
+            box-shadow: 0 12px 35px rgba(201, 169, 97, 0.5); /* COR: Sombra Dourada mais forte */
+        }
+        
+        .chatbot-preview-button.active {
+            /* Esconde o botão de preview quando o chat principal está ativo */
+            opacity: 0;
+            transform: scale(0.9);
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .preview-avatar {
+            width: 35px;
+            height: 35px;
+            background: var(--dourado); /* COR: Avatar Dourado */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .preview-avatar .lucide-icon {
+             width: 20px;
+             height: 20px;
+             color: var(--preto); /* COR: Ícone Preto */
+             stroke-width: 2;
+        }
+
+        .preview-info strong {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            color: var(--branco); /* COR: Texto Branco */
+            font-size: 0.9rem;
+        }
+
+        .preview-info span {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--cinza-text); /* COR: "Online" Cinza */
+        }
+
+        .preview-message-bubble {
+            background-color: rgba(201, 169, 97, 0.1); /* COR: Fundo Dourado transparente */
+            border-left: 3px solid var(--dourado); /* COR: Borda Dourada */
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--cinza-text-dark-bg); /* COR: Texto claro */
+        }
+        
+        /* Estilo para <code> dentro das bolhas de chat */
+        .message-bubble code {
+            background-color: rgba(0,0,0,0.2);
+            padding: 0.1em 0.4em;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--dourado);
+        }
+        
+        .message.user .message-bubble code {
+             background-color: rgba(255,255,255,0.2);
+             color: var(--preto);
+        }
+
+        /* Estilo para <ul> e <li> dentro das bolhas de chat */
+        .message-bubble ul {
+            padding-left: 20px;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .message-bubble li {
+            margin-bottom: 0.25rem;
+        }
+
+
+        .preview-message-bubble #preview-message-text {
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        @keyframes pulse-gold {
+            0%, 100% {
+                box-shadow: 0 8px 25px rgba(201, 169, 97, 0.3);
+            }
+            50% {
+                box-shadow: 0 8px 35px rgba(201, 169, 97, 0.5);
+            }
+        }
+
+        /* Janela Principal do Chatbot (Modal) */
+        .chatbot-window {
+            position: fixed;
+            bottom: 15px; /* Alinha com o botão */
+            right: 15px; /* Alinha com o botão */
+            left: 15px; /* Alinha com o botão */
+            width: calc(100% - 30px); /* Ocupa a largura no mobile */
+            max-width: 400px; /* Largura máxima */
+            height: 70vh; /* Altura boa para mobile */
+            max-height: 550px; /* Altura máxima */
+            background-color: var(--grafite-light); /* COR: Fundo Grafite Claro */
+            border: 1px solid rgba(201, 169, 97, 0.3); /* COR: Borda Dourada */
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            display: none; /* Começa escondido */
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 9998;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+        
+        .chatbot-window.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, var(--dourado-dark), var(--dourado)); /* COR: Gradiente Dourado */
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .chatbot-header-avatar {
+            width: 45px;
+            height: 45px;
+            background-color: rgba(0, 0, 0, 0.2); /* COR: Fundo Preto transparente */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .chatbot-header-avatar .lucide-icon {
+            color: var(--preto); /* COR: Ícone Preto */
+            width: 24px;
+            height: 24px;
+        }
+
+        .chatbot-header-info h3 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 0.2rem;
+            color: var(--preto); /* COR: Título Preto */
+            text-transform: none; /* Sem uppercase */
+        }
+        
+        .chatbot-header-info h3 span {
+            color: var(--preto); /* COR: 'de Ouro' Preto */
+            opacity: 0.8;
+        }
+
+        .chatbot-header-info p {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            color: var(--preto); /* COR: "Online" Preto */
+        }
+
+        .chatbot-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: var(--preto); /* COR: X Preto */
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .chatbot-close .lucide-icon {
+            color: var(--preto);
+            width: 24px;
+            height: 24px;
+        }
+
+        .chatbot-close:hover {
+            background-color: rgba(0, 0, 0, 0.15);
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background-color: var(--grafite); /* COR: Fundo do chat Grafite */
+        }
+
+        .chatbot-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chatbot-messages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .chatbot-messages::-webkit-scrollbar-thumb {
+            background: var(--dourado); /* COR: Scroll Dourado */
+            border-radius: 3px;
+        }
+        
+        .message {
+            display: flex;
+            gap: 0.8rem;
+            max-width: 90%;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+        }
+        
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse; /* Inverte a ordem */
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+            color: var(--preto); /* COR: Ícone Preto */
+        }
+
+        .message.bot .message-avatar {
+             background: var(--dourado); /* COR: Avatar Bot Dourado */
+        }
+
+        .message.user .message-avatar {
+             background-color: #333;
+             color: var(--branco); /* COR: Ícone User Branco */
+        }
+        
+        .message.user .message-avatar .lucide-icon {
+            color: var(--branco);
+        }
+
+        .message-content {
+            max-width: calc(100% - 45px); /* Ajusta a largura */
+        }
+
+        .message-bubble {
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            color: var(--branco); /* COR: Texto da bolha branco */
+        }
+        
+        .message.bot .message-bubble {
+            background-color: var(--grafite-light); /* COR: Bolha do Bot */
+            border-bottom-left-radius: 4px;
+        }
+        
+        .message.user .message-bubble {
+            background-color: var(--dourado-dark); /* COR: Bolha do User Dourada */
+            color: var(--preto); /* COR: Texto do User Preto */
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: var(--cinza-text); /* COR: Cinza */
+            margin-top: 0.4rem;
+        }
+        
+        .message.user .message-time {
+            text-align: right;
+        }
+
+        /* Indicador de "digitando" */
+        .typing-indicator {
+            display: flex;
+            gap: 0.3rem;
+            padding: 0.8rem 1rem;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background-color: var(--dourado); /* COR: Dourado */
+            border-radius: 50%;
+            animation: typing-gold 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing-gold {
+            0%, 60%, 100% {
+                opacity: 0.3;
+                transform: translateY(0);
+            }
+            30% {
+                opacity: 1;
+                transform: translateY(-8px);
+            }
+        }
+
+        .chatbot-input-area {
+            padding: 1rem;
+            background-color: var(--grafite-light); /* COR: Fundo do input */
+            border-top: 1px solid #222;
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .chatbot-input {
+            flex: 1;
+            background-color: var(--grafite); /* COR: Input Grafite */
+            border: 1px solid #333;
+            border-radius: 20px;
+            padding: 0.8rem 1rem;
+            color: var(--branco); /* COR: Texto Branco */
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-input:focus {
+            border-color: var(--dourado); /* COR: Borda Dourada */
+            background-color: var(--grafite-light);
+        }
+
+        .chatbot-input::placeholder {
+            color: var(--cinza-text);
+        }
+
+        .chatbot-send {
+            background: var(--dourado); /* COR: Botão Dourado */
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--preto); /* COR: Ícone Preto */
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .chatbot-send .lucide-icon {
+             color: var(--preto);
+             width: 20px;
+             height: 20px;
+        }
+
+        .chatbot-send:hover {
+            transform: scale(1.05);
+            background-color: var(--dourado-dark);
+        }
+
+        .chatbot-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Ajuste de Posicionamento em Desktop */
+        @media (min-width: 768px) {
+            .floating-chatbot {
+                left: auto;
+                bottom: 30px;
+                right: 30px;
+            }
+            
+            .chatbot-preview-button {
+                width: 300px;
+                margin-left: auto;
+            }
+            
+            .chatbot-window {
+                left: auto; 
+                bottom: 120px; 
+                right: 30px;
+                width: 400px;
+                height: 550px;
+            }
+        }
+        
+        /* Regras para mobile */
+        @media (max-width: 768px) {
+            .chatbot-window {
+                left: 15px; 
+                right: 15px;
+            }
+        }
+
+        /* --- FIM CSS INJETADO DO CHATBOT --- */
+    </style>
 
     <script>
         // --- LÓGICA DO INDICADOR DE ROLAGEM VERTICAL (GRÁFICO) ---
@@ -2390,376 +2946,236 @@
              observer.observe(el);
         });
 
-        // Função placeholder para chatbot
+        // --- DEFINIÇÃO DE FUNÇÕES GLOBAIS PARA O CHATBOT ---
+
+        // Variáveis globais para os elementos do chatbot
+        let chatbotWindow; 
+        let chatbotButton;
+        let chatbotInput;
+        let chatbotSend;
+        let chatbotMessages;
+
+        // 1. Função Global de Abrir/Fechar o Chatbot
+        function toggleChat(e) {
+            if (e) e.preventDefault();
+            
+            // Tenta obter elementos se eles ainda não estiverem definidos (pode ser chamada antes do DOMContentLoaded)
+            if (!chatbotWindow) chatbotWindow = document.getElementById('chatbot-window');
+            if (!chatbotButton) chatbotButton = document.getElementById('chatbot-preview-button');
+            if (!chatbotInput) chatbotInput = document.getElementById('chatbot-input-field');
+
+            if (!chatbotWindow || !chatbotButton || !chatbotInput) {
+                console.error("Chatbot elements not found during toggleChat execution.");
+                return;
+            }
+            
+            const isActive = chatbotWindow.classList.contains('active');
+            
+            if (isActive) {
+                chatbotWindow.classList.remove('active');
+                chatbotButton.classList.remove('active');
+            } else {
+                chatbotWindow.classList.add('active');
+                chatbotButton.classList.add('active');
+                setTimeout(() => chatbotInput.focus(), 300);
+            }
+        }
+
+        // Função placeholder para o botão flutuante antigo (agora redireciona)
         function abrirChatbot(fluxo) {
             console.log('Abrindo chatbot com fluxo:', fluxo);
-            console.log(`Função de chatbot chamada para: ${fluxo}`);
+            toggleChat(); 
         }
 
-        // Event Listeners para os CTAs dos planos
-        document.getElementById('btn-contratar-starter').onclick = function() {
-            abrirChatbot('venda_starter');
-        };
+        // --- Resto do código (Funções Helpers) ---
 
-        document.getElementById('btn-pedir-diagnostico').onclick = function() {
-            abrirChatbot('diagnostico_ecossistema');
-        };
+        // Formata a hora atual
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
 
-        document.getElementById('btn-saber-mais-anual').onclick = function() {
-            abrirChatbot('plano_anual');
-        };
+        // Adiciona mensagem ao chat
+        function addMessage(text, isUser = false) {
+             if (!chatbotMessages) chatbotMessages = document.getElementById('chatbot-messages-container');
 
-        // Smooth scroll para links internos (Adicionando a função de fechar menu)
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                const target = document.querySelector(targetId);
-                if (target) {
-                    // Feche o menu mobile (se estiver aberto) antes de rolar
-                    if (mobileNav && mobileNav.classList.contains('active')) {
-                        navToggle.classList.remove('active');
-                        mobileNav.classList.remove('active');
-                        document.body.style.overflow = '';
-                    }
-                     // Calculate offset for fixed header
-                    const headerOffset = 75; // Height of the fixed header
-                    const elementPosition = target.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            let formattedText = text.replace(/\n/g, '<br>');
+            formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            formattedText = formattedText.replace(/`(.*?)`/g, '<code>$1</code>');
+            formattedText = formattedText.replace(/<br>\* (.*)/g, '<li>$1</li>');
+            formattedText = formattedText.replace(/^\* (.*)/gm, '<li>$1</li>');
+            
+            if(formattedText.includes('<li>')) {
+                formattedText = formattedText.replace(/<br>(<li>)/g, '$1');
+                formattedText = '<ul>' + formattedText + '</ul>';
+                formattedText = formattedText.replace(/<\/li><br>/g, '</li>'); 
+            }
 
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                    });
+
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i data-lucide="${isUser ? 'user' : 'brain-circuit'}" class="lucide-icon"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble">${formattedText}</div>
+                    <div class="message-time">${getCurrentTime()}</div>
+                </div>
+            `;
+            
+            if (chatbotMessages) {
+                chatbotMessages.appendChild(messageDiv);
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
                 }
-            });
-        });
-
-
-        /* --- LÓGICA DE EXIBIÇÃO DE CARDS NO FLUXOGRAMA (ACORDEÃO/SLICER) --- */
-        const flowSteps = document.querySelectorAll('.flow-step');
-        const flowItemWrappers = document.querySelectorAll('.flow-item-wrapper');
-
-        // Função para alternar o card (slicer)
-        function toggleFlowCard(targetBtn) {
-            const targetCardId = targetBtn.getAttribute('data-target');
-            const targetCard = document.getElementById(targetCardId);
-            const targetWrapper = targetBtn.closest('.flow-item-wrapper');
-
-            // 1. Verifica se o item clicado já está ativo
-            const isActive = targetBtn.classList.contains('active');
-
-            // 2. Fecha todos os outros (Acordeão)
-            flowItemWrappers.forEach(wrapper => {
-                wrapper.classList.remove('active');
-                wrapper.querySelector('.flow-step').classList.remove('active');
-                const card = wrapper.querySelector('.flow-card');
-                if (card) {
-                    card.classList.remove('active');
-                    // Reset CSS properties for transition
-                    card.style.maxHeight = null;
-                    card.style.padding = ''; // <!-- MODIFICAÇÃO EXECUTADA (BUG FIX) -->
-                }
-            });
-
-            // 3. Se o item não estava ativo, abre ele
-            if (!isActive) {
-                targetWrapper.classList.add('active');
-                targetBtn.classList.add('active');
-                targetCard.classList.add('active');
-
-                // Define a altura máxima para a transição funcionar (recalculada)
-                // Usamos scrollHeight do wrapper para garantir que o card seja visível
-                // Adicionamos um pequeno buffer (+ 50px) para garantir que o padding caiba
-                // NOTA: No CSS, o controle principal é feito por max-height/padding no .flow-card.active.
-                // Aqui apenas garantimos que a classe .active seja aplicada.
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
             }
         }
 
-        // Adiciona o listener de clique a cada botão/passo
-        flowSteps.forEach(step => {
-            step.addEventListener('click', () => {
-                toggleFlowCard(step);
-            });
-        });
+        // Mostra indicador de "digitando"
+        function showTypingIndicator() {
+             if (!chatbotMessages) chatbotMessages = document.getElementById('chatbot-messages-container');
 
-        // Inicializa o primeiro card como ativo
-        const firstStep = document.querySelector('.flow-step');
-        if (firstStep) {
-             // Chamamos com o item ativo para que ele feche e abra o primeiro
-             // Assim, se for o primeiro carregamento, ele garante o estado inicial.
-             toggleFlowCard(firstStep);
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot typing-message';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="message-avatar">
+                     <i data-lucide="brain-circuit" class="lucide-icon"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble">
+                        <div class="typing-indicator">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            if (chatbotMessages) {
+                chatbotMessages.appendChild(typingDiv);
+                 if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            }
         }
 
-
-        // --- LÓGICA DO HERO SLIDER E ANIMAÇÃO DE FUNDO MODIFICADA ---
-        // 1. Variáveis Globais
-        const slides = document.querySelectorAll('.hero-slide');
-        const prevSlideBtn = document.getElementById('prevSlideBtn');
-        const nextSlideBtn = document.getElementById('nextSlideBtn');
-        let currentSlide = 0;
-        // Aumentado o tempo para dar espaço para a animação mais longa (3.0s)
-        const slideIntervalTime = 8000;
-        let intervalId;
-
-        // Array com as classes de animação para ciclar
-        const animationClasses = [
-            'animate-zoom-in-out',        // Efeito de Zoom (Pulando/Zoom)
-            'animate-slide-block-down',   // Efeito Bloco Caindo
-            'animate-slide-block-right',  // Efeito Bloco Entrando Lateral
-        ];
-        let currentAnimationIndex = 0; // Começa com o primeiro
-
-        // 2. Função para exibir o slide
-        function showSlide(n) {
-            const prevSlide = slides[currentSlide];
-
-            // 1. Remove classes ativas e de animação do slide anterior
-            if (prevSlide) {
-                prevSlide.classList.remove('active');
-                animationClasses.forEach(cls => prevSlide.classList.remove(cls));
-                // Força o reset da animação do conteúdo para que ele possa ser animado no próximo slide
-                const prevContent = prevSlide.querySelector('.hero-content');
-                if(prevContent) {
-                    prevContent.style.animation = 'none';
-                    void prevContent.offsetWidth; // Trigger reflow
-                }
+        // Remove indicador de "digitando"
+        function removeTypingIndicator() {
+            const typingDiv = document.getElementById('typing-indicator');
+            if (typingDiv && typingDiv.parentNode) {
+                typingDiv.parentNode.removeChild(typingDiv);
             }
-
-            // Garante que o índice sempre esteja correto (loop)
-            currentSlide = (n + slides.length) % slides.length;
-
-            const nextSlideEl = slides[currentSlide];
-
-            // 2. Aplica a classe de animação (que afeta a imagem de fundo)
-            const animationClass = animationClasses[currentAnimationIndex];
-            nextSlideEl.classList.add(animationClass);
-
-            // 3. Adiciona a classe 'active' para exibir o slide
-            nextSlideEl.classList.add('active');
-
-            // 4. Re-aplica as animações de entrada de texto
-            const nextContent = nextSlideEl.querySelector('.hero-content');
-            if(nextContent) {
-                // Remove a propriedade style para reativar as animações definidas no CSS (slideInDown/fadeInUp)
-                nextContent.style.animation = '';
-            }
-
-            // 5. Atualiza o índice da animação para a próxima vez
-            currentAnimationIndex = (currentAnimationIndex + 1) % animationClasses.length;
         }
 
-        // 3. Função para passar para o próximo slide
-        function nextSlide() {
-            showSlide(currentSlide + 1);
-        }
+        // Função Principal de Envio
+        async function sendMessage() {
+            if (!chatbotInput) chatbotInput = document.getElementById('chatbot-input-field');
+             if (!chatbotSend) chatbotSend = document.getElementById('chatbot-send-button');
 
-        // 4. Função para voltar o slide
-        function prevSlide() {
-            // Ajusta o índice da animação também, para que a próxima animação seja diferente
-            currentAnimationIndex = (currentAnimationIndex - 1 + animationClasses.length) % animationClasses.length;
-            showSlide(currentSlide - 1);
-        }
-
-        // 5. Função para reiniciar o intervalo automático
-        function resetInterval() {
-            clearInterval(intervalId);
-            intervalId = setInterval(nextSlide, slideIntervalTime);
-        }
-
-        // 6. Inicia o slider e o intervalo
-        if (slides.length > 0) {
-            // Inicializa o primeiro slide com a primeira animação (se não for o slide 0, que já está 'active')
-            if (currentSlide === 0) {
-                slides[0].classList.add(animationClasses[0]);
-                currentAnimationIndex = 1; // Prepara para a próxima animação
+            if (!chatbotInput) return;
+            let message = chatbotInput.value.trim();
+            
+            if (message === '') return;
+            
+            if (!message.startsWith('http://') && !message.startsWith('https://')) {
+                message = 'https://' + message;
             }
-            intervalId = setInterval(nextSlide, slideIntervalTime);
-        }
+            
+            addMessage(message, true);
+            chatbotInput.value = '';
+            
+            showTypingIndicator();
+            chatbotSend.disabled = true;
 
-        // 7. Event Listeners para os botões
-        if (prevSlideBtn && nextSlideBtn) {
-            prevSlideBtn.addEventListener('click', () => {
-                prevSlide();
-                resetInterval(); // Reseta o timer automático após a interação manual
-            });
-            nextSlideBtn.addEventListener('click', () => {
-                nextSlide();
-                resetInterval(); // Reseta o timer automático após a interação manual
-            });
-        }
-
-
-        // --- ANIMAÇÃO DE PARTÍCULAS (CANVAS) ---
-        const canvas = document.getElementById('particle-background');
-        if (canvas) {
-            const ctx = canvas.getContext('2d');
-            const heroSection = document.querySelector('.hero');
-            let width = heroSection.clientWidth;
-            let height = heroSection.clientHeight;
-            let particleArray = [];
-            const particleCount = 40;
-
-            // Cor das partículas (dourado)
-            const particleColor = getComputedStyle(document.documentElement).getPropertyValue('--particle-color');
-
-            canvas.width = width;
-            canvas.height = height;
-
-            // Redimensiona o canvas quando a tela muda
-            const resizeObserver = new ResizeObserver(() => {
-                width = heroSection.clientWidth;
-                height = heroSection.clientHeight;
-                canvas.width = width;
-                canvas.height = height;
-            });
-            resizeObserver.observe(heroSection);
-
-
-            class Particle {
-                constructor() {
-                    this.size = Math.random() * 3 + 1; // Tamanho 1-4
-                    // Inicia a partícula na lateral esquerda ou direita
-                    this.direction = Math.random() > 0.5 ? 1 : -1;
-                    this.x = this.direction === 1 ? -this.size : width + this.size;
-                    this.y = Math.random() * height;
-                    // Velocidade mais lenta para ser sutil
-                    this.vx = (Math.random() * 0.3 + 0.1) * this.direction;
-                    this.vy = Math.random() * 0.1 - 0.05; // Movimento vertical sutil
-                    this.opacity = Math.random() * 0.5 + 0.3;
-                }
-
-                update() {
-                    this.x += this.vx;
-                    this.y += this.vy;
-
-                    // Se a partícula sair da tela, reseta ela do lado oposto
-                    if (this.direction === 1 && this.x > width + this.size * 2) {
-                        this.x = -this.size * 2;
-                        this.y = Math.random() * height;
-                    } else if (this.direction === -1 && this.x < -this.size * 2) {
-                        this.x = width + this.size * 2;
-                        this.y = Math.random() * height;
-                    }
-                    // Mantém a partícula dentro da altura
-                    if (this.y > height || this.y < 0) {
-                        this.vy *= -1;
-                    }
-                }
-
-                draw() {
-                    ctx.fillStyle = particleColor;
-                    ctx.globalAlpha = this.opacity;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.globalAlpha = 1; // Reseta a opacidade global
-                }
-            }
-
-            function initParticles() {
-                for (let i = 0; i < particleCount; i++) {
-                    particleArray.push(new Particle());
-                }
-            }
-
-            function animateParticles() {
-                // Efeito "rastro" sutil (para não ficar muito carregado)
-                ctx.fillStyle = 'rgba(10, 10, 10, 0.2)';
-                ctx.fillRect(0, 0, width, height);
-
-                for (let i = 0; i < particleArray.length; i++) {
-                    particleArray[i].update();
-                    particleArray[i].draw();
-                }
-                requestAnimationFrame(animateParticles);
-            }
-
-             // Inicia a animação DEPOIS que a página carregar
-            window.addEventListener('load', function() {
-                if (canvas) { // Verifica novamente se o canvas existe
-                    initParticles();
-                    animateParticles();
-                }
-            });
-        }
-
-        // Executa o Lucide Icons E a lógica do carrossel
-        document.addEventListener('DOMContentLoaded', (event) => {
-            // Check if lucide exists before calling createIcons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            } else {
-                console.error("Lucide library not loaded.");
-            }
-
-            // --- LÓGICA DO CARROSSEL DE BLOG ---
-            const carouselWrapper = document.querySelector('.blog-carousel-wrapper');
-            if (carouselWrapper) {
-                const carousel = carouselWrapper.querySelector('.blog-carousel');
-                const prevBtn = carouselWrapper.querySelector('.arrow-left');
-                const nextBtn = carouselWrapper.querySelector('.arrow-right');
-
-                if(carousel && prevBtn && nextBtn) {
-                     // Wait for images and layout to settle before calculating width
-                    setTimeout(() => {
-                        const firstCard = carousel.querySelector('.blog-card');
-                        if (!firstCard) return; // Exit if no cards found
-
-                        const cardWidth = firstCard.offsetWidth;
-                        const cardGap = parseFloat(window.getComputedStyle(carousel).gap);
-                        const scrollAmount = cardWidth + cardGap;
-
-                        nextBtn.addEventListener('click', () => {
-                            carousel.scrollLeft += scrollAmount;
-                        });
-
-                        prevBtn.addEventListener('click', () => {
-                            carousel.scrollLeft -= scrollAmount;
-                        });
-                    }, 500); // Delay to ensure layout calculation is correct
-                }
-            }
-
-            // --- LÓGICA DO PLAYER DE VÍDEO STORYTELLING ---
-            const videoContainer = document.getElementById('storytelling-video-container');
-            const video = document.getElementById('storytelling-video');
-
-            if (videoContainer && video) {
-                // Listener para o clique no container
-                videoContainer.addEventListener('click', () => {
-                    if (video.paused) {
-                        video.play();
-                        videoContainer.classList.add('playing');
-                        video.muted = false; // Tira o mudo ao clicar
-                    } else {
-                        video.pause();
-                        videoContainer.classList.remove('playing');
-                    }
-                });
-
-                // Listener para o próprio vídeo (caso o usuário pause pelos controles)
-                video.addEventListener('pause', () => {
-                    videoContainer.classList.remove('playing');
-                });
-
-                // Listener para o play (garante que a classe seja aplicada)
-                video.addEventListener('play', () => {
-                    videoContainer.classList.add('playing');
-                });
-
-                // Garante que o vídeo comece pausado para mostrar o overlay
-                video.pause();
-            }
-
-            // --- [NOVO] LÓGICA DA API PAGESPEED ---
-
-            // ####################################################################
-            // # DIRETOR: SUBSTITUA PELA URL DO SEU BACKEND NO RENDER
-            // ####################################################################
+            // --- Conexão Real com o Backend ---
             const RENDER_API_URL = "https://fluxodeouro.onrender.com"; // <-- MUDE AQUI
-            // ####################################################################
+            try {
+                const response = await fetch(RENDER_API_URL + '/api/get-seo-diagnosis', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ user_url: message }), 
+                });
 
+                const data = await response.json();
+
+                if (response.ok && data.diagnosis) {
+                    addMessage(data.diagnosis, false);
+                } else {
+                    addMessage(data.error || 'Opa, não consegui analisar essa URL. Tente outra.', false);
+                    console.error("Erro da API /api/get-seo-diagnosis:", data.error || "Resposta inválida");
+                }
+
+            } catch (error) {
+                removeTypingIndicator();
+                addMessage('Erro de conexão com o Analista. 🔌 Tente novamente.', false);
+                console.error("Erro de rede ao chamar /api/get-seo-diagnosis:", error);
+            } finally {
+                 removeTypingIndicator();
+                 chatbotSend.disabled = false;
+                 chatbotInput.focus();
+            }
+        }
+
+        // --- Event Listeners Principais (Executados no DOMContentLoaded) ---
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Inicializa as referências dos elementos do chatbot
+            chatbotWindow = document.getElementById('chatbot-window');
+            chatbotButton = document.getElementById('chatbot-preview-button');
+            const chatbotClose = document.getElementById('chatbot-close-button');
+            chatbotInput = document.getElementById('chatbot-input-field'); 
+            chatbotSend = document.getElementById('chatbot-send-button');
+            chatbotMessages = document.getElementById('chatbot-messages-container');
+            const previewMessageEl = document.getElementById('preview-message-text');
+
+
+            // --- Abrir/Fechar chatbot (listeners) ---
+            if (chatbotButton) chatbotButton.addEventListener('click', toggleChat);
+            if (chatbotClose) chatbotClose.addEventListener('click', toggleChat);
+            
+            // Event Listeners para enviar
+            if (chatbotSend) chatbotSend.addEventListener('click', sendMessage);
+            if (chatbotInput) chatbotInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); 
+                    sendMessage();
+                }
+            });
+
+
+            // --- LÓGICA DO CHATBOT PREVIEW (Mantida) ---
+            const previewMessages = [
+                "Olá! 🚀 Posso analisar seu SEO?",
+                "Clique aqui para um diagnóstico de IA.",
+                "O que falta para seu site ter nota 100?",
+                "Fale com o Analista de Ouro.",
+                "Diagnóstico de SEO gratuito!"
+            ];
+            let messageIndex = 0;
+
+            if (previewMessageEl) {
+                setInterval(() => {
+                    messageIndex = (messageIndex + 1) % previewMessages.length;
+                    
+                    previewMessageEl.style.opacity = 0;
+                    setTimeout(() => {
+                        previewMessageEl.textContent = previewMessages[messageIndex];
+                        previewMessageEl.style.opacity = 1;
+                    }, 300);
+                }, 4000);
+            }
+            // --- FIM LÓGICA DO CHATBOT PREVIEW ---
+
+
+            // --- LÓGICA DA API PAGESPEED (Barra de Busca) ---
+
+            // A lógica da barra de busca precisa ser reescrita aqui dentro do DOMContentLoaded
             const seoInput = document.getElementById('seo-url-input');
             const seoButton = document.getElementById('seo-submit-button');
             const seoNote = document.getElementById('seo-result-note');
@@ -2773,17 +3189,15 @@
                         return;
                     }
 
-                    // Adiciona "https://" se o usuário esquecer
                     if (!url.startsWith('http://') && !url.startsWith('https://')) {
                         url = 'https://' + url;
-                        seoInput.value = url; // Atualiza o input para o usuário ver
+                        seoInput.value = url;
                     }
 
-                    // 1. Desabilita o botão e mostra o loading
                     seoButton.disabled = true;
                     seoButton.textContent = "Analisando...";
                     seoNote.textContent = "Iniciando diagnóstico... Isso pode levar alguns segundos.";
-                    seoNote.className = 'search-bar-note'; // Reseta o estilo
+                    seoNote.className = 'search-bar-note';
 
                     try {
                         const response = await fetch(RENDER_API_URL + '/api/get-pagespeed', {
@@ -2791,38 +3205,31 @@
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({
-                                inspected_url: url
-                            })
+                            body: JSON.stringify({ inspected_url: url })
                         });
 
                         const data = await response.json();
 
                         if (!response.ok) {
-                            // Se a API retornar um erro (4xx, 5xx), usa a mensagem dela
                             throw new Error(data.status_message || 'Ocorreu um erro no servidor.');
                         }
 
-                        // 2. Sucesso! Mostra a mensagem da API
                         seoNote.textContent = data.status_message;
                         seoNote.className = 'search-bar-note success';
 
                     } catch (error) {
-                        // 3. Erro! Mostra a mensagem de erro
                         console.error("Erro ao chamar API PageSpeed:", error);
                         seoNote.textContent = error.message.includes("Failed to fetch") ? "Erro de rede. Não foi possível conectar ao servidor." : error.message;
                         seoNote.className = 'search-bar-note error';
                     } finally {
-                        // 4. Reabilita o botão
                         seoButton.disabled = false;
                         seoButton.textContent = "Diagnosticar Agora";
                     }
                 });
             }
             // --- [FIM] LÓGICA DA API PAGESPEED ---
-            
         });
-
+        
     </script>
 </body>
 </html>
