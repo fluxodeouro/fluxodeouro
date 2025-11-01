@@ -5,9 +5,8 @@ import google.generativeai as genai
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
-import psycopg2 
-import traceback
-import threading # <- 1. Importado para background tasks
+import psycopg2 # <- Adicionado para salvar leads
+import traceback # <- Adicionado para logs de erro
 
 # Carrega variáveis do .env (APENAS para testes locais)
 load_dotenv() 
@@ -81,107 +80,7 @@ def extract_failing_audits(report_json):
     print(f"ℹ️  [Parser] Extraídas {len(failed_audits)} auditorias com falha.")
     return failed_audits
 
-# --- 5. [NOVO] Função de Background (A TAREFA LENTA) ---
-def generate_and_save_report(app_instance, lead_id, user_url, nome):
-    """
-    Esta função roda em uma thread separada (background).
-    Ela executa as chamadas lentas (PageSpeed, Gemini) e salva o 
-    resultado final no banco de dados.
-    """
-    # 'with app.app_context()' é essencial para a thread
-    # acessar as variáveis de ambiente e configurações do Flask.
-    with app_instance.app_context():
-        print(f"ℹ️  [Thread-{lead_id}] Iniciando análise em background para {user_url}")
-        conn_thread = None
-        try:
-            # 0. Pega as chaves de API (necessário dentro do contexto da thread)
-            PAGESPEED_API_KEY_THREAD = os.environ.get("PAGESPEED_API_KEY")
-            DATABASE_URL_THREAD = os.environ.get("DATABASE_URL")
-            GEMINI_API_KEY_THREAD = os.environ.get("GEMINI_API_KEY")
-
-            if not all([PAGESPEED_API_KEY_THREAD, DATABASE_URL_THREAD, GEMINI_API_KEY_THREAD]):
-                raise Exception("Variáveis de ambiente não encontradas na thread.")
-
-            # 1. Conecta ao DB (conexão exclusiva da thread)
-            conn_thread = psycopg2.connect(DATABASE_URL_THREAD)
-            cur_thread = conn_thread.cursor()
-
-            # 2. Marca o lead como 'PROCESSANDO'
-            cur_thread.execute("UPDATE leads_chatbot SET status_analise = 'PROCESSANDO' WHERE id = %s", (lead_id,))
-            conn_thread.commit()
-
-            # 3. Busca o relatório do PageSpeed (LENTO)
-            report_json, report_error = fetch_full_pagespeed_json(user_url, PAGESPEED_API_KEY_THREAD)
-            if report_error:
-                raise Exception(f"Erro PageSpeed: {report_error}")
-
-            # 4. Extrai falhas
-            failing_audits = extract_failing_audits(report_json)
-            seo_score = (report_json.get('lighthouseResult', {}).get('categories', {}).get('seo', {}).get('score', 0)) * 100
-
-            # 5. Configura Gemini (instância da thread)
-            genai.configure(api_key=GEMINI_API_KEY_THREAD)
-            model_thread = genai.GenerativeModel('gemini-flash-latest')
-
-            # 6. Cria o Prompt para o RELATÓRIO FINAL
-            system_prompt_final = f"""
-            Você é o "Analista de Ouro", um especialista sênior em SEO.
-            Sua missão é gerar um RELATÓRIO COMPLETO E DETALHADO para o {nome}, que enviou os dados para analisar o site {user_url}.
-
-            REGRAS:
-            1.  **Tom de Voz:** Profissional, técnico, mas didático.
-            2.  **FOCO NA SOLUÇÃO:** O usuário ( {nome} ) já é um lead. Seu objetivo é entregar valor.
-            3.  **ESTRUTURA:**
-                a. Comece com "Olá, {nome}! Aqui está seu diagnóstico completo para {user_url}."
-                b. Confirme a nota: (ex: "Seu score de SEO mobile é {seo_score:.0f}/100.").
-                c. Liste as falhas mais importantes e **explique de forma didática como corrigir CADA UMA DELAS**.
-                d. Dê uma conclusão e próximos passos.
-            4.  Use Markdown para formatar (listas, negrito, etc).
-
-            ---
-            ANÁLISE DO SITE ({user_url}):
-            - Score Geral de SEO: {seo_score:.0f}/100
-            - Auditorias com Falha: {json.dumps(failing_audits, ensure_ascii=False)}
-            ---
-
-            RELATÓRIO COMPLETO (comece aqui):
-            """
-
-            # 7. Chama a Gemini (LENTO)
-            response = model_thread.start_chat(history=[]).send_message(
-                system_prompt_final,
-                generation_config=genai.types.GenerationConfig(temperature=0.5),
-                safety_settings={'HATE': 'BLOCK_NONE', 'HARASSMENT': 'BLOCK_NONE', 'SEXUAL' : 'BLOCK_NONE', 'DANGEROUS' : 'BLOCK_NONE'}
-            )
-            final_report_text = response.text
-
-            # 8. Salva o relatório final no Banco
-            cur_thread.execute(
-                "UPDATE leads_chatbot SET status_analise = 'CONCLUIDO', relatorio_final = %s WHERE id = %s",
-                (final_report_text, lead_id)
-            )
-            conn_thread.commit()
-            print(f"✅  [Thread-{lead_id}] Relatório final salvo com sucesso.")
-
-        except Exception as e:
-            print(f"❌ ERRO [Thread-{lead_id}]: {e}")
-            traceback.print_exc()
-            if conn_thread:
-                # Salva a mensagem de erro no relatório
-                error_msg = f"Falha ao gerar o relatório: {str(e)}"
-                cur_thread.execute(
-                    "UPDATE leads_chatbot SET status_analise = 'FALHA', relatorio_final = %s WHERE id = %s",
-                    (error_msg, lead_id)
-                )
-                conn_thread.commit()
-        finally:
-            if conn_thread:
-                cur_thread.close()
-                conn_thread.close()
-                print(f"🔌  [Thread-{lead_id}] Conexão de background fechada.")
-
-
-# --- 6. [HELPER] Função de Setup do Banco ---
+# --- 5. [NOVO] Função para garantir que a tabela de leads exista ---
 def setup_database():
     """
     Garante que a tabela 'leads_chatbot' exista no banco de dados
@@ -197,7 +96,7 @@ def setup_database():
         conn = psycopg2.connect(DATABASE_URL)
         cur = conn.cursor()
         
-        # Comando SQL (Idempotente) - ADICIONADO colunas novas
+        # Comando SQL (Idempotente)
         cur.execute("""
             CREATE TABLE IF NOT EXISTS leads_chatbot (
                 id SERIAL PRIMARY KEY,
@@ -206,22 +105,13 @@ def setup_database():
                 whatsapp VARCHAR(50),
                 url_analisada TEXT,
                 score_seo INTEGER,
-                data_captura TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                status_analise VARCHAR(50) DEFAULT 'PENDENTE',
-                relatorio_final TEXT
+                data_captura TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         """)
         
-        # Garante que as colunas existam mesmo se a tabela já existia
-        cur.execute("""
-            ALTER TABLE leads_chatbot
-                ADD COLUMN IF NOT EXISTS status_analise VARCHAR(50) DEFAULT 'PENDENTE',
-                ADD COLUMN IF NOT EXISTS relatorio_final TEXT;
-        """)
-
         conn.commit()
         cur.close()
-        print("✅  [DB] Tabela 'leads_chatbot' (com colunas de status) verificada/criada com sucesso.")
+        print("✅  [DB] Tabela 'leads_chatbot' verificada/criada com sucesso.")
         
     except psycopg2.Error as e:
         print(f"❌ ERRO [DB] ao configurar a tabela 'leads_chatbot': {e}")
@@ -234,11 +124,11 @@ def setup_database():
             conn.close()
             print("🔌  [DB] Conexão de setup fechada.")
 
-# --- 7. Endpoints da API ---
+# --- 6. Endpoints da API ---
 
 @app.route('/')
 def index():
-    return jsonify({"message": "Fluxo de Ouro API Service (V5 - Captura de Leads com Threading) is running"})
+    return jsonify({"message": "Fluxo de Ouro API Service (V5 - Captura de Leads) is running"})
 
 # --- Endpoint 1: Barra de Busca (Diagnóstico Rápido) ---
 @app.route('/api/get-pagespeed', methods=['POST'])
@@ -280,8 +170,7 @@ def get_pagespeed_report():
 def get_seo_diagnosis():
     """
     Endpoint para o diagnóstico ISCA do Chatbot com Gemini.
-    Este endpoint continua sendo LENTO, pois precisa gerar a ISCA.
-    A tarefa de background só começa DEPOIS que o lead é capturado.
+    Não entrega a análise, apenas o resumo para capturar o lead.
     """
     print("\n--- Recebido trigger para /api/get-seo-diagnosis ---")
     
@@ -298,7 +187,7 @@ def get_seo_diagnosis():
         return jsonify({"error": "Requisição mal formatada."}), 400
 
     try:
-        # 1. Busca o relatório do usuário (LENTO)
+        # 1. Busca o relatório do usuário
         user_report, user_error = fetch_full_pagespeed_json(user_url, PAGESPEED_API_KEY)
         if user_error:
             return jsonify({"error": user_error}), 502
@@ -339,7 +228,6 @@ def get_seo_diagnosis():
         DIAGNÓSTICO-ISCA (comece aqui):
         """
         
-        # 4. Chama a Gemini (LENTO)
         chat_session = model.start_chat(history=[])
         response = chat_session.send_message(
             system_prompt,
@@ -356,16 +244,13 @@ def get_seo_diagnosis():
         traceback.print_exc()
         return jsonify({'error': 'Ocorreu um erro ao gerar o diagnóstico de IA.'}), 500
 
-# --- Endpoint 3: [MODIFICADO] Captura do Lead ---
+# --- Endpoint 3: [NOVO] Captura do Lead ---
 @app.route('/api/capture-lead', methods=['POST'])
 def capture_lead():
     """
     Endpoint para salvar os dados do lead (Nome, E-mail, WhatsApp) no banco.
-    Esta rota agora é RÁPIDA. Ela salva o lead com status 'PENDENTE'
-    e dispara a thread em background 'generate_and_save_report'
-    para fazer o trabalho lento (PageSpeed + Relatório Final da Gemini).
     """
-    print("\n--- Recebido trigger para /api/capture-lead (com Threading) ---")
+    print("\n--- Recebido trigger para /api/capture-lead ---")
     
     if not DATABASE_URL:
         print("❌ ERRO [DB]: DATABASE_URL não definida. Não é possível salvar o lead.")
@@ -391,32 +276,16 @@ def capture_lead():
         conn = psycopg2.connect(DATABASE_URL)
         cur = conn.cursor()
         
-        # SQL modificado para retornar o ID do novo lead
         cur.execute("""
             INSERT INTO leads_chatbot (nome, email, whatsapp, url_analisada, score_seo)
             VALUES (%s, %s, %s, %s, %s)
-            RETURNING id;
         """, (nome, email, whatsapp, url_analisada, score_seo))
         
-        # --- MODIFICAÇÃO PARA THREADING ---
-        # 1. Pega o ID do lead que acabamos de criar
-        lead_id = cur.fetchone()[0] 
-        conn.commit() # Confirma o INSERT imediatamente
+        conn.commit()
+        cur.close()
         
-        print(f"✅  [DB] Lead salvo com ID: {lead_id}. Disparando análise em background...")
-
-        # 2. Inicia a thread em background para o trabalho lento
-        # Passamos 'app' (a instância do Flask) para a thread poder
-        # criar seu próprio contexto.
-        thread = threading.Thread(
-            target=generate_and_save_report, 
-            args=(app, lead_id, url_analisada, nome)
-        )
-        thread.start()
-        
-        # 3. Retorna a resposta imediata para o usuário
-        return jsonify({"success": "Obrigado! Recebemos seus dados. Estamos gerando seu relatório completo, isso pode levar alguns minutos."}), 201
-        # --- FIM DA MODIFICAÇÃO ---
+        print("✅  [DB] Lead salvo com sucesso.")
+        return jsonify({"success": "Lead salvo com sucesso!"}), 201
 
     except Exception as e:
         print(f"❌ ERRO [DB] ao salvar o lead: {e}")
@@ -426,7 +295,6 @@ def capture_lead():
         return jsonify({"error": "Erro ao salvar o lead no banco de dados."}), 500
     finally:
         if conn:
-            cur.close()
             conn.close()
 
 # --- Execução do App (Pronto para Render/Gunicorn) ---
