@@ -1,7 +1,7 @@
 Flask
+Flask-Cors
 gunicorn
 requests
-flask-cors
+google-genai
 python-dotenv
 psycopg2-binary
-google-generativeai
