@@ -1,7 +1,7 @@
 import os
 import requests
 import json
-import google.generativeai as genai # <- Adicionado do Taurusbot [cite: app - Copia.py]
+import google.generativeai as genai
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -15,7 +15,7 @@ CORS(app)
 # --- 1. Configuração Lida do Ambiente (Render) ---
 PAGESPEED_API_KEY = os.environ.get("PAGESPEED_API_KEY")
 DATABASE_URL = os.environ.get("DATABASE_URL") # Mantido para o futuro "Mapa de Ouro"
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY") # <- Adicionado do Taurusbot [cite: app - Copia.py]
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY") # A mesma chave do Taurusbot
 
 # --- 2. Configuração do Gemini (do Taurusbot) ---
 try:
@@ -142,53 +142,48 @@ def get_seo_diagnosis():
     except Exception:
         return jsonify({"error": "Requisição mal formatada."}), 400
 
-    # 3. Define o "Padrão Ouro"
-    golden_url = "https://teclabel.com.br/"
+    # 3. Define o "Padrão Ouro" (REMOVIDO FETCH)
+    # golden_url = "https://teclabel.com.br/"
 
     try:
-        # 4. Busca os relatórios (Usuário e Padrão Ouro)
+        # 4. Busca o relatório (APENAS DO USUÁRIO)
         user_report, user_error = fetch_full_pagespeed_json(user_url, PAGESPEED_API_KEY)
-        golden_report, golden_error = fetch_full_pagespeed_json(golden_url, PAGESPEED_API_KEY)
 
         if user_error:
             return jsonify({"error": user_error}), 502
-        if golden_error:
-            # Se o Padrão Ouro falhar, ainda podemos continuar, mas avisamos no log
-            print("⚠️ AVISO: Não foi possível buscar o relatório 'Padrão Ouro'. O diagnóstico será parcial.")
-            golden_report = {} # Envia um relatório vazio para o Gemini
-
+        
         # 5. Extrai as falhas do usuário
         user_failing_audits = extract_failing_audits(user_report)
-        # Extrai o score geral de SEO do usuário
         user_seo_score = (user_report.get('lighthouseResult', {}).get('categories', {}).get('seo', {}).get('score', 0)) * 100
 
-        # 6. Cria o System Prompt para o Gemini (O "Analista de Ouro")
+        # 6. Cria o System Prompt OTIMIZADO (sem o JSON gigante do Padrão Ouro)
         system_prompt = f"""
         Você é o "Analista de Ouro", um especialista sênior em SEO e Performance Web.
         Sua missão é dar um diagnóstico claro, direto e acionável para um usuário que enviou a URL do site dele.
 
         REGRAS:
         1.  **Tom de Voz:** Profissional, especialista, mas encorajador. Use 🚀 e 💡.
-        2.  **Referência:** Você vai comparar as falhas do site do usuário com um "Padrão Ouro" (um site nota 100/100) que eu vou fornecer.
-        3.  **NÃO CITE O NOME:** NUNCA mencione o nome do site Padrão Ouro (teclabel.com.br). Chame-o apenas de "nosso padrão de referência 100/100".
+        2.  **Referência (O Padrão Ouro):** Um site 100/100 (como o teclabel.com.br) NUNCA falha em auditorias básicas. Ele sempre tem:
+            * 'meta description' (descrição para o Google)
+            * 'Títulos e cabeçalhos claros' (H1, H2)
+            * 'Imagens em formatos modernos' (WebP, AVIF)
+            * 'Links internos e externos válidos' (sem erro 404)
+            * 'Boa performance mobile' (carregamento rápido)
+        3.  **NÃO CITE O NOME:** NUNCA mencione "teclabel.com.br". Chame-o apenas de "nosso padrão de referência 100/100".
         4.  **Seja Específico:** Dê 3 a 4 dicas práticas baseadas nas *piores* falhas (menor score) do usuário.
         5.  **Formato:** Use Markdown (negrito, bullet points) para formatar a resposta.
-        6.  **Foco:** Foque nas auditorias de SEO, Performance e Acessibilidade.
-        7.  **Encerramento:** Sempre termine com um call-to-action para o usuário contratar os serviços da "Fluxo de Ouro" para implementar as melhorias.
+        6.  **Encerramento:** Sempre termine com um call-to-action para o usuário contratar os serviços da "Fluxo de Ouro" para implementar as melhorias.
 
         ---
         ANÁLISE DO SITE DO USUÁRIO ({user_url}):
         - Score Geral de SEO: {user_seo_score:.0f}/100
-        - Auditorias com Falha: {json.dumps(user_failing_audits, ensure_ascii=False)}
-        
-        RELATÓRIO DO SITE "PADRÃO OURO" (Nota 100/100):
-        - (Relatório completo do Padrão Ouro anexado para sua referência de como é um site perfeito.)
+        - Auditorias com Falha (JSON): {json.dumps(user_failing_audits, ensure_ascii=False)}
         ---
         
         DIAGNÓSTICO (comece aqui):
         """
         
-        # Prepara o chat (similar ao Taurusbot, mas sem histórico longo)
+        # Prepara o chat
         chat_session = model.start_chat(history=[])
         
         # 7. Envia para o Gemini
