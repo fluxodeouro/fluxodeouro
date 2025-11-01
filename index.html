@@ -661,11 +661,31 @@
         .search-bar-button:hover {
             background: var(--dourado-dark);
         }
+        /* <!-- ESTILO PARA O BOTÃO QUANDO ESTIVER CARREGANDO --> */
+        .search-bar-button:disabled {
+            background: var(--cinza);
+            color: var(--cinza-text);
+            cursor: not-allowed;
+        }
         .search-bar-note {
             font-size: 0.85rem;
             color: var(--cinza-text);
             margin-top: 1rem;
             font-style: italic;
+            /* <!-- Adiciona transição para a mudança de cor --> */
+            transition: color 0.3s ease;
+        }
+        /* <!-- ESTILO PARA MENSAGEM DE SUCESSO --> */
+        .search-bar-note.success {
+            color: var(--dourado-dark);
+            font-weight: 600;
+            font-style: normal;
+        }
+        /* <!-- ESTILO PARA MENSAGEM DE ERRO --> */
+        .search-bar-note.error {
+            color: #D93025; /* Vermelho Google */
+            font-weight: 600;
+            font-style: normal;
         }
         /* --- FIM NOVA SEÇÃO DE BUSCA GOOGLE --- */
 
@@ -1797,7 +1817,7 @@
 
     </section>
 
-    <!-- ### INÍCIO NOVA SEÇÃO GOOGLE SEARCH ### -->
+    <!-- ### INÍCIO SEÇÃO GOOGLE SEARCH (MODIFICADA) ### -->
     <section id="google-search-intro" class="google-search-section">
         <div class="search-intro-content">
             <h2 class="search-section-title">Chegou a hora de inverter o jogo:<br> Agora são seus clientes que vão te encontrar!</h2>
@@ -1805,13 +1825,16 @@
 
             <div class="search-bar-simulator">
                 <i data-lucide="search" class="search-bar-icon lucide-icon"></i>
-                <input type="text" placeholder="Digite a URL do seu site aqui..." class="search-bar-input" aria-label="URL do site">
-                <button class="search-bar-button">Verificar Posição</button>
+                <!-- ID Adicionado ao Input -->
+                <input type="text" placeholder="Digite a URL do seu site aqui..." class="search-bar-input" id="seo-url-input" aria-label="URL do site">
+                <!-- Texto do Botão e ID Adicionados -->
+                <button class="search-bar-button" id="seo-submit-button">Diagnosticar Agora</button>
             </div>
-            <p class="search-bar-note">Em breve: Analise a visibilidade do seu site no Google.</p>
+            <!-- Texto da Nota e ID Adicionados -->
+            <p class="search-bar-note" id="seo-result-note">Insira a URL do seu site (ex: https://seusite.com.br) para um diagnóstico de SEO (via Google PageSpeed).</p>
         </div>
     </section>
-    <!-- ### FIM NOVA SEÇÃO GOOGLE SEARCH ### -->
+    <!-- ### FIM SEÇÃO GOOGLE SEARCH (MODIFICADA) ### -->
 
     <!-- NOVO MINI FLUXOGRAMA DOURADO - AGORA É UM SLICER/ACORDEÃO -->
     <section id="como-funciona" class="flow-section">
@@ -2008,54 +2031,52 @@
     <section id="planos" class="planos">
         <h2 class="section-title">Comece Agora. Escolha seu Fluxo.</h2>
         <div class="planos-grid">
-            <!-- CARD 1: LITE (Formerly STARTER) -->
+            <!-- CARD 1: STARTER -->
             <div class="plano-card destaque">
                 <span class="plano-badge">Mais Procurado</span>
-                <h3>Base Ouro (Lite)</h3>
-                <p class="plano-ideal">Ideal para negócios que precisam de presença digital rápida e sem mensalidade.</p>
+                <h3>Base de Ouro: STARTER</h3>
+                <p class="plano-ideal">Ideal para negócios que precisam de presença digital rápida.</p>
                 <div class="plano-preco">
-                    R$ 700
-                    <span>Pagamento Único (1º Ano)</span>
+                    R$ 600
+                    <span>Pagamento Único</span>
                 </div>
                 <ul class="plano-features">
-                    <li>Site 1 Página (Até 5 Seções)</li>
-                    <li>SEO Técnico Otimizado</li>
-                    <li>Hospedagem 1º Ano Grátis</li>
-                    <li>Painel de Coleta de Leads (Planilhas Google)</li>
+                    <li>Site 1 Página</li>
+                    <li>SEO Básico</li>
+                    <li>GA4 Configurado</li>
+                    <li>Módulo Blog (via Colab)</li>
                 </ul>
                 <button id="btn-contratar-starter" class="plano-cta gold">Contratar Agora</button>
             </div>
 
-            <!-- CARD 2: FULL (Formerly ECOSSISTEMA) -->
-            <div class="plano-card">
-                <h3>Base Ouro (Full)</h3>
-                <p class="plano-ideal">Ideal para negócios que precisam de um site robusto e customizado.</p>
-                <div class="plano-preco">
-                    Sob Orçamento
-                </div>
-                <ul class="plano-features">
-                    <li>Site Multi-Páginas (Ilimitado)</li>
-                    <li>Layout 100% Personalizado</li>
-                    <li>Funções Customizadas (Blog, E-commerce, etc.)</li>
-                    <li>Hospedagem Dedicada (sob consulta)</li>
-                </ul>
-                <button id="btn-orcamento-full" class="plano-cta black">Solicitar Orçamento</button>
-            </div>
-
-            <!-- CARD 3: ECOSSISTEMA COMPLETO (Formerly ANUAL) -->
+            <!-- CARD 2: ECOSSISTEMA -->
             <div class="plano-card">
                 <h3>Ecossistema Completo</h3>
-                <p class="plano-ideal">A máquina de vendas completa: Site, IA e Análise de ROI.</p>
+                <p class="plano-ideal">Ideal para empresas que buscam automação máxima e ROI.</p>
                 <div class="plano-preco">
                     Sob Orçamento
                 </div>
                 <ul class="plano-features">
-                    <li>Base Ouro (Full) Inclusa</li>
+                    <li>Base de Ouro Completa</li>
                     <li>Motor de Ouro (Vendedor AI)</li>
-                    <li>Mapa de Ouro (Dashboard Power BI)</li>
-                    <li>Automação e Nutrição de Leads (N8N)</li>
+                    <li>Mapa de Ouro (Power BI)</li>
                 </ul>
-                <button id="btn-diagnostico-ecossistema" class="plano-cta black">Pedir Diagnóstico</button>
+                <button id="btn-pedir-diagnostico" class="plano-cta black">Pedir Diagnóstico</button>
+            </div>
+
+            <!-- CARD 3: ANUAL -->
+            <div class="plano-card">
+                <h3>Plano Anual (Setup Zero)</h3>
+                <p class="plano-ideal">Ideal para quem quer o ecossistema completo sem investimento inicial.</p>
+                <div class="plano-preco">
+                    Consulte
+                </div>
+                <ul class="plano-features">
+                    <li>Motor de Ouro</li>
+                    <li>Mapa de Ouro</li>
+                    <li>Base Completa (Custo Zero)</li>
+                </ul>
+                <button id="btn-saber-mais-anual" class="plano-cta black">Saber Mais</button>
             </div>
         </div>
     </section>
@@ -2108,7 +2129,7 @@
                             <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
                         </summary>
                         <div class="faq-answer">
-                            <p>É a tecnologia principal do nosso Motor de Ouro (disponível no Ecossistema Completo). É um chatbot avançado (alimentado por Gemini) que assume o papel de qualificador no site ou WhatsApp, recuperando vendas e nutrindo leads 24/7.</p>
+                            <p>É uma das tecnologias do nosso Motor de Ouro. É um chatbot avançado (alimentado por Gemini) que assume o papel de qualificador no site ou WhatsApp, recuperando vendas e coletando briefings (como no nosso plano Base Starter).</p>
                         </div>
                     </details>
 
@@ -2128,17 +2149,17 @@
                             <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
                         </summary>
                         <div class="faq-answer">
-                            <p>Depende da complexidade. Temos soluções de entrada, como o Base Ouro (Lite) por R$ 700 (para iniciar a coleta de dados). Para soluções maiores, como o Base Ouro (Full) (site customizado) ou o Ecossistema Completo (com IA e BI), o valor é sob orçamento.</p>
+                            <p>Depende do tamanho do funil. Temos soluções de entrada, como a Base Starter por R$ 600 (para iniciar a coleta de dados). Para o Ecossistema Completo (Motor + Mapa), oferecemos Planos Anuais com Setup Zero, onde o site sai de graça.</p>
                         </div>
                     </details>
 
                     <details class="faq-item">
                         <summary class="faq-question">
-                            <span>É possível fazer o site Base Ouro (Lite) evoluir para o Ecossistema Completo?</span>
+                            <span>É possível fazer o site Base Starter evoluir para o Ecossistema Completo?</span>
                             <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
                         </summary>
                         <div class="faq-answer">
-                            <p>Com certeza. A Base Ouro (Lite) (R$ 700) já instala o GA4 e cria a fundação de SEO. Seu site já nasce pronto para receber o Motor de Ouro (automação) e o Mapa de Ouro (análise) futuramente.</p>
+                            <p>Com certeza. A Base Starter (R$ 600) já instala o GA4 e cria a fundação de SEO. Seu site já nasce pronto para receber o Motor de Ouro (automação) e o Mapa de Ouro (análise) futuramente.</p>
                         </div>
                     </details>
                 </div>
@@ -2177,21 +2198,21 @@
 
                     <details class="faq-item">
                         <summary class="faq-question">
-                            <span>O Base Ouro (Lite) (R$ 700) inclui algum painel?</span>
+                            <span>A Base Starter (R$ 600) inclui alguma forma de eu atualizar o conteúdo?</span>
                             <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
                         </summary>
                         <div class="faq-answer">
-                            <p>Sim. A Base Ouro (Lite) inclui um Painel de Coleta de Leads conectado a uma Planilha Google, permitindo que você gerencie seus novos contatos desde o primeiro dia, sem precisar de código.</p>
+                            <p>Sim, como bônus. A Base Starter inclui um Módulo de Blog que permite a você ou sua equipe atualizar o conteúdo facilmente, sem precisar de código (usando uma interface intuitiva, como nosso painel Colab).</p>
                         </div>
                     </details>
 
                     <details class="faq-item">
-                        <summary class="faq-question">
-                            <span>Quanto tempo leva para a Base Ouro (Lite) ser entregue?</span>
+                        <summary class="faq-col-question">
+                            <span>Quanto tempo leva para a Base de Ouro: Starter ser entregue?</span>
                             <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
                         </summary>
                         <div class="faq-answer">
-                            <p>A produção da Base Ouro (Lite) (R$ 700) é feita em 5 dias úteis após o envio de todo o material (textos, imagens, logo). A coleta do briefing é feita de forma estruturada para agilizar o processo.</p>
+                            <p>Como o briefing é coletado e aprovado em minutos pelo nosso Vendedor AI, a produção da Base Starter (R$ 600) é feita em tempo recorde após a confirmação do pagamento, permitindo que você comece a coletar dados imediatamente.</p>
                         </div>
                     </details>
 
@@ -2207,7 +2228,7 @@
 
                     <details class="faq-item">
                         <summary class="faq-question">
-                            <span>Se eu fechar o Ecossistema Completo, o Mapa de Ouro me mostra o desempenho da concorrência?</span>
+                            <span>Se eu fechar o Plano Anual, o Mapa de Ouro me mostra o desempenho da concorrência?</span>
                             <i data-lucide="chevron-down" class="faq-arrow lucide-icon"></i>
                         </summary>
                         <div class="faq-answer">
@@ -2379,15 +2400,14 @@
         document.getElementById('btn-contratar-starter').onclick = function() {
             abrirChatbot('venda_starter');
         };
-        // Updated ID for Base Ouro Full
-        document.getElementById('btn-orcamento-full').onclick = function() {
-            abrirChatbot('orcamento_base_full'); // Example function call, adjust as needed
-        };
-         // Updated ID for Ecossistema Completo
-        document.getElementById('btn-diagnostico-ecossistema').onclick = function() {
+
+        document.getElementById('btn-pedir-diagnostico').onclick = function() {
             abrirChatbot('diagnostico_ecossistema');
         };
 
+        document.getElementById('btn-saber-mais-anual').onclick = function() {
+            abrirChatbot('plano_anual');
+        };
 
         // Smooth scroll para links internos (Adicionando a função de fechar menu)
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -2731,9 +2751,78 @@
                 // Garante que o vídeo comece pausado para mostrar o overlay
                 video.pause();
             }
+
+            // --- [NOVO] LÓGICA DA API PAGESPEED ---
+
+            // ####################################################################
+            // # DIRETOR: SUBSTITUA PELA URL DO SEU BACKEND NO RENDER
+            // ####################################################################
+            const RENDER_API_URL = "https://fluxodeouro.onrender.com"; // <-- MUDE AQUI
+            // ####################################################################
+
+            const seoInput = document.getElementById('seo-url-input');
+            const seoButton = document.getElementById('seo-submit-button');
+            const seoNote = document.getElementById('seo-result-note');
+
+            if (seoButton && seoInput && seoNote) {
+                seoButton.addEventListener('click', async () => {
+                    let url = seoInput.value;
+                    if (!url) {
+                        seoNote.textContent = "Por favor, insira uma URL para analisar.";
+                        seoNote.className = 'search-bar-note error';
+                        return;
+                    }
+
+                    // Adiciona "https://" se o usuário esquecer
+                    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                        url = 'https://' + url;
+                        seoInput.value = url; // Atualiza o input para o usuário ver
+                    }
+
+                    // 1. Desabilita o botão e mostra o loading
+                    seoButton.disabled = true;
+                    seoButton.textContent = "Analisando...";
+                    seoNote.textContent = "Iniciando diagnóstico... Isso pode levar alguns segundos.";
+                    seoNote.className = 'search-bar-note'; // Reseta o estilo
+
+                    try {
+                        const response = await fetch(RENDER_API_URL + '/api/get-pagespeed', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                inspected_url: url
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                            // Se a API retornar um erro (4xx, 5xx), usa a mensagem dela
+                            throw new Error(data.status_message || 'Ocorreu um erro no servidor.');
+                        }
+
+                        // 2. Sucesso! Mostra a mensagem da API
+                        seoNote.textContent = data.status_message;
+                        seoNote.className = 'search-bar-note success';
+
+                    } catch (error) {
+                        // 3. Erro! Mostra a mensagem de erro
+                        console.error("Erro ao chamar API PageSpeed:", error);
+                        seoNote.textContent = error.message.includes("Failed to fetch") ? "Erro de rede. Não foi possível conectar ao servidor." : error.message;
+                        seoNote.className = 'search-bar-note error';
+                    } finally {
+                        // 4. Reabilita o botão
+                        seoButton.disabled = false;
+                        seoButton.textContent = "Diagnosticar Agora";
+                    }
+                });
+            }
+            // --- [FIM] LÓGICA DA API PAGESPEED ---
+            
         });
 
     </script>
 </body>
 </html>
-
