@@ -1,0 +1,20 @@
+# Arquivos de Chaves e Configuração Local (O MAIS IMPORTANTE)
+.env
+*.json
+gsc_service_account.json
+
+# Ambiente Virtual do Python
+venv/
+.venv/
+*.env/
+
+# Arquivos de Cache e Compilados do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Arquivos de IDE e Sistema
+.idea/
+.vscode/
+.DS_Store
