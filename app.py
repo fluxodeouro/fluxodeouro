@@ -30,10 +30,10 @@ try:
         genai.configure(api_key=GEMINI_API_KEY)
         
         # --- [INÍCIO DA CORREÇÃO] ---
-        # Trocando 'gemini-1.5-flash' para 'gemini-pro',
-        # que é o modelo mais estável e universal, evitando o erro 404.
-        model = genai.GenerativeModel('gemini-pro') 
-        print("✅  [Gemini] Modelo ('gemini-pro') inicializado.")
+        # Voltando para o modelo 'flash', que é o correto.
+        # O erro 404 será corrigido atualizando o requirements.txt
+        model = genai.GenerativeModel('gemini-1.5-flash') 
+        print("✅  [Gemini] Modelo ('gemini-1.5-flash') inicializado.")
         # --- [FIM DA CORREÇÃO] ---
         
     else:
