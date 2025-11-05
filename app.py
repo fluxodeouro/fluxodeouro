@@ -2,8 +2,8 @@
 # Este app implementa o fluxo completo de captura, diagnóstico,
 # qualificação, geração de isca (Padrão Ouro) e upsell (orçamento).
 #
-# CORREÇÃO v6.1: Corrigido o método de chamada do Gemini para usar
-#                generate_content (API v1) em vez de send_message (API v1beta)
+# CORREÇÃO v6.2: Forçando o nome do modelo para 'latest'
+#                para ser compatível com a API v1beta
 #
 import os
 import requests
@@ -33,10 +33,13 @@ try:
     if GEMINI_API_KEY:
         genai.configure(api_key=GEMINI_API_KEY)
         
-        # O modelo 'gemini-1.5-flash' é o correto.
-        # O erro 404 era do MÉTODO de chamada, não do nome do modelo.
-        model = genai.GenerativeModel('gemini-1.5-flash') 
-        print("✅  [Gemini] Modelo ('gemini-1.5-flash') inicializado.")
+        # --- [A CORREÇÃO ESTÁ AQUI] ---
+        # Se a biblioteca (0.5.0) insiste em chamar a v1beta,
+        # vamos usar um nome de modelo que a v1beta entende.
+        # 'latest' é um alias que funciona em ambas.
+        model = genai.GenerativeModel('gemini-1.5-flash-latest') 
+        print("✅  [Gemini] Modelo ('gemini-1.5-flash-latest') inicializado.")
+        # --- [FIM DA CORREÇÃO] ---
         
     else:
         model = None
@@ -47,7 +50,7 @@ except Exception as e:
     traceback.print_exc()
 
 # --- 3. [HELPER] Funções do Banco de Dados ---
-# (Sem alterações - Funções de DB estão corretas)
+# (Sem alterações)
 
 def get_db_connection():
     """Helper para abrir uma conexão com o banco."""
@@ -115,7 +118,7 @@ def append_to_chat_history(lead_id, role, text):
         if conn: conn.close()
 
 # --- 4. [HELPER] Funções da API PageSpeed ---
-# (Sem alterações - Funções de API estão corretas)
+# (Sem alterações)
 
 def fetch_full_pagespeed_json(url_to_check, api_key):
     """Função helper que chama a API PageSpeed."""
@@ -155,7 +158,8 @@ def extract_failing_audits(report_json):
     print(f"ℹ️  [Parser] Extraídas {len(failed_audits)} auditorias com falha.")
     return failed_audits
 
-# --- 5. [HELPER] Geração de Resposta da IA (GEMINI CORRIGIDO) ---
+# --- 5. [HELPER] Geração de Resposta da IA (GEMINI v1.1) ---
+# (Usando o método generate_content)
 
 def generate_ai_response(lead_data, user_message, failed_audits=None):
     """
@@ -257,23 +261,22 @@ def generate_ai_response(lead_data, user_message, failed_audits=None):
     else:
         return {"response_text": "Houve um erro no meu status. Pode recomeçar, por favor?"}
 
-    # --- [INÍCIO DA CORREÇÃO] ---
-    # Substituindo o método antigo (send_message) pelo método novo (generate_content)
+    # --- Método de chamada v1.1 (Correto) ---
     try:
         if not model:
             return {"error": "IA não configurada."}
             
         # 1. Cria um modelo local com a instrução de sistema
-        #    Usamos 'model.model_name' para pegar 'gemini-1.5-flash' do modelo global
+        #    model.model_name agora é 'gemini-1.5-flash-latest'
         chat_model = genai.GenerativeModel(
             model_name=model.model_name,
             system_instruction=system_prompt
         )
 
-        # 2. Cria o histórico (o 'fluxodeouro' só manda a última mensagem)
+        # 2. Cria o histórico
         history = [{'role': 'user', 'parts': [{'text': user_message}]}]
 
-        # 3. Chama 'generate_content' (o método NOVO que usa a API v1)
+        # 3. Chama 'generate_content'
         response = chat_model.generate_content(
             history,
             generation_config=genai.types.GenerationConfig(temperature=0.4),
@@ -284,14 +287,16 @@ def generate_ai_response(lead_data, user_message, failed_audits=None):
         return {"response_text": response.text}
 
     except Exception as e:
-        print(f"❌ ERRO Inesperado [Gemini] em generate_ai_response (v1.1): {e}")
+        # Se der erro 404 de novo, será com 'gemini-1.5-flash-latest',
+        # o que nos dirá mais sobre o problema.
+        print(f"❌ ERRO Inesperado [Gemini] em generate_ai_response (v1.2): {e}")
         traceback.print_exc()
         return {"error": "Desculpe, tive um problema ao processar sua solicitação."}
-    # --- [FIM DA CORREÇÃO] ---
+    # --- [FIM DA CORREÇÃO v1.1] ---
 
 
 # --- 6. Endpoint Principal: /api/chat ---
-# (Sem alterações - A lógica de fluxo está correta)
+# (Sem alterações)
 @app.route('/api/chat', methods=['POST'])
 def chat_handler():
     """
@@ -483,7 +488,7 @@ def chat_handler():
 
 
 # --- Endpoint 7: Webhook para N8N (Atualizar Status) ---
-# (Sem alterações - A lógica está correta)
+# (Sem alterações)
 @app.route('/api/update-status-n8n', methods=['POST'])
 def update_status_n8n():
     """
@@ -532,7 +537,7 @@ def update_status_n8n():
         if conn: conn.close()
 
 # --- Endpoint 8: Diagnóstico Rápido (Barra de Busca) ---
-# (Sem alterações - A lógica está correta)
+# (Sem alterações)
 @app.route('/api/get-pagespeed', methods=['POST'])
 def get_pagespeed_report():
     """Endpoint para o diagnóstico rápido da barra de busca do index.html."""
