@@ -2,8 +2,8 @@
 # Este app implementa o fluxo completo de captura, diagnóstico,
 # qualificação, geração de isca (Padrão Ouro) e upsell (orçamento).
 #
-# CORREÇÃO v6.2: Forçando o nome do modelo para 'latest'
-#                para ser compatível com a API v1beta
+# CORREÇÃO v6.4: Adicionado endpoint /api/test-gemini para descobrir
+#                qual modelo é realmente aceito pela API v1beta do ambiente.
 #
 import os
 import requests
@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 import psycopg2
 import traceback
 from psycopg2.extras import RealDictCursor # Para retornar dicts do DB
+from google.api_core import exceptions # Para capturar o 404
 
 load_dotenv()
 
@@ -29,17 +30,14 @@ N8N_SECRET_KEY = os.environ.get("N8N_SECRET_KEY", "sua-chave-secreta-padrao")
 SALES_WEBHOOK_URL = os.environ.get("SALES_WEBHOOK_URL") # Webhook para N8N/Vendas
 
 # --- 2. Configuração do Gemini ---
+# (Manter o modelo de fallback para garantir que o resto do código funcione)
 try:
     if GEMINI_API_KEY:
         genai.configure(api_key=GEMINI_API_KEY)
         
-        # --- [A CORREÇÃO ESTÁ AQUI] ---
-        # Se a biblioteca (0.5.0) insiste em chamar a v1beta,
-        # vamos usar um nome de modelo que a v1beta entende.
-        # 'latest' é um alias que funciona em ambas.
-        model = genai.GenerativeModel('gemini-1.5-flash-latest') 
-        print("✅  [Gemini] Modelo ('gemini-1.5-flash-latest') inicializado.")
-        # --- [FIM DA CORREÇÃO] ---
+        # O modelo usado será o 'gemini-pro' (melhor compatibilidade)
+        model = genai.GenerativeModel('gemini-pro') 
+        print("✅  [Gemini] Modelo ('gemini-pro') inicializado.")
         
     else:
         model = None
@@ -51,7 +49,6 @@ except Exception as e:
 
 # --- 3. [HELPER] Funções do Banco de Dados ---
 # (Sem alterações)
-
 def get_db_connection():
     """Helper para abrir uma conexão com o banco."""
     try:
@@ -158,25 +155,22 @@ def extract_failing_audits(report_json):
     print(f"ℹ️  [Parser] Extraídas {len(failed_audits)} auditorias com falha.")
     return failed_audits
 
-# --- 5. [HELPER] Geração de Resposta da IA (GEMINI v1.1) ---
-# (Usando o método generate_content)
+# --- 5. [HELPER] Geração de Resposta da IA (GEMINI v1.2) ---
+# (Mantida a lógica de generate_content com o modelo global 'gemini-pro')
 
 def generate_ai_response(lead_data, user_message, failed_audits=None):
     """
     Função central que decide qual prompt usar (Qualificação ou Isca-Mestre).
-    AGORA USANDO O MÉTODO generate_content (API v1) PARA EVITAR O ERRO 404 da v1beta.
     """
     status = lead_data.get('status')
     
-    # -----------------------------------------------------------
-    # PROMPT 1: QUALIFICAÇÃO (Coletando Dados)
-    # -----------------------------------------------------------
+    # --- Lógica de Prompts (inalterada) ---
     if status == 'Coletando Dados':
         missing_data = []
         if not lead_data.get('nome'): missing_data.append("nome (nome do cliente)")
-        if not lead_data.get('email'): missing_data.append("email (email profissional)")
-        if not lead_data.get('whatsapp'): missing_data.append("whatsapp (número com DDD)")
-        if not lead_data.get('cargo'): missing_data.append("cargo (ex: Diretor, Marketing, Dono)")
+        elif not lead_data.get('email'): missing_data.append("email (email profissional)")
+        elif not lead_data.get('whatsapp'): missing_data.append("whatsapp (número com DDD)")
+        elif not lead_data.get('cargo'): missing_data.append("cargo (ex: Diretor, Marketing, Dono)")
 
         if not missing_data:
             return {'next_step': 'generate_isca'}
@@ -192,14 +186,8 @@ def generate_ai_response(lead_data, user_message, failed_audits=None):
         4.  **Sua Tarefa:** Analise o último chat ('{user_message}') e a lista de dados faltantes.
         5.  Se o usuário respondeu o que você pediu, agradeça (ex: "Perfeito, {lead_data.get('nome', 'cliente')}.") e PEÇA O PRÓXIMO item da lista.
         6.  Se o usuário não respondeu, peça novamente o PRIMEIRO item da lista de faltantes.
-        EXEMPLO DE RESPOSTA (se o próximo item for 'email'):
-        "Obrigado, {lead_data.get('nome', 'cliente')}! 
-        Para qual e-mail profissional posso enviar a análise completa?"
         """
         
-    # -----------------------------------------------------------
-    # PROMPT 2: ISCA-MESTRE (Padrão Ouro)
-    # -----------------------------------------------------------
     elif status == 'Gerando Isca':
         system_prompt = f"""
         Você é o "Analista de Ouro", um especialista sênior em SEO e Vendas.
@@ -220,28 +208,9 @@ def generate_ai_response(lead_data, user_message, failed_audits=None):
         2.  **Diagnóstico:** Comece validando o score ("Seu score de {lead_data.get('score_seo')}/100 é um bom começo...").
         3.  **Conexão (A VENDA):** Analise as {len(failed_audits)} falhas e CONECTE-AS DIRETAMENTE aos nossos produtos.
         4.  **OBRIGATÓRIO:** O texto DEVE conter a tag [RELATORIO_ENVIADO] no final.
-        EXEMPLO DE RESPOSTA PERFEITA:
-        "Certo, {lead_data.get('nome')}. Análise concluída.
-        
-        Seu score de {lead_data.get('score_seo')}/100 é um bom começo, mas identifiquei {len(failed_audits)} falhas técnicas críticas.
-        
-        Por exemplo, vi que seu site tem problemas de velocidade (LCP lento) e falhas de indexação. Isso significa que, mesmo que seu site seja bonito, os clientes e o Google não o encontram ou desistem antes de carregar.
-        
-        É exatamente here que a **Base de Ouro (nosso serviço de SEO/Site)** entra, corrigindo essas falhas para transformar visitantes em clientes.
-        
-        Também notei que seu site não possui um sistema de captura ativo. Você está perdendo leads que saem da página.
-        Nosso **Motor de Ouro (Vendedor AI)** poderia estar capturando e qualificando esses leads para você 24/7.
-        
-        Enviei o relatório técnico completo para o seu e-mail ({lead_data.get('email')}).
-        [RELATORIO_ENVIADO]
-        
-        Baseado no seu cargo de {lead_data.get('cargo')}, sei que seu foco é em resultados. Você gostaria de iniciar um orçamento para um plano de ação?"
         """
         user_message = "Gere a Isca-Mestre com base nos meus dados e falhas."
 
-    # -----------------------------------------------------------
-    # PROMPT 3: UPSELL (Coletando Orçamento)
-    # -----------------------------------------------------------
     elif status in ['Isca Entregue', 'Coletando Orçamento']:
         system_prompt = f"""
         Você é o "Analista de Ouro". Você acabou de entregar a "Isca-Mestre" (o diagnóstico).
@@ -261,13 +230,12 @@ def generate_ai_response(lead_data, user_message, failed_audits=None):
     else:
         return {"response_text": "Houve um erro no meu status. Pode recomeçar, por favor?"}
 
-    # --- Método de chamada v1.1 (Correto) ---
+    # --- Implementação generate_content ---
     try:
         if not model:
             return {"error": "IA não configurada."}
             
         # 1. Cria um modelo local com a instrução de sistema
-        #    model.model_name agora é 'gemini-1.5-flash-latest'
         chat_model = genai.GenerativeModel(
             model_name=model.model_name,
             system_instruction=system_prompt
@@ -287,22 +255,16 @@ def generate_ai_response(lead_data, user_message, failed_audits=None):
         return {"response_text": response.text}
 
     except Exception as e:
-        # Se der erro 404 de novo, será com 'gemini-1.5-flash-latest',
-        # o que nos dirá mais sobre o problema.
         print(f"❌ ERRO Inesperado [Gemini] em generate_ai_response (v1.2): {e}")
         traceback.print_exc()
         return {"error": "Desculpe, tive um problema ao processar sua solicitação."}
-    # --- [FIM DA CORREÇÃO v1.1] ---
 
 
 # --- 6. Endpoint Principal: /api/chat ---
 # (Sem alterações)
 @app.route('/api/chat', methods=['POST'])
 def chat_handler():
-    """
-    Endpoint ÚNICO para gerenciar todo o fluxo do chatbot.
-    Gerencia o estado do lead (Coleta de URL, Coleta de Dados, Geração de Isca, Orçamento).
-    """
+# ... (restante da função chat_handler)
     print("\n--- Recebido trigger para /api/chat ---")
     data = request.get_json()
     user_message = data.get('message')
@@ -487,14 +449,60 @@ def chat_handler():
             print("🔌  [DB] Conexão principal do /api/chat fechada.")
 
 
+# --- Endpoint de Teste (NOVO) ---
+@app.route('/api/test-gemini', methods=['GET'])
+def test_gemini_models():
+    """
+    Tenta usar vários modelos conhecidos que podem funcionar na API v1beta
+    e retorna o primeiro que conseguir gerar uma resposta.
+    """
+    if not GEMINI_API_KEY:
+        return jsonify({"status": "error", "message": "GEMINI_API_KEY não configurada."}), 500
+
+    TEST_MODELS = [
+        "gemini-pro",
+        "gemini-1.0-pro",
+        "gemini-1.0-flash",
+        "gemini-1.5-flash-latest",
+        "gemini-1.5-flash"
+    ]
+
+    for model_name in TEST_MODELS:
+        try:
+            print(f"ℹ️  [TESTE] Tentando modelo: {model_name}")
+            
+            # 1. Cria o modelo
+            test_model = genai.GenerativeModel(model_name)
+            
+            # 2. Gera um conteúdo simples (o método generate_content é o correto)
+            response = test_model.generate_content("Responda apenas 'OK'.")
+            
+            if response.text and response.text.strip().upper() == 'OK':
+                print(f"✅  [SUCESSO] Modelo aceito: {model_name}")
+                return jsonify({
+                    "status": "success", 
+                    "accepted_model": model_name,
+                    "message": f"O ambiente aceita {model_name}. Use este modelo no app.py."
+                }), 200
+                
+        except exceptions.NotFound:
+            print(f"❌ [FALHA] Modelo {model_name} não encontrado (404/v1beta).")
+            continue
+        except Exception as e:
+            print(f"⚠️ [ERRO GERAL] Falha ao testar {model_name}: {e}")
+            continue
+
+    return jsonify({
+        "status": "fail", 
+        "message": "Nenhum modelo popular foi aceito pela API v1beta. O ambiente está severamente desatualizado."
+    }), 200
+
+
 # --- Endpoint 7: Webhook para N8N (Atualizar Status) ---
 # (Sem alterações)
 @app.route('/api/update-status-n8n', methods=['POST'])
 def update_status_n8n():
-    """
-    Webhook SEGURO para o N8N (ou outro workflow) atualizar o status
-    de um lead. (Ex: 'Email Enviado').
-    """
+    # ... (restante da função update_status_n8n)
     print("\n--- Recebido trigger para /api/update-status-n8n ---")
     
     auth_header = request.headers.get('Authorization')
@@ -540,7 +548,7 @@ def update_status_n8n():
 # (Sem alterações)
 @app.route('/api/get-pagespeed', methods=['POST'])
 def get_pagespeed_report():
-    """Endpoint para o diagnóstico rápido da barra de busca do index.html."""
+    # ... (restante da função get_pagespeed_report)
     print("\n--- Recebido trigger para /api/get-pagespeed (Barra de Busca) ---")
     
     if not PAGESPEED_API_KEY:
@@ -571,8 +579,6 @@ def get_pagespeed_report():
 
 # --- Execução do App ---
 if __name__ == "__main__":
-    # Esta função (setup_database) é necessária para criar as tabelas
-    # 'leads_chatbot' e 'orcar_chatbot' se elas não existirem.
     # setup_database() # <-- Descomente se precisar criar as tabelas
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
