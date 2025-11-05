@@ -225,7 +225,7 @@ def generate_ai_response(lead_data, user_message, failed_audits=None):
         
         Por exemplo, vi que seu site tem problemas de velocidade (LCP lento) e falhas de indexação. Isso significa que, mesmo que seu site seja bonito, os clientes e o Google não o encontram ou desistem antes de carregar.
         
-        É exatamente aqui que a **Base de Ouro (nosso serviço de SEO/Site)** entra, corrigindo essas falhas para transformar visitantes em clientes.
+        É exatamente here que a **Base de Ouro (nosso serviço de SEO/Site)** entra, corrigindo essas falhas para transformar visitantes em clientes.
         
         Também notei que seu site não possui um sistema de captura ativo. Você está perdendo leads que saem da página.
         Nosso **Motor de Ouro (Vendedor AI)** poderia estar capturando e qualificando esses leads para você 24/7.
@@ -309,10 +309,7 @@ def chat_handler():
         # -----------------------------------------------------------
         if not lead_id:
             
-            # --- [INÍCIO DA CORREÇÃO] ---
-            # Validação da URL no Backend
-            
-            # Regra simples: se não tiver '.' ou for muito curta, não é uma URL.
+            # --- [Validação de URL (Fix 1)] ---
             is_url_like = "." in user_message and len(user_message) > 4 
             
             if not is_url_like:
@@ -321,21 +318,25 @@ def chat_handler():
                 bot_response = "Olá! Para começar, preciso que você **cole a URL completa** do seu site (ex: `https://seusite.com.br`) para eu poder analisar."
                 
                 # Retorna a mensagem de erro, MAS NÃO CRIA UM LEAD.
-                # O frontend receberá "lead_id: None" e continuará nulo,
-                # forçando a próxima mensagem a cair aqui de novo.
                 return jsonify({"message": bot_response, "lead_id": None}), 200
             
             # Se CHEGOU AQUI, a mensagem é uma URL (ex: "google.com")
-            # O fluxo original continua...
             print(f"ℹ️  [Fluxo] Novo Lead. Mensagem (URL): {user_message}")
-            url_analisada = user_message 
-            # --- [FIM DA CORREÇÃO] ---
+
+            # --- [INÍCIO DA NOVA CORREÇÃO (Fix 2)] ---
+            # Normalização de URL: Garante que a URL tenha 'https://'
+            url_analisada = user_message
+            if not url_analisada.startswith('http://') and not url_analisada.startswith('https://'):
+                url_analisada = 'https://' + url_analisada
+                print(f"ℹ️  [Fluxo] URL normalizada para: {url_analisada}")
+            # --- [FIM DA NOVA CORREÇÃO] ---
 
             # --- Ação: Salva Imediatamente ---
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 cur.execute(
                     "INSERT INTO leads_chatbot (url_analisada, status, historico_chat) VALUES (%s, %s, %s) RETURNING *",
-                    (url_analisada, 'Coletando URL', json.dumps([{"role": "user", "text": url_analisada}]))
+                    # Salva a URL normalizada, mas o histórico salva a original
+                    (url_analisada, 'Coletando URL', json.dumps([{"role": "user", "text": user_message}]))
                 )
                 lead_data = cur.fetchone()
                 conn.commit()
@@ -343,7 +344,9 @@ def chat_handler():
             print(f"✅  [DB] Lead {lead_id} criado (Status: Coletando URL).")
 
             # --- Ação: Busca PageSpeed ---
+            # Agora 'url_analisada' (com https://) é passada para o PageSpeed
             report_json, error = fetch_full_pagespeed_json(url_analisada, PAGESPEED_API_KEY)
+            
             if error:
                 print(f"❌ ERRO [PageSpeed] para Lead {lead_id}: {error}")
                 # Atualiza o status de erro e informa o usuário
@@ -580,6 +583,11 @@ def get_pagespeed_report():
     inspected_url = request.get_json().get('inspected_url')
     if not inspected_url:
         return jsonify({"status_message": "Erro: Nenhuma URL fornecida."}), 400
+    
+    # --- [CORREÇÃO APLICADA AQUI TAMBÉM] ---
+    # Normaliza a URL para o PageSpeed da barra de busca
+    if not inspected_url.startswith('http://') and not inspected_url.startswith('https://'):
+        inspected_url = 'https://' + inspected_url
 
     results, error = fetch_full_pagespeed_json(inspected_url, PAGESPEED_API_KEY)
     
