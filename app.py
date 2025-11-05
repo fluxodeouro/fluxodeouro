@@ -1,4 +1,4 @@
-# Fluxo de Ouro API Service (v6.0 - Vendedor-Consultor IA)
+# Fluxo de Ouro API Service (v6.0 - Vendedor-Consultor  IA)
 # Este app implementa o fluxo completo de captura, diagnóstico,
 # qualificação, geração de isca (Padrão Ouro) e upsell (orçamento).
 import os
