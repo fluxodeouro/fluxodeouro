@@ -308,9 +308,29 @@ def chat_handler():
         # ESTÁGIO 1: PRIMEIRA MENSAGEM (URL)
         # -----------------------------------------------------------
         if not lead_id:
-            print(f"ℹ️  [Fluxo] Novo Lead. Mensagem (URL): {user_message}")
-            url_analisada = user_message # A primeira mensagem é a URL
             
+            # --- [INÍCIO DA CORREÇÃO] ---
+            # Validação da URL no Backend
+            
+            # Regra simples: se não tiver '.' ou for muito curta, não é uma URL.
+            is_url_like = "." in user_message and len(user_message) > 4 
+            
+            if not is_url_like:
+                # Se NÃO for uma URL (ex: "Oi")
+                print(f"ℹ️  [Fluxo] Novo Lead. Mensagem não é URL: {user_message}")
+                bot_response = "Olá! Para começar, preciso que você **cole a URL completa** do seu site (ex: `https://seusite.com.br`) para eu poder analisar."
+                
+                # Retorna a mensagem de erro, MAS NÃO CRIA UM LEAD.
+                # O frontend receberá "lead_id: None" e continuará nulo,
+                # forçando a próxima mensagem a cair aqui de novo.
+                return jsonify({"message": bot_response, "lead_id": None}), 200
+            
+            # Se CHEGOU AQUI, a mensagem é uma URL (ex: "google.com")
+            # O fluxo original continua...
+            print(f"ℹ️  [Fluxo] Novo Lead. Mensagem (URL): {user_message}")
+            url_analisada = user_message 
+            # --- [FIM DA CORREÇÃO] ---
+
             # --- Ação: Salva Imediatamente ---
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 cur.execute(
@@ -329,6 +349,8 @@ def chat_handler():
                 # Atualiza o status de erro e informa o usuário
                 update_lead_status(lead_id, 'Erro PageSpeed')
                 append_to_chat_history(lead_id, 'bot', error)
+                # NOTA: Retornamos o lead_id aqui para que o chat possa continuar
+                # mesmo se o usuário tentar outra URL.
                 return jsonify({"message": error, "lead_id": lead_id}), 200
 
             score_seo = (report_json.get('lighthouseResult', {}).get('categories', {}).get('seo', {}).get('score', 0)) * 100
