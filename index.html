@@ -2269,14 +2269,7 @@
         </div>
     </footer>
 
-    <!-- CHATBOT FLUTUANTE ANTIGO -->
-    <!-- Este bloco é removido e substituído pelo novo sistema.
-    <div class="chat-float" onclick="abrirChatbot('geral')">
-        <div class="chat-icon">
-            <i data-lucide="message-circle-more" class="lucide-icon"></i>
-        </div>
-    </div>
-    -->
+    <!-- CHATBOT FLUTUANTE ANTIGO (REMOVIDO) -->
     
     <!-- ### [INÍCIO] CÓDIGO DO CHATBOT DE IA INJETADO ### -->
 
@@ -2798,60 +2791,13 @@
             cursor: not-allowed;
         }
         
-        /* --- CSS DO FORMULÁRIO DE LEAD V5 --- */
-        .chatbot-form-bubble {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        
-        .chatbot-form-input {
-            background-color: var(--grafite);
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 0.8rem 1rem;
-            color: var(--branco);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            outline: none;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-        
-        .chatbot-form-input:focus {
-            border-color: var(--dourado);
-            background-color: var(--grafite-light);
-        }
-        
-        .chatbot-form-button {
-            background: var(--dourado);
-            color: var(--preto);
-            border: none;
-            border-radius: 8px;
-            padding: 0.8rem 1rem;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-        
-        .chatbot-form-button:hover {
-            background: var(--dourado-dark);
-        }
-        
-        .chatbot-form-button:disabled {
-            background: #555;
-            color: #999;
-            cursor: not-allowed;
-        }
-        
-        .chatbot-form-status {
-            font-size: 0.8rem;
-            text-align: center;
-            margin-top: 0.5rem;
-            min-height: 1.2em;
-        }
+        /* --- CSS DO FORMULÁRIO DE LEAD V5 (REMOVIDO NA V6) --- */
+        /*
+        .chatbot-form-bubble { ... }
+        .chatbot-form-input { ... }
+        .chatbot-form-button { ... }
+        .chatbot-form-status { ... }
+        */
         /* --- FIM CSS FORMULÁRIO --- */
 
         /* Ajuste de Posicionamento em Desktop */
@@ -2890,7 +2836,7 @@
     <!-- 
     ====================================================================
     INÍCIO DA SUBSTITUIÇÃO DO SCRIPT
-    O conteúdo antigo do <script> foi removido e substituído pelo V5 abaixo
+    O conteúdo antigo do <script> (V5) foi removido e substituído pelo V6 abaixo
     ====================================================================
     -->
     <script>
@@ -3115,7 +3061,7 @@
             window.addEventListener('load', () => { if (canvas) { initParticles(); animateParticles(); } });
         }
 
-        // --- [INÍCIO] LÓGICA DO CHATBOT V5 (Captura de Leads) ---
+        // --- [INÍCIO] LÓGICA DO CHATBOT V6 (Compatível com app.py v6.0) ---
 
         // --- Variáveis Globais e Helpers ---
         let chatbotWindow; 
@@ -3125,17 +3071,12 @@
         let chatbotMessages;
         let RENDER_API_URL = ""; // Será definida no DOMContentLoaded
 
-        // Variáveis de estado para o fluxo de captura de leads
-        let chatState = "awaiting_url"; // Estados: awaiting_url, awaiting_form, awaiting_confirmation
-        let tempLeadData = {
-            url_analisada: "",
-            score_seo: 0,
-            nome: "",
-            email: "",
-            whatsapp: ""
-        };
+        // [MUDANÇA V6]
+        // O estado agora é gerenciado pelo servidor.
+        // Precisamos apenas armazenar o lead_id que o servidor nos envia.
+        let currentLeadId = null; 
 
-        // Função Global de Abrir/Fechar o Chatbot
+        // Função Global de Abrir/Fechar o Chatbot (Sem alterações)
         function toggleChat(e) {
             if (e) e.preventDefault();
             if (!chatbotWindow) chatbotWindow = document.getElementById('chatbot-window');
@@ -3156,19 +3097,19 @@
             }
         }
 
-        // Função chamada pelos botões antigos (agora redireciona)
+        // Função chamada pelos botões antigos (Sem alterações)
         function abrirChatbot(fluxo) {
             console.log('Abrindo chatbot com fluxo:', fluxo);
             toggleChat(); 
         }
 
-        // Formata a hora atual
+        // Formata a hora atual (Sem alterações)
         function getCurrentTime() {
             const now = new Date();
             return now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
         }
 
-        // Adiciona mensagem ao chat
+        // Adiciona mensagem ao chat (Sem alterações)
         function addMessage(text, isUser = false) {
              if (!chatbotMessages) chatbotMessages = document.getElementById('chatbot-messages-container');
 
@@ -3180,8 +3121,10 @@
             formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             formattedText = formattedText.replace(/`(.*?)`/g, '<code>$1</code>');
 
-            // Remove a tag [FORMULARIO_LEAD] se ela existir
+            // [MUDANÇA V6] Removemos a tag [FORMULARIO_LEAD] pois não é mais usada
             formattedText = formattedText.replace("[FORMULARIO_LEAD]", "");
+            // [MUDANÇA V6] Removemos a tag [ORCAMENTO_FINALIZADO]
+            formattedText = formattedText.replace("[ORCAMENTO_FINALIZADO]", "");
 
             // Converte listas *
             formattedText = formattedText.replace(/^\* (.*$)/gm, '<li>$1</li>');
@@ -3190,6 +3133,17 @@
                 formattedText = '<ul>' + formattedText.replace(/<\/li><br>/g, '</li>') + '</ul>';
                 formattedText = formattedText.replace(/<\/ul><br>$/, '</ul>'); // Limpa quebra de linha extra
             }
+            
+            // [MUDANÇA V6] Trata a tag [RELATORIO_ENVIADO]
+            if (formattedText.includes("[RELATORIO_ENVIADO]")) {
+                const parts = formattedText.split("[RELATORIO_ENVIADO]");
+                // O app.py v6 agora envia a "isca" (parte 0) e a "pergunta" (parte 1) juntas.
+                // O JS antigo dividia, mas a nova lógica do app.py (v6) parece enviar
+                // a isca e a pergunta juntas na resposta.
+                // Vamos apenas juntar as partes e remover a tag.
+                formattedText = parts.join('<br><br>').trim();
+            }
+
 
             messageDiv.innerHTML = `
                 <div class="message-avatar">
@@ -3210,7 +3164,7 @@
             }
         }
 
-        // Mostra indicador de "digitando"
+        // Mostra indicador de "digitando" (Sem alterações)
         function showTypingIndicator() {
              if (!chatbotMessages) chatbotMessages = document.getElementById('chatbot-messages-container');
             const typingDiv = document.createElement('div');
@@ -3239,7 +3193,7 @@
             }
         }
 
-        // Remove indicador de "digitando"
+        // Remove indicador de "digitando" (Sem alterações)
         function removeTypingIndicator() {
             const typingDiv = document.getElementById('typing-indicator');
             if (typingDiv && typingDiv.parentNode) {
@@ -3247,105 +3201,16 @@
             }
         }
 
-        // Adiciona o formulário de captura de leads ao chat
-        function addLeadForm() {
-            if (!chatbotMessages) chatbotMessages = document.getElementById('chatbot-messages-container');
+        // [MUDANÇA V6]
+        // As funções addLeadForm() e handleLeadFormSubmit() foram REMOVIDAS.
+        // O novo app.py (v6) coleta dados de forma conversacional,
+        // então não precisamos mais de um formulário HTML injetado.
 
-            const formHTML = `
-                <div class="message bot">
-                    <div class="message-avatar">
-                        <i data-lucide="brain-circuit" class="lucide-icon"></i>
-                    </div>
-                    <div class="message-content">
-                        <div class="message-bubble chatbot-form-bubble">
-                            <input type="text" id="lead-form-nome" placeholder="Seu nome completo" class="chatbot-form-input">
-                            <input type="email" id="lead-form-email" placeholder="Seu melhor e-mail" class="chatbot-form-input">
-                            <input type="tel" id="lead-form-whatsapp" placeholder="WhatsApp (ex: 11 987654321)" class="chatbot-form-input">
-                            <button id="lead-form-submit" class="chatbot-form-button">Enviar Análise</button>
-                            <div id="lead-form-status" class="chatbot-form-status"></div>
-                        </div>
-                        <div class="message-time">${getCurrentTime()}</div>
-                    </div>
-                </div>
-            `;
-
-            chatbotMessages.insertAdjacentHTML('beforeend', formHTML);
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-
-            // Adiciona o listener ao botão recém-criado
-            document.getElementById('lead-form-submit').addEventListener('click', handleLeadFormSubmit);
-        }
-
-        // Manipula o envio do formulário de lead
-        async function handleLeadFormSubmit() {
-            const nome = document.getElementById('lead-form-nome').value;
-            const email = document.getElementById('lead-form-email').value;
-            const whatsapp = document.getElementById('lead-form-whatsapp').value;
-            const statusEl = document.getElementById('lead-form-status');
-            const submitBtn = document.getElementById('lead-form-submit');
-
-            if (!nome || !email || !whatsapp) {
-                statusEl.textContent = "Por favor, preencha todos os campos.";
-                statusEl.style.color = "var(--dourado)";
-                return;
-            }
-
-            statusEl.textContent = "Salvando...";
-            submitBtn.disabled = true;
-
-            tempLeadData.nome = nome;
-            tempLeadData.email = email;
-            tempLeadData.whatsapp = whatsapp;
-            
-            let leadResponse; // Definido fora do try para estar no escopo do finally
-
-            try {
-                leadResponse = await fetch(RENDER_API_URL + '/api/capture-lead', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(tempLeadData)
-                });
-
-                if (leadResponse.ok) {
-                    // Sucesso!
-                    statusEl.textContent = "Sucesso! Dados salvos.";
-                    statusEl.style.color = "#4CAF50"; // Verde
-                    addMessage("🚀 **Tudo pronto!** \n\nSeus dados foram salvos. Vou gerar seu relatório completo e nossa equipe entrará em contato com você pelo WhatsApp em breve!", false);
-                    document.querySelector('.chatbot-form-bubble').style.display = 'none'; // Esconde o formulário
-                } else {
-                    const errorData = await leadResponse.json();
-                    throw new Error(errorData.error || "Erro ao salvar.");
-                }
-
-            } catch (error) {
-                console.error("Erro ao salvar o lead:", error);
-                statusEl.textContent = `Erro: ${error.message}`;
-                statusEl.style.color = "var(--dourado)";
-                submitBtn.disabled = false; // Reabilita se falhar
-            } finally {
-                // Reseta o chatbot APENAS em caso de SUCESSO
-                if (leadResponse && leadResponse.ok) {
-                    chatState = "awaiting_url";
-                    chatbotInput.disabled = false;
-                    chatbotSend.disabled = false;
-                    chatbotInput.placeholder = "Cole outra URL para analisar...";
-                    tempLeadData = { url_analisada: "", score_seo: 0, nome: "", email: "", whatsapp: "" }; // Limpa os dados
-                }
-            }
-        }
-
-
-        // Função Principal de Envio (V5 - Simplificada para usar Formulário)
+        // Função Principal de Envio (V6 - Totalmente Reescreita)
         async function sendMessage() {
             if (!chatbotInput) chatbotInput = document.getElementById('chatbot-input-field');
             if (!chatbotSend) chatbotSend = document.getElementById('chatbot-send-button');
-            if (!chatbotInput) return;
-
-            // Bloqueia novos envios se já estiver aguardando o formulário
-            if (chatState === 'awaiting_form') return;
+            if (!chatbotInput || chatbotSend.disabled) return;
 
             const message = chatbotInput.value.trim();
             if (message === '') return;
@@ -3353,68 +3218,65 @@
             addMessage(message, true); // Mostra a mensagem do usuário
             const originalPlaceholder = chatbotInput.placeholder;
             chatbotInput.value = '';
-            chatbotInput.placeholder = "Analisando sua URL...";
+            chatbotInput.placeholder = "Analisando...";
             chatbotSend.disabled = true;
             showTypingIndicator();
 
             try {
-                // --- ETAPA 1: Enviar URL para Diagnóstico-ISCA ---
-                let url = message;
-                if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                    url = 'https://' + url;
-                }
-                tempLeadData.url_analisada = url; // Salva a URL
+                // --- ETAPA 1: Enviar mensagem para o endpoint ÚNICO /api/chat ---
+                // O payload agora envia a mensagem e o lead_id atual (que é null no início)
+                const payload = {
+                    message: message,
+                    lead_id: currentLeadId 
+                };
 
-                const response = await fetch(RENDER_API_URL + '/api/get-seo-diagnosis', {
+                const response = await fetch(RENDER_API_URL + '/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_url: url }),
+                    body: JSON.stringify(payload),
                 });
 
                 const data = await response.json();
                 removeTypingIndicator();
 
-                if (response.ok && data.diagnosis) {
-                    tempLeadData.score_seo = data.seo_score || 0; // Salva o score
+                if (!response.ok) {
+                    throw new Error(data.error || "Erro na resposta do servidor.");
+                }
 
-                    if (data.diagnosis.includes("[FORMULARIO_LEAD]")) {
-                        const [isca, _] = data.diagnosis.split("[FORMULARIO_LEAD]");
-                        addMessage(isca, false); // Mostra a isca
-                        addLeadForm(); // Adiciona o formulário HTML
-                        chatState = "awaiting_form"; // Muda o estado para aguardar preenchimento
-                        chatbotInput.placeholder = "Preencha o formulário acima...";
-                        chatbotInput.disabled = true; // Desabilita o input principal
-                        chatbotSend.disabled = true;
-                    } else {
-                        addMessage(data.diagnosis, false);
-                        chatState = "awaiting_url"; 
-                        chatbotInput.placeholder = originalPlaceholder;
-                        chatbotSend.disabled = false;
-                    }
+                // SUCESSO:
+                
+                // 1. Armazena o lead_id recebido do servidor
+                if (data.lead_id) {
+                    currentLeadId = data.lead_id;
+                }
+
+                // 2. Mostra a resposta do bot (que pode ser o score, uma pergunta, a isca, etc.)
+                addMessage(data.message, false);
+
+                // 3. Reseta o placeholder para a próxima interação
+                if (currentLeadId) {
+                     chatbotInput.placeholder = "Digite sua resposta...";
                 } else {
-                    addMessage(data.error || 'Opa, não consegui analisar essa URL. Tente outra.', false);
-                    chatState = "awaiting_url";
-                    chatbotInput.placeholder = originalPlaceholder;
-                    chatbotSend.disabled = false;
+                    // Se algo deu errado e não recebemos um lead_id (ex: Erro PageSpeed)
+                    chatbotInput.placeholder = "Tente outra URL...";
                 }
 
             } catch (error) {
                 removeTypingIndicator();
-                addMessage('Erro de conexão com o Analista. 🔌 Tente novamente.', false);
+                addMessage('Erro de conexão com o Analista. 🔌 Tente novamente. ' + error.message, false);
                 console.error("Erro de rede no sendMessage:", error);
-                chatState = "awaiting_url";
-                chatbotInput.placeholder = originalPlaceholder;
-                chatbotSend.disabled = false;
+                
+                // Se der um erro fatal, limpamos o lead_id para recomeçar o fluxo
+                currentLeadId = null;
+                chatbotInput.placeholder = "Tente outra URL...";
             } finally {
-                // A reabilitação dos botões agora é controlada dentro dos fluxos
-                if (chatState === 'awaiting_url') {
-                    chatbotSend.disabled = false;
-                    chatbotInput.disabled = false;
-                    chatbotInput.placeholder = "Cole outra URL...";
-                }
+                // Reabilita o input para a próxima mensagem
+                chatbotSend.disabled = false;
+                chatbotInput.disabled = false;
+                chatbotInput.focus();
             }
         }
-        // --- [FIM] LÓGICA DO CHATBOT V5 ---
+        // --- [FIM] LÓGICA DO CHATBOT V6 ---
 
         // --- Event Listeners Principais (Executados no DOMContentLoaded) ---
         document.addEventListener('DOMContentLoaded', (event) => {
@@ -3443,7 +3305,10 @@
             if (chatbotInput) chatbotInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault(); 
-                    sendMessage();
+                    // [MUDANÇA V6] Garante que o botão de enviar não está desabilitado
+                    if (!chatbotSend.disabled) {
+                        sendMessage();
+                    }
                 }
             });
 
@@ -3468,6 +3333,7 @@
             }
 
             // --- LÓGICA DA API PAGESPEED (Barra de Busca) ---
+            // (Sem alterações - Esta lógica está correta para o app.py v6)
             const seoInput = document.getElementById('seo-url-input');
             const seoButton = document.getElementById('seo-submit-button');
             const seoNote = document.getElementById('seo-result-note');
@@ -3530,7 +3396,7 @@
             }
 
             // --- LÓGICA DOS BOTÕES DOS PLANOS ---
-            // Adiciona os listeners aos botões dos planos para abrir o chat
+            // (Sem alterações)
             const btnStarter = document.getElementById('btn-contratar-starter');
             const btnFull = document.getElementById('btn-orcamento-full');
             const btnEco = document.getElementById('btn-diagnostico-ecossistema');
@@ -3538,9 +3404,6 @@
             if(btnStarter) btnStarter.addEventListener('click', (e) => {
                 e.preventDefault();
                 toggleChat(e);
-                // Futuramente, pode adicionar uma mensagem inicial:
-                // addMessage("Olá! Tenho interesse no plano Base Ouro (Lite).", true);
-                // sendMessage("Olá! Tenho interesse no plano Base Ouro (Lite)."); // (precisa adaptar a V5 para isso)
             });
             if(btnFull) btnFull.addEventListener('click', (e) => {
                 e.preventDefault();
