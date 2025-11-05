@@ -28,8 +28,14 @@ SALES_WEBHOOK_URL = os.environ.get("SALES_WEBHOOK_URL") # Webhook para N8N/Venda
 try:
     if GEMINI_API_KEY:
         genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel('gemini-1.5-flash-latest') # Usando 1.5-flash para prompts longos
-        print("✅  [Gemini] Modelo ('gemini-1.5-flash-latest') inicializado.")
+        
+        # --- [INÍCIO DA CORREÇÃO] ---
+        # Mudando de 'gemini-1.5-flash-latest' para a versão "pinned" (fixa)
+        # para evitar o erro 404 da API v1beta.
+        model = genai.GenerativeModel('gemini-1.5-flash') 
+        print("✅  [Gemini] Modelo ('gemini-1.5-flash') inicializado.")
+        # --- [FIM DA CORREÇÃO] ---
+        
     else:
         model = None
         print("❌ ERRO: GEMINI_API_KEY não encontrada. O Chatbot não funcionará.")
@@ -323,13 +329,11 @@ def chat_handler():
             # Se CHEGOU AQUI, a mensagem é uma URL (ex: "google.com")
             print(f"ℹ️  [Fluxo] Novo Lead. Mensagem (URL): {user_message}")
 
-            # --- [INÍCIO DA NOVA CORREÇÃO (Fix 2)] ---
-            # Normalização de URL: Garante que a URL tenha 'https://'
+            # --- [Normalização de URL (Fix 2)] ---
             url_analisada = user_message
             if not url_analisada.startswith('http://') and not url_analisada.startswith('https://'):
                 url_analisada = 'https://' + url_analisada
                 print(f"ℹ️  [Fluxo] URL normalizada para: {url_analisada}")
-            # --- [FIM DA NOVA CORREÇÃO] ---
 
             # --- Ação: Salva Imediatamente ---
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -344,7 +348,6 @@ def chat_handler():
             print(f"✅  [DB] Lead {lead_id} criado (Status: Coletando URL).")
 
             # --- Ação: Busca PageSpeed ---
-            # Agora 'url_analisada' (com https://) é passada para o PageSpeed
             report_json, error = fetch_full_pagespeed_json(url_analisada, PAGESPEED_API_KEY)
             
             if error:
@@ -352,8 +355,6 @@ def chat_handler():
                 # Atualiza o status de erro e informa o usuário
                 update_lead_status(lead_id, 'Erro PageSpeed')
                 append_to_chat_history(lead_id, 'bot', error)
-                # NOTA: Retornamos o lead_id aqui para que o chat possa continuar
-                # mesmo se o usuário tentar outra URL.
                 return jsonify({"message": error, "lead_id": lead_id}), 200
 
             score_seo = (report_json.get('lighthouseResult', {}).get('categories', {}).get('seo', {}).get('score', 0)) * 100
