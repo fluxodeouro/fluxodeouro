@@ -30,10 +30,10 @@ try:
         genai.configure(api_key=GEMINI_API_KEY)
         
         # --- [INÍCIO DA CORREÇÃO] ---
-        # Mudando de 'gemini-1.5-flash-latest' para a versão "pinned" (fixa)
-        # para evitar o erro 404 da API v1beta.
-        model = genai.GenerativeModel('gemini-1.5-flash') 
-        print("✅  [Gemini] Modelo ('gemini-1.5-flash') inicializado.")
+        # Trocando 'gemini-1.5-flash' para 'gemini-pro',
+        # que é o modelo mais estável e universal, evitando o erro 404.
+        model = genai.GenerativeModel('gemini-pro') 
+        print("✅  [Gemini] Modelo ('gemini-pro') inicializado.")
         # --- [FIM DA CORREÇÃO] ---
         
     else:
